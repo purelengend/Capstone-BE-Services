@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import { product } from './api/index';
+// import {PORT } from './config/index';
 
 export default (app: Application) => {
     app.use(express.json());
