@@ -1,9 +1,13 @@
+import { Channel } from 'amqplib';
 import { Application, Request, Response } from 'express';
+import observerRPC from './../message-queue/rpc/observerRPC';
 import { IProductModel } from '../model/productModel';
-import ProductService from '../service/productService';
+import ProductService from '../service/ProductService';
 
-export default (app: Application) => {
+export default (app: Application, channel: Channel) => {
     const productService = new ProductService();
+
+    observerRPC('PRODUCT_RPC', productService);
 
     app.get('/', async (_: Request, res: Response) => {
         const products = await productService.getProducts();
@@ -11,7 +15,7 @@ export default (app: Application) => {
     });
 
     app.get('/:id', async (req: Request, res: Response) => {
-        const product = await productService.getProduct(req.params.id);
+        const product = await productService.getProductById(req.params.id);
         return res.json(product);
     });
 

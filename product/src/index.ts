@@ -8,7 +8,7 @@ const main = async () => {
 
     await databaseConnection();
 
-    expressApp(app);
+    await expressApp(app);
 
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);

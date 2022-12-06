@@ -1,7 +1,7 @@
 import ProductModel, { IProductModel } from '../model/productModel';
 
 export class ProductRepository {
-    async getProduct(id: string) : Promise<IProductModel | null> {
+    async getProductById(id: string) : Promise<IProductModel | null> {
         try {
             return await ProductModel.findById(id);
         } catch (error) {
