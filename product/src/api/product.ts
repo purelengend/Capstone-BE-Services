@@ -4,7 +4,7 @@ import observerRPC from './../message-queue/rpc/observerRPC';
 import { IProductModel } from '../model/productModel';
 import ProductService from '../service/ProductService';
 
-export default (app: Application, channel: Channel) => {
+export default (app: Application, _: Channel) => {
     const productService = new ProductService();
 
     observerRPC('PRODUCT_RPC', productService);

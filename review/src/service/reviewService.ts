@@ -1,5 +1,5 @@
-import { IUserModel } from './../model/reviewModel';
-import { USER_RPC } from './../config/index';
+// import { IUserModel } from './../model/reviewModel';
+// import { USER_RPC } from './../config/index';
 import { requestRPC } from './../message-queue/requestRPC';
 import { EventPayload } from './../types/utilTypes';
 import EventType from './../types/eventType';
@@ -27,19 +27,24 @@ export class ReviewService implements IService {
         userId: string
     ): Promise<IReviewModel> {
         try {
-            // const fakeAuthor = {
-            //     _id: userId,
-            //     name: 'fake name',
-            //     avatarUrl: 'fake avatarUrl',
-            // };
-            const userResponse = (await requestRPC(USER_RPC, {
-                type: 'GET-USER',
-                data: userId,
-            })) as IUserModel;
-            return await this.reviewRepository.createReview(
-                review,
-                userResponse
-            );
+            const fakeAuthor = {
+                _id: userId,
+                name: 'fake name',
+                avatarUrl: 'fake avatarUrl',
+            };
+            // const userResponse = (await requestRPC(USER_RPC, {
+            //     type: 'GET-USER',
+            //     data: userId,
+            // })) as IUserModel;
+            const productResponse = await requestRPC('PRODUCT_RPC', {
+                type: 'GET_PRODUCT_BY_ID',
+                data: {
+                    id: review.productId,
+                },
+            });
+            console.log('[*] product response from RPC: ', productResponse);
+
+            return await this.reviewRepository.createReview(review, fakeAuthor);
         } catch (error) {
             console.log('Error in createReview', error);
             throw error;

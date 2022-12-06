@@ -1,9 +1,9 @@
 import { IService } from './IService';
 import { RPCTypes } from '../types/rpcType';
-import { EventPayload, RPCPayload } from '../types/utilType';
+import { RPCPayload } from '../types/utilType';
 import { IProductModel } from "../model/productModel";
 import { ProductRepository } from "../repository/ProductRepository";
-import EventType from '../types/eventType';
+
 
 export default class ProductService implements IService {
     private productRepository: ProductRepository;
@@ -32,9 +32,7 @@ export default class ProductService implements IService {
         return await this.productRepository.deleteProduct(id);
     }
 
-    subscribeEvents(payload: string): void {
-        const eventPayload: EventPayload = JSON.parse(payload);
-        
+    subscribeEvents(_: string): void {        
         throw new Error("Method not implemented.");
     }
 
