@@ -17,11 +17,19 @@ export default class ProductService implements IService {
     }
     
     async getProductById(id: string) {
-        return await this.productRepository.getProductById(id);
+        const product = await this.productRepository.getProductById(id);
+        if (!product) {
+            throw new Error('Product id did not match');
+        }
+        return product;
     }
     
     async createProduct(product: IProductModel) {
-        return await this.productRepository.createProduct(product);
+        product = await this.productRepository.createProduct(product);
+        if (!product) {
+            throw new Error('Error while creating product');
+        }
+        return product;
     }
     
     async updateProduct(id: string, product: any) {
@@ -29,6 +37,10 @@ export default class ProductService implements IService {
     }
     
     async deleteProduct(id: string) {
+        const product = await this.productRepository.getProductById(id);
+        if (!product) {
+            throw new Error('Product id did not match');
+        }
         return await this.productRepository.deleteProduct(id);
     }
 

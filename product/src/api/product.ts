@@ -1,5 +1,5 @@
 import { Channel } from 'amqplib';
-import { Application, Request, Response } from 'express';
+import { Application, NextFunction, Request, Response } from 'express';
 import observerRPC from './../message-queue/rpc/observerRPC';
 import { IProductModel } from '../model/productModel';
 import ProductService from '../service/ProductService';
@@ -9,32 +9,59 @@ export default (app: Application, _: Channel) => {
 
     observerRPC('PRODUCT_RPC', productService);
 
-    app.get('/', async (_: Request, res: Response) => {
-        const products = await productService.getProducts();
-        return res.json(products);
+    app.get('/', async (_: Request, res: Response, next: NextFunction) => {
+        try {
+            const products = await productService.getProducts();
+            return res.json(products);
+        } catch (error) {
+            next(error);
+            return;
+        }
     });
 
-    app.get('/:id', async (req: Request, res: Response) => {
-        const product = await productService.getProductById(req.params.id);
-        return res.json(product);
+    app.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const product = await productService.getProductById(req.params.id);
+            return res.json(product);
+        } catch (error) {
+            next(error);
+            return;
+        }
     });
 
-    app.post('/create', async (req: Request, res: Response) => {
-        const product = req.body as IProductModel;
-        const data = await productService.createProduct(product);
-        return res.json(data);
+    app.post('/create', async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const product = req.body as IProductModel;
+            const data = await productService.createProduct(product);
+            return res.json(data);
+        } catch (error) {
+            next(error)
+            return;
+        }
     });
 
-    app.put('/update/:id', async (req: Request, res: Response) => {
-        const id = req.params.id;
-        const product = req.body as IProductModel;
-        const data = await productService.updateProduct(id, product);
-        return res.json(data);
+    app.put('/update/:id', async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = req.params.id;
+            const product = req.body as IProductModel;
+            const data = await productService.updateProduct(id, product);
+            return res.json(data);
+        } catch (error) {
+            next(error);
+            return;
+        }
+
     });
 
-    app.delete('/delete/:id', async (req: Request, res: Response) => {
-        const id = req.params.id;
-        const data = await productService.deleteProduct(id);
-        return res.json(data);
+    app.delete('/delete/:id', async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = req.params.id;
+            const data = await productService.deleteProduct(id);
+            return res.json(data);
+        } catch (error) {
+            next(error)
+            return;
+        }
+
     });
 };
