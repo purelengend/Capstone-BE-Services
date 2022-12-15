@@ -1,3 +1,5 @@
+import { ValidationError } from './../error/error-type/ValidationError';
+import { NotFoundError } from './../error/error-type/NotFoundError';
 import { IService } from './IService';
 import { RPCTypes } from '../types/rpcType';
 import { RPCPayload } from '../types/utilType';
@@ -19,7 +21,7 @@ export default class ProductService implements IService {
     async getProductById(id: string) {
         const product = await this.productRepository.getProductById(id);
         if (!product) {
-            throw new Error('Product id did not match');
+            throw new NotFoundError('Product id did not match');
         }
         return product;
     }
@@ -27,7 +29,7 @@ export default class ProductService implements IService {
     async createProduct(product: IProductModel) {
         product = await this.productRepository.createProduct(product);
         if (!product) {
-            throw new Error('Error while creating product');
+            throw new ValidationError('product create body did not match');
         }
         return product;
     }
@@ -39,7 +41,7 @@ export default class ProductService implements IService {
     async deleteProduct(id: string) {
         const product = await this.productRepository.getProductById(id);
         if (!product) {
-            throw new Error('Product id did not match');
+            throw new NotFoundError('Product id did not match');
         }
         return await this.productRepository.deleteProduct(id);
     }

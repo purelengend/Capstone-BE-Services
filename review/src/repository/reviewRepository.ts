@@ -1,50 +1,45 @@
+import { NotFoundError } from './../error/error-type/NotFoundError';
 import reviewModel, { IUserModel, IReviewModel } from '../model/reviewModel';
 import { DeleteType } from '../types/utilTypes';
 
 export class ReviewRepository {
     async getReviewsByProductId(productId: string): Promise<IReviewModel[]> {
-        try {
-            return await reviewModel.find({ productId });
-        } catch (error) {
-            console.log('Error in getReviewsByProductId', error);
-            throw error;
-        }
+        return await reviewModel.find({ productId });
     }
 
     async createReview(
         review: IReviewModel,
         author: IUserModel | undefined
     ): Promise<IReviewModel> {
-        try {
-            review.user = author;
-            return await new reviewModel(review).save();
-        } catch (error) {
-            console.log('Error in createReview', error);
-            throw error;
+        
+        review.user = author;
+        review = await new reviewModel(review).save();
+        if (!review) {
+            throw new Error('Review save failed in the database');
         }
+        return review;
     }
 
     async updateReview(
         id: string,
         review: IReviewModel
     ): Promise<IReviewModel | null> {
-        try {
-            return await reviewModel.findByIdAndUpdate(id, review, {
-                new: true,
-            });
-        } catch (error) {
-            console.log('Error in updateReview', error);
-            throw new Error('Error in updateReview');
+        const updatedReview = await reviewModel.findByIdAndUpdate(id, review, {
+            new: true,
+        });
+        if (!updatedReview) {
+            throw new Error('Review update failed in the database');
         }
+        return updatedReview;
     }
 
     async deleteReview(id: string): Promise<IReviewModel | null> {
-        try {
-            return await reviewModel.findByIdAndDelete(id);
-        } catch (error) {
-            console.log('Error in deleteReview', error);
-            throw new Error('Error in deleteReview');
+        
+        const deletedReview = await reviewModel.findByIdAndDelete(id);
+        if (!deletedReview) {
+            throw new NotFoundError('Review not found in the database');
         }
+        return deletedReview;
     }
 
     // Delete all reviews for a product

@@ -12,7 +12,7 @@ export default (app: Application, _: Channel) => {
     app.get('/', async (_: Request, res: Response, next: NextFunction) => {
         try {
             const products = await productService.getProducts();
-            return res.json(products);
+            return res.status(200).json(products);
         } catch (error) {
             next(error);
             return;
@@ -22,7 +22,7 @@ export default (app: Application, _: Channel) => {
     app.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const product = await productService.getProductById(req.params.id);
-            return res.json(product);
+            return res.status(200).json(product);
         } catch (error) {
             next(error);
             return;
@@ -33,7 +33,7 @@ export default (app: Application, _: Channel) => {
         try {
             const product = req.body as IProductModel;
             const data = await productService.createProduct(product);
-            return res.json(data);
+            return res.status(200).json(data);
         } catch (error) {
             next(error)
             return;
@@ -45,12 +45,11 @@ export default (app: Application, _: Channel) => {
             const id = req.params.id;
             const product = req.body as IProductModel;
             const data = await productService.updateProduct(id, product);
-            return res.json(data);
+            return res.status(200).json(data);
         } catch (error) {
             next(error);
             return;
         }
-
     });
 
     app.delete('/delete/:id', async (req: Request, res: Response, next: NextFunction) => {
@@ -62,6 +61,5 @@ export default (app: Application, _: Channel) => {
             next(error)
             return;
         }
-
     });
 };
