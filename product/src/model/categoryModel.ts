@@ -1,21 +1,23 @@
-import { IProductModel } from "./productModel";
 import { model, Schema } from "mongoose";
 
 export interface ICategoryModel {
+    id?: string;
     name: string;
-    product?: IProductModel[]
+    products?: string[]
 };
 
 const categorySchema = new Schema<ICategoryModel>(
     {
         name: { type: String, required: true },
-        product: [{ type: Schema.Types.ObjectId, ref: 'Product' }]
+        products: [{ type: Schema.Types.ObjectId, ref: 'Product' }]
     },
     {
         toJSON: {
             transform(_, ret) {
+                ret.id = ret._id;
+                delete ret._id;
                 delete ret.__v;
-            }
+            },
         }
     }
 );

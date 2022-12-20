@@ -1,10 +1,18 @@
+import { CategoryWithProduct } from './../types/category';
+import { IProductModel } from './../model/productModel';
 import CategoryModel, { ICategoryModel } from './../model/categoryModel';
 
 export class CategoryRepository {
     async getCategoryById(id: string): Promise<ICategoryModel | null> {
         const category = await CategoryModel
             .findById(id)
-            .populate('products');
+        return category;
+    }
+
+    async getCategoryByIdWithProduct(categoryId: string): Promise<CategoryWithProduct> {
+        const category = await CategoryModel
+            .findById(categoryId)
+            .populate<{products: IProductModel[]}>('products', ['-categories','-photoUrls']).orFail();
         return category;
     }
 
@@ -36,5 +44,30 @@ export class CategoryRepository {
             throw new Error('Category delete failed in the database');
         }
         return deleteCategory;
+    }
+
+    async addProductToMultipleCategories(categoryIds: string[], productId: string): Promise<void> {
+        // const categories = await Promise.all(categoryIds.map(async (categoryId) => {
+        //     const category = await this.addProductToCategory(categoryId, productId);
+        //     return category;
+        // }));
+        // return categories;
+        await CategoryModel.updateMany({ '_id': categoryIds }, { $addToSet: { products: productId } });
+    }
+
+    async removeProductFromMultipleCategories(categoryIds: string[], productId: string): Promise<void> {
+        await CategoryModel.updateMany({ '_id': categoryIds }, { $pull: { products: productId } });
+    }
+
+    async addProductToCategory(categoryId: string, productId: string): Promise<ICategoryModel> {
+        const category = await CategoryModel.findById(categoryId).orFail();
+
+        category.products = category.products ? category.products : [];
+        category.products.push(productId);
+        const updatedCategory = await category.save();
+        if (!updatedCategory) {
+            throw new Error('Category update failed in the database');
+        }
+        return updatedCategory;
     }
 }

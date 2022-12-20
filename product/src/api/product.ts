@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Channel } from 'amqplib';
 import { Application, NextFunction, Request, Response } from 'express';
 import observerRPC from './../message-queue/rpc/observerRPC';

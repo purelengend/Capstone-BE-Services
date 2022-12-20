@@ -1,8 +1,12 @@
+import { NotFoundError } from './../error/error-type/NotFoundError';
 import ProductModel, { IProductModel } from '../model/productModel';
 
 export class ProductRepository {
     async getProductById(id: string): Promise<IProductModel | null> {
         const product = await ProductModel.findById(id);
+        if (!product) {
+            throw new NotFoundError('Product id did not match');
+        }
         return product;
     }
 

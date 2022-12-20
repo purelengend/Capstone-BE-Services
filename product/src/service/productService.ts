@@ -5,13 +5,16 @@ import { RPCTypes } from '../types/rpcType';
 import { RPCPayload } from '../types/utilType';
 import { IProductModel } from "../model/productModel";
 import { ProductRepository } from "../repository/ProductRepository";
+import CategoryService from './categoryService';
 
 
 export default class ProductService implements IService {
     private productRepository: ProductRepository;
+    private categoryService: CategoryService;
     
     constructor() {
         this.productRepository = new ProductRepository();
+        this.categoryService = new CategoryService();
     }
     
     async getProducts() {
@@ -31,6 +34,7 @@ export default class ProductService implements IService {
         if (!product) {
             throw new ValidationError('product create body did not match');
         }
+        await this.categoryService.addProductToCategories(product.id!, product.categories);
         return product;
     }
     

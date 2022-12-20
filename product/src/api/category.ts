@@ -5,9 +5,9 @@ import CategoryService from '../service/categoryService';
 export default (app: Application) => {
     const categoryService = new CategoryService();
     
-    app.get('/all', (_: Request, res: Response, next: NextFunction) => {
+    app.get('/category/all', async (_: Request, res: Response, next: NextFunction) => {
         try {
-            const categories = categoryService.getAllCategories();
+            const categories = await categoryService.getAllCategories();
             return res.status(200).json(categories);
         } catch (error) {
             next(error);
@@ -15,9 +15,9 @@ export default (app: Application) => {
         }
     });
 
-    app.get('/:id', (req: Request, res: Response, next: NextFunction) => {
+    app.get('/category/:id', async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const category = categoryService.getCategoryById(req.params.id);
+            const category = await categoryService.getCategoryById(req.params.id);
             return res.status(200).json(category);
         } catch (error) {
             next(error);
@@ -25,10 +25,10 @@ export default (app: Application) => {
         }
     });
 
-    app.post('/create', (req: Request, res: Response, next: NextFunction) => {
+    app.post('/category/create', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const category = req.body as ICategoryModel;
-            const data = categoryService.createCategory(category);
+            const data = await categoryService.createCategory(category);
             return res.status(200).json(data);
         } catch (error) {
             next(error)
@@ -36,11 +36,11 @@ export default (app: Application) => {
         }
     });
 
-    app.put('/update/:id', (req: Request, res: Response, next: NextFunction) => {
+    app.put('/category/update/:id', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const id = req.params.id;
             const category = req.body as ICategoryModel;
-            const data = categoryService.updateCategory(id, category);
+            const data = await categoryService.updateCategory(id, category);
             return res.status(200).json(data);
         } catch (error) {
             next(error);

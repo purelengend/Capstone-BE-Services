@@ -5,6 +5,6 @@ export interface IProductDto {
     basePrice: number;
     quantity: number;  
     coverPhotoUrl: string;
-    categoryId?: string[];
-    photosUrl?: string[];
+    categoryIds?: string[];
+    photosUrls?: string[];
 }
