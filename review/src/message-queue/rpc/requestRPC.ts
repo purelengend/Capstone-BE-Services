@@ -1,5 +1,5 @@
-import { getChannel } from './createChannel';
 import { v4 as uuidv4 } from 'uuid';
+import { getChannel } from '../createChannel';
 
 export const requestRPC = async (
     RPC_QUEUE_NAME: string,
@@ -7,42 +7,35 @@ export const requestRPC = async (
 ) => {
     const uuid = uuidv4();
     return await requestData(RPC_QUEUE_NAME, requestPayload, uuid);
-};
+}
 
-const requestData = async (
-    RPC_QUEUE_NAME: string,
-    requestPayload: Object,
-    uuid: string
-) => {
+const requestData = async (RPC_QUEUE_NAME: string, requestPayload: Object, uuid: string) => {
     try {
         const channel = await getChannel();
-
-        const q = await channel.assertQueue('', { exclusive: true });
+        const responseQueue = await channel.assertQueue('', { exclusive: true });
 
         channel.sendToQueue(
             RPC_QUEUE_NAME,
             Buffer.from(JSON.stringify(requestPayload)),
             {
                 correlationId: uuid,
-                replyTo: q.queue,
+                replyTo: responseQueue.queue
             }
         );
 
         return new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
+            const timeOut = setTimeout(() => {
                 channel.close();
                 resolve('timeout and API could not fulfill the request');
             }, 5000);
             channel.consume(
-                q.queue,
+                responseQueue.queue,
                 (msg) => {
-                    if (
-                        msg?.content &&
-                        msg?.properties?.correlationId === uuid
-                    ) {
+                    if (msg?.content &&
+                        msg?.properties?.correlationId === uuid) {
                         const response = JSON.parse(msg.content.toString());
                         resolve(response);
-                        clearTimeout(timeout);
+                        clearTimeout(timeOut);
                     } else {
                         reject(
                             'Error in consuming message, message content is null or correlationId is not matching'
@@ -52,8 +45,9 @@ const requestData = async (
                 { noAck: true }
             );
         });
+
     } catch (error) {
-        console.log('Error in requestRPCMessage', error);
+        console.log('Error in requestRPC', error);
         throw error;
     }
-};
+}

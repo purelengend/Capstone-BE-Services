@@ -1,8 +1,9 @@
+import { difference } from './../util/util';
 import { ValidationError } from './../error/error-type/ValidationError';
 import { NotFoundError } from './../error/error-type/NotFoundError';
 import { IService } from './IService';
 import { RPCTypes } from '../types/rpcType';
-import { RPCPayload } from '../types/utilType';
+import { RPCPayload } from '../types/utilTypes';
 import { IProductModel } from "../model/productModel";
 import { ProductRepository } from "../repository/ProductRepository";
 import CategoryService from './categoryService';
@@ -38,8 +39,26 @@ export default class ProductService implements IService {
         return product;
     }
     
-    async updateProduct(id: string, product: any) {
-        return await this.productRepository.updateProduct(id, product);
+    async updateProduct(id: string, updateProduct: IProductModel) {
+        const existingProduct = await this.productRepository.getProductById(id);
+        if (!existingProduct) {
+            throw new NotFoundError('Product id did not match');
+        }
+        await this.modifyCategoriesOfProduct(existingProduct, updateProduct.categories || []);
+        return await this.productRepository.updateProduct(id, updateProduct);
+    }
+
+    async modifyCategoriesOfProduct(existingProduct: IProductModel, updatedCategories: string[]): Promise<void> {
+        const existingCategories = existingProduct.categories || [];
+
+        const addedCategories = difference(updatedCategories, existingCategories);
+        const removedCategories = difference(existingCategories, updatedCategories);
+
+        if (addedCategories.length === 0 && removedCategories.length === 0) {
+            return;
+        }
+        await this.categoryService.addProductToCategories(existingProduct.id!, addedCategories);
+        await this.categoryService.removeProductFromCategories(existingProduct.id!, removedCategories);
     }
     
     async deleteProduct(id: string) {
@@ -47,6 +66,7 @@ export default class ProductService implements IService {
         if (!product) {
             throw new NotFoundError('Product id did not match');
         }
+        this.categoryService.removeProductFromCategories(product.id!, product.categories || []);
         return await this.productRepository.deleteProduct(id);
     }
 

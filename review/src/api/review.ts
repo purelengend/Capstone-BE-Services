@@ -3,7 +3,7 @@ import { IReviewModel } from './../model/reviewModel';
 import { Application, NextFunction, Request, Response } from 'express';
 import { ReviewService } from '../service/reviewService';
 import { Channel } from 'amqplib';
-import subscribeMessage from './../message-queue/subscribeMessage';
+import subscribeMessage from './../message-queue/pub-sub/subscribeMessage';
 
 export default (app: Application, channel: Channel) => {
     const reviewService = new ReviewService();
@@ -49,18 +49,26 @@ export default (app: Application, channel: Channel) => {
 
     app.post('/create', async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { productId, rating, comment, authorId } = req.body;
+            const { productId, rating, comment, userId } = req.body;
             const review = {
                 productId,
                 rating,
                 comment,
             } as IReviewModel;
 
-            if (review && authorId) {
+            if (review && userId) {
                 const newReview = await reviewService.createReview(
                     review,
-                    authorId
+                    userId
                 );
+                /* const payload = {
+                    event: EventType.REVIEW_CREATED,
+                    data: {
+                        productId: newReview.productId,
+                        rating: newReview.rating,
+                    }
+                }
+                await publishMessage(channel, PRODUCT_SERVICE, payload) */
                 return res.status(200).json(newReview);
             } else {
                 throw new ValidationError('Missing review or authorId in body');

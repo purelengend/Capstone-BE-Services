@@ -1,11 +1,13 @@
-import { Application, Request, Response } from 'express';
+// @ts-nocheck
+import { Application, NextFunction, Request, Response } from 'express';
 
 const errorHandler = (app: Application) => {
-    app.use((err: Error, _: Request, res: Response) => {
-        console.error(err);
-        const statusCode = res.statusCode || 500;
-        const errorInfo = err.message;
-        res.status(statusCode).json(errorInfo);
+    console.log('error handler called');
+    
+    app.use((err: BaseError, _: Request, res: Response, next: NextFunction) => {
+        const statusCode = err.statusCode || 500;
+        const errorInfo = {code: statusCode, name: err.name, message: err.message};
+        return res.status(statusCode).json(errorInfo);
     });
 }
 

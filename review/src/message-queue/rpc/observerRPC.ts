@@ -1,4 +1,4 @@
-import { RPCPayload } from '../../types/utilTypes';
+import { RPCPayload } from './../../types/utilTypes';
 import { getChannel } from '../createChannel';
 import { IService } from './../../service/IService';
 const observerRPC = async (RPC_QUEUE_NAME: string, service: IService) => {

@@ -4,42 +4,47 @@ import { DeleteType } from '../types/utilTypes';
 
 export class ReviewRepository {
     async getReviewsByProductId(productId: string): Promise<IReviewModel[]> {
-        return await reviewModel.find({ productId });
+        try {
+            return await reviewModel.find({ productId });
+        } catch (error) {
+            throw new NotFoundError(`Reviews for product ${productId} not found`);
+        }
     }
 
     async createReview(
         review: IReviewModel,
         author: IUserModel | undefined
     ): Promise<IReviewModel> {
-        
-        review.user = author;
-        review = await new reviewModel(review).save();
-        if (!review) {
-            throw new Error('Review save failed in the database');
+        try {
+            review.user = author;
+            review = await new reviewModel(review).save();
+            return review;
+        } catch (error) {
+            throw new Error('Review creation failed in the database');
         }
-        return review;
     }
 
     async updateReview(
         id: string,
         review: IReviewModel
     ): Promise<IReviewModel | null> {
-        const updatedReview = await reviewModel.findByIdAndUpdate(id, review, {
-            new: true,
-        });
-        if (!updatedReview) {
+        try {
+            const updatedReview = await reviewModel.findByIdAndUpdate(id, review, {
+                new: true,
+            });
+            return updatedReview;
+        } catch (error) {
             throw new Error('Review update failed in the database');
         }
-        return updatedReview;
     }
 
     async deleteReview(id: string): Promise<IReviewModel | null> {
-        
-        const deletedReview = await reviewModel.findByIdAndDelete(id);
-        if (!deletedReview) {
-            throw new NotFoundError('Review not found in the database');
+        try {
+            const deletedReview = await reviewModel.findByIdAndDelete(id);
+            return deletedReview;
+        } catch (error) {
+            throw new Error('Review delete failed in the database');
         }
-        return deletedReview;
     }
 
     // Delete all reviews for a product
@@ -55,16 +60,75 @@ export class ReviewRepository {
     }
 
     // Delete all reviews by _id of author when the author is deleted, author is a field in review
-    async deleteReviewsByAuthorId(authorId: string): Promise<DeleteType> {
+    async deleteReviewsByAuthorId(userId: string): Promise<DeleteType> {
         try {
             const data = await reviewModel.deleteMany({
-                'author._id': authorId,
+                'user._id': userId,
             });
-            console.log('return data of delete reviews by authorId', data);
+            console.log('return data of delete reviews by userId', data);
             return data;
         } catch (error) {
             console.log('Error in deleteReviewsByAuthorId', error);
             throw new Error('Error in deleteReviewsByAuthorId');
+        }
+    }
+
+    async getCountReviewsByProductId(productId: string): Promise<number> {
+        try {
+            const count = await reviewModel.countDocuments({ productId });
+            return count;
+        } catch (error) {
+            throw new Error('Error in getCountReviewsByProductId');
+        }
+    }
+
+    async getAverageRatingByProductId(productId: string): Promise<number> {
+        try {
+            const averageRating = await reviewModel.aggregate([
+                {
+                    $match: { productId },
+                },
+                {
+                    $group: {
+                        _id: '$productId',
+                        averageRating: { $avg: '$rating' },
+                    },
+                },
+            ]);
+            return averageRating[0].averageRating;
+        } catch (error) {
+            throw new Error('Error in getAverageRatingByProductId');
+        }
+    }
+
+    async getAllAverageRatingOfAllProducts(): Promise<any> {
+        try {
+            const averageRating = await reviewModel.aggregate([
+                {
+                    $group: {
+                        _id: '$productId',
+                        averageRating: { $avg: '$rating' },
+                    },
+                },
+            ]);
+            return averageRating;
+        } catch (error) {
+            throw new Error('Error in getAllAverageRatingOfAllProducts');
+        }
+    }
+
+    getAverageRatingAndCountByProductId(productId: string): PromiseLike<{ averageRating: number; count: number; }> {
+        try {
+            const averageRating = this.getAverageRatingByProductId(productId);
+            const count = this.getCountReviewsByProductId(productId);
+            return Promise.all([averageRating, count]).then((values) => {
+                return {
+                    averageRating: values[0],
+                    count: values[1],
+                };
+            });
+        } catch (error) {
+            throw new Error('Error in getAverageRatingAndCountByProductId');
         }
     }
 }

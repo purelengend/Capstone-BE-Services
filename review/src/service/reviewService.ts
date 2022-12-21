@@ -1,12 +1,13 @@
 import { NotFoundError } from './../error/error-type/NotFoundError';
 // import { IUserModel } from './../model/reviewModel';
 // import { USER_RPC } from './../config/index';
-import { requestRPC } from './../message-queue/requestRPC';
-import { EventPayload } from './../types/utilTypes';
+import { requestRPC } from './../message-queue/rpc/requestRPC';
+import { EventPayload, RPCPayload } from './../types/utilTypes';
 import EventType from './../types/eventType';
 import { ReviewRepository } from './../repository/reviewRepository';
 import { IReviewModel } from '../model/reviewModel';
 import { DeleteType } from '../types/utilTypes';
+import { IService } from './IService';
 export class ReviewService implements IService {
     private reviewRepository: ReviewRepository;
 
@@ -22,10 +23,9 @@ export class ReviewService implements IService {
         review: IReviewModel,
         userId: string
     ): Promise<IReviewModel> {
-        try {
             const fakeAuthor = {
-                _id: userId,
-                name: 'fake name',
+                id: userId,
+                username: 'fake name',
                 avatarUrl: 'fake avatarUrl',
             };
             // const userResponse = (await requestRPC(USER_RPC, {
@@ -44,10 +44,6 @@ export class ReviewService implements IService {
             console.log('[*] product response from RPC: ', productResponse);
 
             return await this.reviewRepository.createReview(review, fakeAuthor);
-        } catch (error) {
-            console.log('Error in createReview', error);
-            throw error;
-        }
     }
 
     async updateReview(
@@ -73,6 +69,19 @@ export class ReviewService implements IService {
         return await this.reviewRepository.deleteReviewsByAuthorId(
             authorId
         );
+    }
+
+    async getAverageRatingByProductId(productId: string): Promise<number> {
+        return await this.reviewRepository.getAverageRatingByProductId(productId);
+    }
+
+    async getAverageRatingAndCountByProductId(productId: string): Promise<{averageRating: number, count: number}> {
+        return await this.reviewRepository.getAverageRatingAndCountByProductId(productId);
+    }
+
+
+    serveRPCRequest(_: RPCPayload) {
+        throw new Error('Method not implemented.');
     }
 
     subscribeEvents(payload: string): void {

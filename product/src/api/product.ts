@@ -1,11 +1,13 @@
-// @ts-nocheck
 import { Channel } from 'amqplib';
 import { Application, NextFunction, Request, Response } from 'express';
 import observerRPC from './../message-queue/rpc/observerRPC';
 import { IProductModel } from '../model/productModel';
 import ProductService from '../service/ProductService';
+import publishMessage from '../message-queue/pub-sub/publishMessage';
+import EventType from './../types/eventType';
+import { REVIEW_SERVICE } from './../config';
 
-export default (app: Application, _: Channel) => {
+export default (app: Application, channel: Channel) => {
     const productService = new ProductService();
 
     observerRPC('PRODUCT_RPC', productService);
@@ -33,8 +35,8 @@ export default (app: Application, _: Channel) => {
     app.post('/create', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const product = req.body as IProductModel;
-            const data = await productService.createProduct(product);
-            return res.status(200).json(data);
+            const createdProduct = await productService.createProduct(product);
+            return res.status(200).json(createdProduct);
         } catch (error) {
             next(error)
             return;
@@ -45,8 +47,8 @@ export default (app: Application, _: Channel) => {
         try {
             const id = req.params.id;
             const product = req.body as IProductModel;
-            const data = await productService.updateProduct(id, product);
-            return res.status(200).json(data);
+            const updatedProduct = await productService.updateProduct(id, product);
+            return res.status(200).json(updatedProduct);
         } catch (error) {
             next(error);
             return;
@@ -56,8 +58,15 @@ export default (app: Application, _: Channel) => {
     app.delete('/delete/:id', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const id = req.params.id;
-            const data = await productService.deleteProduct(id);
-            return res.json(data);
+            const deletedProduct = await productService.deleteProduct(id);
+            const payload = {
+                event: EventType.DELETE_PRODUCT,
+                data: {
+                    productId: deletedProduct?.id
+                }
+            }
+            publishMessage(channel, REVIEW_SERVICE, payload)
+            return res.status(200).json(deletedProduct);
         } catch (error) {
             next(error)
             return;

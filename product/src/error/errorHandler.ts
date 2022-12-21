@@ -6,7 +6,7 @@ const errorHandler = (app: Application) => {
     
     app.use((err: BaseError, _: Request, res: Response, next: NextFunction) => {
         const statusCode = err.statusCode || 500;
-        const errorInfo = {code: err.code, name: err.name, message: err.description};
+        const errorInfo = {code: statusCode, name: err.name, message: err.message};
         return res.status(statusCode).json(errorInfo);
     });
 }

@@ -13,8 +13,6 @@ export default class CategoryService implements IService {
         return this.categoryRepository.getAllCategories();
     }
 
-
-
     getCategoryById(id: string) {
         return this.categoryRepository.getCategoryByIdWithProduct(id);
     }
@@ -42,11 +40,17 @@ export default class CategoryService implements IService {
     }
 
     addProductToCategories(productId: string, categoryIds: string[] = []) {
+        if (categoryIds.length === 0) {
+            return;
+        }
         return this.categoryRepository.addProductToMultipleCategories(categoryIds, productId);
     }
 
-    removeProductFromCategories(categoryId: string[], productId: string) {
-        return this.categoryRepository.removeProductFromMultipleCategories(categoryId, productId);
+    removeProductFromCategories(productId: string, categoryIds: string[]) {
+        if (categoryIds.length === 0) {
+            return;
+        }
+        return this.categoryRepository.removeProductFromMultipleCategories(categoryIds, productId);
     }
 
     subscribeEvents(_: string): void {
