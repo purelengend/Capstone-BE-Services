@@ -6,11 +6,13 @@ import ProductService from '../service/ProductService';
 import publishMessage from '../message-queue/pub-sub/publishMessage';
 import EventType from './../types/eventType';
 import { REVIEW_SERVICE } from './../config';
+import subscribeMessage from './../message-queue/pub-sub/subscribeMessage';
 
 export default (app: Application, channel: Channel) => {
     const productService = new ProductService();
 
     observerRPC('PRODUCT_RPC', productService);
+    subscribeMessage(channel, productService);
 
     app.get('/', async (_: Request, res: Response, next: NextFunction) => {
         try {

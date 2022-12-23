@@ -7,7 +7,9 @@ export class ReviewRepository {
         try {
             return await reviewModel.find({ productId });
         } catch (error) {
-            throw new NotFoundError(`Reviews for product ${productId} not found`);
+            throw new NotFoundError(
+                `Reviews for product ${productId} not found`
+            );
         }
     }
 
@@ -29,9 +31,13 @@ export class ReviewRepository {
         review: IReviewModel
     ): Promise<IReviewModel | null> {
         try {
-            const updatedReview = await reviewModel.findByIdAndUpdate(id, review, {
-                new: true,
-            });
+            const updatedReview = await reviewModel.findByIdAndUpdate(
+                id,
+                review,
+                {
+                    new: true,
+                }
+            );
             return updatedReview;
         } catch (error) {
             throw new Error('Review update failed in the database');
@@ -73,12 +79,28 @@ export class ReviewRepository {
         }
     }
 
-    async getCountReviewsByProductId(productId: string): Promise<number> {
+    async getReviewCountByProductId(productId: string): Promise<number> {
         try {
             const count = await reviewModel.countDocuments({ productId });
             return count;
         } catch (error) {
             throw new Error('Error in getCountReviewsByProductId');
+        }
+    }
+
+    async getReviewCountsOfAllProducts(): Promise<any> {
+        try {
+            const count = await reviewModel.aggregate([
+                {
+                    $group: {
+                        _id: '$productId',
+                        count: { $sum: 1 },
+                    },
+                },
+            ]);
+            return count;
+        } catch (error) {
+            throw new Error('Error in getReviewCountsOfAllProducts');
         }
     }
 
@@ -117,16 +139,17 @@ export class ReviewRepository {
         }
     }
 
-    getAverageRatingAndCountByProductId(productId: string): PromiseLike<{ averageRating: number; count: number; }> {
+    async getAverageRatingAndCountByProductId(
+        productId: string
+    ): Promise<{ averageRating: number; reviewCount: number }> {
         try {
             const averageRating = this.getAverageRatingByProductId(productId);
-            const count = this.getCountReviewsByProductId(productId);
-            return Promise.all([averageRating, count]).then((values) => {
-                return {
-                    averageRating: values[0],
-                    count: values[1],
-                };
-            });
+            const count = this.getReviewCountByProductId(productId);
+            const values_1 = await Promise.all([averageRating, count]);
+            return {
+                averageRating: values_1[0],
+                reviewCount: values_1[1],
+            };
         } catch (error) {
             throw new Error('Error in getAverageRatingAndCountByProductId');
         }

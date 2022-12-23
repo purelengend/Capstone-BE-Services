@@ -1,7 +1,8 @@
 enum EventType {
     DELETE_USER = 'DELETE_USER',
     DELETE_PRODUCT = 'DELETE_PRODUCT',
-    REVIEW_CREATED = 'REVIEW_CREATED',
+    CREATE_REVIEW = 'CREATE_REVIEW',
+    DELETE_REVIEW = 'DELETE_REVIEW',
 }
 
 export default EventType;

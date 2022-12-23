@@ -23,27 +23,27 @@ export class ReviewService implements IService {
         review: IReviewModel,
         userId: string
     ): Promise<IReviewModel> {
-            const fakeAuthor = {
-                id: userId,
-                username: 'fake name',
-                avatarUrl: 'fake avatarUrl',
-            };
-            // const userResponse = (await requestRPC(USER_RPC, {
-            //     type: 'GET-USER',
-            //     data: userId,
-            // })) as IUserModel;
-            const productResponse = await requestRPC('PRODUCT_RPC', {
-                type: 'GET_PRODUCT_BY_ID',
-                data: {
-                    id: review.productId,
-                },
-            });
-            if (!productResponse) {
-                throw new NotFoundError('Product not found');
-            }
-            console.log('[*] product response from RPC: ', productResponse);
+        const fakeAuthor = {
+            id: userId,
+            username: 'fake name',
+            avatarUrl: 'fake avatarUrl',
+        };
+        // const userResponse = (await requestRPC(USER_RPC, {
+        //     type: 'GET-USER',
+        //     data: userId,
+        // })) as IUserModel;
+        const productResponse = await requestRPC('PRODUCT_RPC', {
+            type: 'GET_PRODUCT_BY_ID',
+            data: {
+                id: review.productId,
+            },
+        });
+        if (!productResponse) {
+            throw new NotFoundError('Product not found');
+        }
+        console.log('[*] product response from RPC: ', productResponse);
 
-            return await this.reviewRepository.createReview(review, fakeAuthor);
+        return await this.reviewRepository.createReview(review, fakeAuthor);
     }
 
     async updateReview(
@@ -59,26 +59,27 @@ export class ReviewService implements IService {
 
     // Delete all reviews for a product
     async deleteReviewsByProductId(productId: string): Promise<DeleteType> {
-        return await this.reviewRepository.deleteReviewsByProductId(
-            productId
-        );
+        return await this.reviewRepository.deleteReviewsByProductId(productId);
     }
 
     // Delete all reviews by _id of author when the author is deleted, author is a field in review
     async deleteReviewsByUserId(authorId: string): Promise<DeleteType> {
-        return await this.reviewRepository.deleteReviewsByAuthorId(
-            authorId
-        );
+        return await this.reviewRepository.deleteReviewsByAuthorId(authorId);
     }
 
     async getAverageRatingByProductId(productId: string): Promise<number> {
-        return await this.reviewRepository.getAverageRatingByProductId(productId);
+        return await this.reviewRepository.getAverageRatingByProductId(
+            productId
+        );
     }
 
-    async getAverageRatingAndCountByProductId(productId: string): Promise<{averageRating: number, count: number}> {
-        return await this.reviewRepository.getAverageRatingAndCountByProductId(productId);
+    async getReviewAnalysisByProductId(
+        productId: string
+    ): Promise<{ averageRating: number; reviewCount: number }> {
+        return await this.reviewRepository.getAverageRatingAndCountByProductId(
+            productId
+        );
     }
-
 
     serveRPCRequest(_: RPCPayload) {
         throw new Error('Method not implemented.');
