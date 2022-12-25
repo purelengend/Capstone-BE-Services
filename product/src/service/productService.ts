@@ -1,7 +1,7 @@
-import EventType from './../types/eventType';
-import { difference } from './../util/util';
-import { ValidationError } from './../error/error-type/ValidationError';
-import { NotFoundError } from './../error/error-type/NotFoundError';
+import EventType from '../types/eventType';
+import { difference } from '../util/util';
+import { ValidationError } from '../error/error-type/ValidationError';
+import { NotFoundError } from '../error/error-type/NotFoundError';
 import { IService } from './IService';
 import { RPCTypes } from '../types/rpcType';
 import { EventPayload, RPCPayload } from '../types/utilTypes';
