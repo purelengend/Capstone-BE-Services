@@ -1,14 +1,14 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductVariant } from "./ProductVariant";
 
 @Entity()
-export class Size extends BaseEntity {
+export class Size  {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
     name: string;
 
-    @ManyToOne(() => ProductVariant, (productVariant) => productVariant.size)
-    productVariant: ProductVariant[];
+    @OneToMany(() => ProductVariant, (productVariant) => productVariant.size)
+    productVariants: ProductVariant[];
 }

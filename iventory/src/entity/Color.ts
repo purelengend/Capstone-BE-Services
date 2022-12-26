@@ -1,8 +1,8 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ProductVariant } from './ProductVariant';
 
 @Entity()
-export class Color extends BaseEntity {
+export class Color {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -10,5 +10,5 @@ export class Color extends BaseEntity {
     name: string;
 
     @OneToMany(() => ProductVariant, (productVariant) => productVariant.color)
-    productVariant: ProductVariant[];
+    productVariants: ProductVariant[];
 }

@@ -1,19 +1,19 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Color } from './Color';
 import { Size } from './Size';
 
 @Entity()
-export class ProductVariant extends BaseEntity {
+export class ProductVariant {
     @PrimaryGeneratedColumn('uuid', { name: 'id' })
     id: string;
 
     @Column()
-    productId: number;
+    productId: string;
 
-    @ManyToOne(() => Color, (color) => color.productVariant)
+    @ManyToOne(() => Color, (color) => color.productVariants)
     color: Color;
 
-    @ManyToOne(() => Size, (size) => size.productVariant)
+    @ManyToOne(() => Size, (size) => size.productVariants)
     size: Size;
 
     @Column()

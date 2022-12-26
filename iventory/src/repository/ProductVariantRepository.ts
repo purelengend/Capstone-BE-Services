@@ -1,12 +1,24 @@
+import { AppDataSource } from './../data-source';
 import { NotFoundError } from './../error/error-type/NotFoundError';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { EntityNotFoundError } from 'typeorm';
 import { ProductVariant } from './../entity/ProductVariant';
 
-export class ProductVariantRepository extends Repository<ProductVariant> {
+export class ProductVariantRepository {
+
+    private repository = AppDataSource.getRepository(ProductVariant);
+
+    async getAll(): Promise<ProductVariant[]> {
+        return this.repository.find();
+    }
+
     async findById(id: string): Promise<ProductVariant> {
         try {
-            return this.findOneOrFail({
+            return this.repository.findOneOrFail({
                 where: { id },
+                relations: {
+                    color: true,
+                    size: true,
+                },
             });
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
@@ -17,15 +29,20 @@ export class ProductVariantRepository extends Repository<ProductVariant> {
     }
 
     async createProductVariant(productVariant: ProductVariant): Promise<ProductVariant> {
-        return this.save(productVariant);
+        return this.repository.save(productVariant);
+    }
+
+    async save(productVariant: ProductVariant): Promise<ProductVariant> {
+        return this.repository.save(productVariant);
     }
 
     async updateProductVariant(id: string, productVariant: ProductVariant): Promise<ProductVariant> {
         try {
-            const productVariantToUpdate = await this.findOneOrFail({where: {id}});
-            productVariantToUpdate.color = productVariant.color;
-            productVariantToUpdate.size = productVariant.size;
-            return this.save(productVariantToUpdate);
+            let productVariantToUpdate = await this.findById(id);
+            productVariantToUpdate = {
+                ...productVariant,
+            }
+            return this.repository.save(productVariantToUpdate);
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
                 throw new NotFoundError(`ProductVariant with id ${id} not found`);
@@ -36,8 +53,8 @@ export class ProductVariantRepository extends Repository<ProductVariant> {
 
     async deleteProductVariant(id: string): Promise<ProductVariant> {
         try {
-            const productVariant = await this.findOneOrFail({where: {id}});
-            return this.remove(productVariant);
+            const productVariant = await this.repository.findOneOrFail({where: {id}});
+            return this.repository.remove(productVariant);
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
                 throw new NotFoundError(`ProductVariant with id ${id} not found`);

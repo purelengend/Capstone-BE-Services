@@ -11,6 +11,10 @@ export class SizeService {
         return this.sizeRepository.findByName(name);
     }
 
+    async findById(id: number): Promise<Size> {
+        return this.sizeRepository.findById(id);
+    }
+
     async createSize(name: string): Promise<Size> {
         return this.sizeRepository.createSize(name);
     }
@@ -21,5 +25,9 @@ export class SizeService {
 
     async deleteSize(id: number): Promise<Size> {
         return this.sizeRepository.deleteSize(id);
+    }
+
+    async getAll(): Promise<Size[]> {
+        return this.sizeRepository.getAll();
     }
 }

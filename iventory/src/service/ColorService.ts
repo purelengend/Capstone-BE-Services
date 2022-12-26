@@ -4,12 +4,20 @@ import { ColorRepository } from "./../repository/ColorRepository";
 export class ColorService {
     private colorRepository: ColorRepository;
     
-    constructor(colorRepository: ColorRepository) {
-        this.colorRepository = colorRepository;
+    constructor() {
+        this.colorRepository = new ColorRepository();
+    }
+
+    async getAll(): Promise<Color[]> {
+        return this.colorRepository.getAll();
     }
 
     async findByName(name: string): Promise<Color> {
         return this.colorRepository.findByName(name);
+    }
+
+    async findById(id: number): Promise<Color> {
+        return this.colorRepository.findById(id);
     }
 
     async createColor(name: string): Promise<Color> {
