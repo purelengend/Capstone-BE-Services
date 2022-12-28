@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 @Table(name = "orders")
 public class Order {
     @Id
@@ -30,5 +31,5 @@ public class Order {
     @CreationTimestamp
     private LocalDateTime createdAt;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItemList;
 }
