@@ -1,3 +1,7 @@
+import {
+    RPCReplyProductVariantUpdateType,
+    RPCRequestProductVariantUpdateType,
+} from './../types/orderRpcType';
 import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
 import { RPCTypes } from './../types/rpcType';
 import { ProductVariantRepository } from './../repository/ProductVariantRepository';
@@ -24,63 +28,163 @@ export class ProductVariantService implements IService {
     }
 
     async findById(id: string): Promise<ProductVariant> {
-        return this.productVariantRepository
-            .findById(id);
+        return this.productVariantRepository.findById(id);
     }
 
-    async createProductVariant(productVariantDTO: CreateProductVariantDTO): Promise<ProductVariant> {
+    async createProductVariant(
+        productVariantDTO: CreateProductVariantDTO
+    ): Promise<ProductVariant> {
         const { colorId, sizeId } = productVariantDTO;
         const [color, size] = await Promise.all([
             this.colorService.findById(colorId),
-            this.sizeService.findById(sizeId)
+            this.sizeService.findById(sizeId),
         ]);
-        const productVariant = Object.assign(new ProductVariant(), productVariantDTO, { color, size });
-        return this.productVariantRepository
-            .createProductVariant(productVariant);
+        const productVariant = Object.assign(
+            new ProductVariant(),
+            productVariantDTO,
+            { color, size }
+        );
+        return this.productVariantRepository.createProductVariant(
+            productVariant
+        );
     }
 
-    async updateProductVariant(id: string, productVariantDTO: UpdateProductVariantDTO): Promise<ProductVariant> {
+    async updateProductVariant(
+        id: string,
+        productVariantDTO: UpdateProductVariantDTO
+    ): Promise<ProductVariant> {
         const { colorId, sizeId } = productVariantDTO;
         const [color, size] = await Promise.all([
             this.colorService.findById(colorId),
-            this.sizeService.findById(sizeId)
+            this.sizeService.findById(sizeId),
         ]);
 
         const productVariant = await this.findById(id);
         Object.assign(productVariant, productVariantDTO, { color, size });
-        return this.productVariantRepository
-            .updateProductVariant(id, productVariant);
+        return this.productVariantRepository.updateProductVariant(
+            id,
+            productVariant
+        );
     }
 
     async deleteProductVariant(id: string): Promise<ProductVariant> {
-        return this.productVariantRepository
-            .deleteProductVariant(id);
+        return this.productVariantRepository.deleteProductVariant(id);
     }
 
-    async reserveProductVariantQuantity(data: any) {
-        const { productVariantId, quantity } = data;
-        const productVariant = await this.productVariantRepository.findById(productVariantId);
-        if (!this.validateReserveProductVariantQuantity(quantity, productVariant.quantity)) {
+    async reserveProductVariantsQuantity(
+        requestProductList: RPCRequestProductVariantUpdateType[]
+    ) {
+        const productVariantList =
+            await this.productVariantRepository.findByProductIdAndColorAndSizeList(
+                requestProductList
+            );
+
+        console.log(
+            '🚀 ~ file: ProductVariantService.ts:78 ~ ProductVariantService ~ productVariantList',
+            productVariantList
+        );
+
+        const productVariantMap =
+            this.createProductVariantMapByList(productVariantList);
+
+        const isEnoughStock = this.validateReserveProductVariantQuantity(
+            requestProductList,
+            productVariantMap
+        );
+
+        if (!isEnoughStock) {
             return {
                 status: 'FAILED',
-                message: 'Not enough stock'
-            }
+                message: 'Product variant quantity not enough',
+            };
         }
-        productVariant.quantity -= quantity;
-        await this.productVariantRepository.save(productVariant);
+
+        const updatedProductVariantList =
+            await this.updateProductVariantQuantityByRPCReverse(
+                requestProductList,
+                productVariantMap
+            );
+
+        // Map the product variant list to RPCReplyProductVariantUpdateType
+        const responseReverseProductList =
+            updatedProductVariantList.map<RPCReplyProductVariantUpdateType>(
+                (productVariant) => {
+                    const { productId, color, size, sellingPrice, quantity } =
+                        productVariant;
+                    return {
+                        productId,
+                        color: color.name,
+                        size: size.name,
+                        quantity,
+                        sellingPrice,
+                    };
+                }
+            );
+
         return {
             status: 'SUCCESS',
-            message: 'Product variant quantity reserved'
-        }
+            message: 'Product variants in order was reserved',
+            productVariantList: responseReverseProductList,
+        };
     }
 
-    validateReserveProductVariantQuantity(revereQuantity: number, stockQuantity: number): boolean {
-        return revereQuantity <= stockQuantity;
+    createProductVariantMapByList(productVariantList: ProductVariant[]) {
+        return productVariantList.reduce(
+            (acc: Map<string, ProductVariant>, productVariant) => {
+                const { productId, color, size } = productVariant;
+                let key = `${productId}-${color.name}-${size.name}`;
+                acc.set(key, productVariant);
+                return acc;
+            },
+            new Map()
+        );
+    }
+
+    async updateProductVariantQuantityByRPCReverse(
+        revereProductList: RPCRequestProductVariantUpdateType[],
+        productVariantMap: Map<string, ProductVariant>
+    ) {
+        revereProductList.forEach((revereProductList) => {
+            const {
+                productId,
+                color,
+                size,
+                quantity: reverseQuantity,
+            } = revereProductList;
+            let key = `${productId}-${color}-${size}`;
+            const productVariant = productVariantMap.get(key);
+            productVariant!.quantity -= reverseQuantity;
+        });
+        return this.productVariantRepository.updateManyProductVariantQuantity(
+            Array.from(productVariantMap.values())
+        );
+    }
+
+    validateReserveProductVariantQuantity(
+        revereProductList: RPCRequestProductVariantUpdateType[],
+        productVariantMap: Map<string, ProductVariant>
+    ): boolean {
+        for (const reverseProduct of revereProductList) {
+            const {
+                productId,
+                color,
+                size,
+                quantity: reverseQuantity,
+            } = reverseProduct;
+            let key = `${productId}-${color}-${size}`;
+            const stockQuantity = productVariantMap.get(key)?.quantity ?? 0;
+            if (stockQuantity < reverseQuantity) {
+                return false;
+            }
+        }
+        return true;
     }
 
     async releaseProductVariantQuantity(data: any): Promise<ProductVariant> {
         const { productVariantId, quantity } = data;
-        const productVariant = await this.productVariantRepository.findById(productVariantId);
+        const productVariant = await this.productVariantRepository.findById(
+            productVariantId
+        );
         productVariant.quantity += quantity;
         return this.productVariantRepository.save(productVariant);
     }
@@ -90,13 +194,17 @@ export class ProductVariantService implements IService {
     }
     serveRPCRequest(payload: RPCPayload) {
         const { type, data } = payload;
+        console.log('RPC request received', {
+            type,
+            data,
+        });
 
         switch (type) {
             case RPCTypes.RESERVE_PRODUCT_VARIANT_QUANTITY:
-                return this.reserveProductVariantQuantity(data);
+                const { productVariantList } = data;
+                return this.reserveProductVariantsQuantity(productVariantList);
             default:
                 throw new Error('Invalid RPC type');
         }
     }
-
 }

@@ -1,5 +1,6 @@
 package order.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -20,8 +22,9 @@ public class OrderItem {
     private int quantity;
     private String color;
     private String size;
-    private String sellingPrice;
+    private float sellingPrice;
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order;
 }

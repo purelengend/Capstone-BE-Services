@@ -1,10 +1,9 @@
 import { AppDataSource } from './../data-source';
 import { NotFoundError } from './../error/error-type/NotFoundError';
 import { Color } from './../entity/Color';
-import { EntityNotFoundError } from "typeorm";
+import { EntityNotFoundError } from 'typeorm';
 
 export class ColorRepository {
-
     private repository = AppDataSource.getRepository(Color);
 
     async getAll(): Promise<Color[]> {
@@ -20,6 +19,8 @@ export class ColorRepository {
             if (error instanceof EntityNotFoundError) {
                 throw new NotFoundError(`Color with id ${id} not found`);
             }
+            console.log(error);
+
             throw new Error(error);
         }
     }
@@ -30,7 +31,7 @@ export class ColorRepository {
                 where: { name },
                 relations: {
                     productVariants: true,
-                }
+                },
             });
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
@@ -48,7 +49,9 @@ export class ColorRepository {
 
     async updateColor(id: number, name: string): Promise<Color> {
         try {
-            const color = await this.repository.findOneOrFail({where: {id}});
+            const color = await this.repository.findOneOrFail({
+                where: { id },
+            });
             color.name = name;
             return this.repository.save(color);
         } catch (error) {
@@ -61,7 +64,9 @@ export class ColorRepository {
 
     async deleteColor(id: number): Promise<Color> {
         try {
-            const color = await this.repository.findOneOrFail({where: {id}});
+            const color = await this.repository.findOneOrFail({
+                where: { id },
+            });
             return this.repository.remove(color);
         } catch (error) {
             if (error instanceof EntityNotFoundError) {

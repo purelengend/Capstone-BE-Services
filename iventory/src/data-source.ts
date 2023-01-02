@@ -1,9 +1,9 @@
-import { DataSource } from "typeorm";
-import { __prod__ } from "./config";
-import path from "path";
-import { ProductVariant } from "./entity/ProductVariant";
-import { Size } from "./entity/Size";
-import { Color } from "./entity/Color";
+import { DataSource } from 'typeorm';
+import { __prod__ } from './config';
+import path from 'path';
+import { ProductVariant } from './entity/ProductVariant';
+import { Size } from './entity/Size';
+import { Color } from './entity/Color';
 
 export const AppDataSource = new DataSource({
     type: 'postgres',

@@ -1,36 +1,40 @@
 package order.service.implement;
 
 import lombok.RequiredArgsConstructor;
-import order.config.RabbitMQConfig;
 import order.dto.OrderDTO;
 import order.dto.OrderItemDTO;
 import order.entity.Order;
+import order.entity.OrderItem;
 import order.mapper.OrderMapper;
-import order.message.RPCEventType;
-import order.message.RPCPayload;
-import order.message.RequestRPC;
-import order.message.ResponseReserveProduct;
+import order.message.mapper.RPCRequestProductVariantTypeMapper;
+import order.message.type.*;
 import order.repository.IOrderRepository;
+import order.service.IOrderItemService;
 import order.service.IOrderService;
+import order.type.OrderStatus;
+import order.type.RPCReverseReplyResultType;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
+import org.springframework.amqp.rabbit.RabbitConverterFuture;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService implements IOrderService {
-
     private final IOrderRepository orderRepository;
+    private final IOrderItemService orderItemService;
 //    private final RabbitMQConfig rabbitMQConfig;
-    private final RequestRPC requestRPC;
-    private RabbitTemplate rabbitTemplate;
+//    private final RequestRPC requestRPC;
+    private final RabbitTemplate rabbitTemplate;
+    private final AsyncRabbitTemplate asyncRabbitTemplate;
+    private final ParameterizedTypeReference<RPCResult> typeReference = new ParameterizedTypeReference<>() {};
 
     @Value("${order.rpc.request.queue}")
     private String requestQueue;
@@ -40,11 +44,12 @@ public class OrderService implements IOrderService {
 
     @Override
     public Order save(OrderDTO orderDTO) {
-        Order order = OrderMapper.INSTANCE.toEntity(orderDTO);
-        List<OrderItemDTO> orderItemDTOList = orderDTO.getOrderItemDTOList();
-        requestRPC.send("PRODUCT_VARIANT_RPC", new RPCPayload(RPCEventType.RESERVE_PRODUCT.getValue(), orderItemDTOList), UUID.randomUUID().toString());
+//        Order order = OrderMapper.INSTANCE.toEntity(orderDTO);
+//        List<OrderItemDTO> orderItemDTOList = orderDTO.getOrderItemDTOList();
+        return processOrder(orderDTO);
+//        requestRPC.send(requestQueue, new RPCPayload(RPCEventType.RESERVE_PRODUCT.getValue(), orderItemDTOList), UUID.randomUUID().toString());
 //        System.out.println(order);
-        return null;
+//        return null;
     }
 
     @Override
@@ -73,23 +78,64 @@ public class OrderService implements IOrderService {
         return order;
     }
 
-//    public boolean processOrder(OrderDTO orderDTO) {
-//        Order order = OrderMapper.INSTANCE.toEntity(orderDTO);
-//        List<OrderItemDTO> orderItemDTOList = orderDTO.getOrderItemDTOList();
-//
-//        // Create request message
-//        RPCPayload requestPayload = new RPCPayload();
-//        requestPayload.setType(RPCEventType.RESERVE_PRODUCT.getValue());
-//        requestPayload.setData(Map.of("productVariantList", orderItemDTOList));
-//        String correlationId = UUID.randomUUID().toString();
-//        rabbitTemplate.convertSendAndReceive(rabbitMQConfig.exchange, rabbitMQConfig.routingKey, requestPayload, message -> {
-//            message.getMessageProperties().setCorrelationId(correlationId);
-//            return message;
-//        });
-//
-////        ResponseEntity<String> response = rabbitTemplate.receiveAndConvert(replyQueue, correlationId);
-//
-//        System.out.println(order);
-//        return false;
-//    }
+    public Order processOrder(OrderDTO orderDTO) {
+        Order order = saveOrderAsProcessingOrder(orderDTO);
+        validateOrderByRPC(order);
+        return order;
+    }
+
+    private void validateOrderByRPC(Order order) {
+        // Create a new message payload
+        List<RPCRequestProductVariantType> productVariantList = RPCRequestProductVariantTypeMapper.INSTANCE.map(order.getOrderItemList());
+        RPCPayload requestPayload = RPCPayload.builder()
+                .type(RPCEventType.RESERVE_PRODUCT_VARIANT.getValue())
+                .data(Map.of("productVariantList", productVariantList))
+                .build();
+
+        RabbitConverterFuture<RPCResult> future = asyncRabbitTemplate.convertSendAndReceiveAsType("INVENTORY_RPC", requestPayload, typeReference);
+        future.whenComplete((response, throwable) -> {
+            if (throwable != null) {
+                System.out.println("Error: " + throwable.getMessage());
+            } else {
+                postProcessReceiveRPCReply(response, order);
+            }
+        });
+    }
+
+    private void postProcessReceiveRPCReply(RPCResult response, Order order) {
+        String status = response.getStatus();
+        System.out.println("Status: " + status);
+        if (status.equals(RPCReverseReplyResultType.SUCCESS.getValue())) {
+            System.out.println("Success case!!!");
+            System.out.println("Order: " + order);
+            List<OrderItem> updatedOrderItemsList = updateOrderItemsSellingPrice(response.getProductVariantList(), order);
+            order.setOrderItemList(updatedOrderItemsList);
+            order.setStatus(OrderStatus.SUCCESS.getValue());
+        } else {
+            order.setStatus(OrderStatus.FAILED.getValue());
+        }
+        order.setMessage(response.getMessage());
+        save(order);
+    }
+
+    private List<OrderItem> updateOrderItemsSellingPrice(List<RPCReplyProductVariantType> productVariantList, Order order) {
+        Map<String, OrderItem> orderItemMap = order.getOrderItemList().stream()
+                .collect(Collectors.toMap(item -> item.getId() + item.getColor() + item.getSize(), item -> item));
+
+        for (RPCReplyProductVariantType productVariant : productVariantList) {
+            OrderItem orderItem = orderItemMap.get(productVariant.getProductId() + productVariant.getColor() + productVariant.getSize());
+            orderItem.setSellingPrice(productVariant.getSellingPrice());
+        }
+        return orderItemService.updateSellingPriceOfOrderItems(order.getOrderItemList());
+    }
+
+    public Order saveOrderAsProcessingOrder(OrderDTO orderDTO) {
+        Order order = OrderMapper.INSTANCE.toEntity(orderDTO);
+        List<OrderItemDTO> orderItemDTOList = orderDTO.getOrderItemDTOList();
+        order.setStatus(OrderStatus.PROCESSING.getValue());
+        order = orderRepository.save(order);
+        List<OrderItem> orderItemList = orderItemService.saveOrderItemsOfOrder(orderItemDTOList, order);
+        order.setOrderItemList(orderItemList);
+        return order;
+    }
 }

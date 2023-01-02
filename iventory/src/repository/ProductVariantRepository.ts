@@ -1,10 +1,10 @@
+import { RPCRequestProductVariantUpdateType } from './../types/orderRpcType';
 import { AppDataSource } from './../data-source';
 import { NotFoundError } from './../error/error-type/NotFoundError';
 import { EntityNotFoundError } from 'typeorm';
 import { ProductVariant } from './../entity/ProductVariant';
 
 export class ProductVariantRepository {
-
     private repository = AppDataSource.getRepository(ProductVariant);
 
     async getAll(): Promise<ProductVariant[]> {
@@ -22,30 +22,58 @@ export class ProductVariantRepository {
             });
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
-                throw new NotFoundError(`ProductVariant with id ${id} not found`);
+                throw new NotFoundError(
+                    `ProductVariant with id ${id} not found`
+                );
             }
             throw new Error(error);
         }
     }
 
-    async createProductVariant(productVariant: ProductVariant): Promise<ProductVariant> {
+    async createProductVariant(
+        productVariant: ProductVariant
+    ): Promise<ProductVariant> {
         return this.repository.save(productVariant);
+    }
+
+    async saveAll(
+        productVariants: ProductVariant[]
+    ): Promise<ProductVariant[]> {
+        return this.repository.save(productVariants);
+    }
+
+    async updateManyProductVariantQuantity(
+        productVariants: ProductVariant[]
+    ): Promise<ProductVariant[]> {
+        const promise = productVariants.map(async (productVariant) => {
+            const productVariantToUpdate = await this.findById(
+                productVariant.id
+            );
+            productVariantToUpdate.quantity = productVariant.quantity;
+            return this.repository.save(productVariantToUpdate);
+        });
+        return Promise.all(promise);
     }
 
     async save(productVariant: ProductVariant): Promise<ProductVariant> {
         return this.repository.save(productVariant);
     }
 
-    async updateProductVariant(id: string, productVariant: ProductVariant): Promise<ProductVariant> {
+    async updateProductVariant(
+        id: string,
+        productVariant: ProductVariant
+    ): Promise<ProductVariant> {
         try {
             let productVariantToUpdate = await this.findById(id);
             productVariantToUpdate = {
                 ...productVariant,
-            }
+            };
             return this.repository.save(productVariantToUpdate);
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
-                throw new NotFoundError(`ProductVariant with id ${id} not found`);
+                throw new NotFoundError(
+                    `ProductVariant with id ${id} not found`
+                );
             }
             throw new Error(error);
         }
@@ -53,13 +81,60 @@ export class ProductVariantRepository {
 
     async deleteProductVariant(id: string): Promise<ProductVariant> {
         try {
-            const productVariant = await this.repository.findOneOrFail({where: {id}});
+            const productVariant = await this.repository.findOneOrFail({
+                where: { id },
+            });
             return this.repository.remove(productVariant);
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
-                throw new NotFoundError(`ProductVariant with id ${id} not found`);
+                throw new NotFoundError(
+                    `ProductVariant with id ${id} not found`
+                );
             }
             throw new Error(error);
         }
     }
-} 
+
+    // Find a list of product variants by a list that each item contains a productId and a color and a size
+    async findByProductIdAndColorAndSizeList(
+        productIdColorSizeList: RPCRequestProductVariantUpdateType[]
+    ): Promise<ProductVariant[]> {
+        try {
+            const productVariantListQuery = this.repository
+                .createQueryBuilder('productVariant')
+                .select([
+                    'productVariant.id',
+                    'productVariant.productId',
+                    'color.name',
+                    'size.name',
+                    'productVariant.quantity',
+                    'productVariant.sellingPrice',
+                ])
+                .leftJoin('productVariant.color', 'color')
+                .leftJoin('productVariant.size', 'size')
+                .where('productVariant.productId = :productId', {
+                    productId: productIdColorSizeList[0].productId,
+                })
+                .andWhere('color.name = :colorName', {
+                    colorName: productIdColorSizeList[0].color,
+                })
+                .andWhere('size.name = :sizeName', {
+                    sizeName: productIdColorSizeList[0].size,
+                });
+
+            for (let i = 1; i < productIdColorSizeList.length; i++) {
+                productVariantListQuery.orWhere(
+                    `(productVariant.productId = :productId${i} AND color.name = :colorName${i} AND size.name = :sizeName${i})`,
+                    {
+                        [`productId${i}`]: productIdColorSizeList[i].productId,
+                        [`colorName${i}`]: productIdColorSizeList[i].color,
+                        [`sizeName${i}`]: productIdColorSizeList[i].size,
+                    }
+                );
+            }
+            return productVariantListQuery.getMany();
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+}

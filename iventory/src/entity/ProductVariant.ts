@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Check, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Color } from './Color';
 import { Size } from './Size';
 
@@ -16,7 +16,9 @@ export class ProductVariant {
     @ManyToOne(() => Size, (size) => size.productVariants)
     size: Size;
 
+    // Not lower than 0
     @Column()
+    @Check('"quantity" >= 0')
     quantity: number;
 
     @Column()

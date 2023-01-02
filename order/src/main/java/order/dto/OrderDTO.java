@@ -22,5 +22,5 @@ public class OrderDTO {
 
     private String paymentMethod;
 
-    private List<OrderItemDTO> OrderItemDTOList;
+    private List<OrderItemDTO> orderItemDTOList;
 }

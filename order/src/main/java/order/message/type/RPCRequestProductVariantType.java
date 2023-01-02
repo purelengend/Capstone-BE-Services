@@ -1,18 +1,11 @@
-package order.dto;
+package order.message.type;
 
 import lombok.Data;
 
 @Data
-public class OrderItemDTO {
+public class RPCRequestProductVariantType {
     private String productId;
-
-    private String productName;
-
-    private String productPhotoUrl;
-
     private String color;
-
     private String size;
-
     private int quantity;
 }
