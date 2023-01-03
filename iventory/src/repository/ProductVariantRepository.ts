@@ -1,7 +1,7 @@
 import { RPCRequestProductVariantUpdateType } from './../types/orderRpcType';
 import { AppDataSource } from './../data-source';
 import { NotFoundError } from './../error/error-type/NotFoundError';
-import { EntityNotFoundError } from 'typeorm';
+import { EntityNotFoundError} from 'typeorm';
 import { ProductVariant } from './../entity/ProductVariant';
 
 export class ProductVariantRepository {
@@ -43,16 +43,21 @@ export class ProductVariantRepository {
     }
 
     async updateManyProductVariantQuantity(
-        productVariants: ProductVariant[]
+        productVariants: ProductVariant[],
     ): Promise<ProductVariant[]> {
-        const promise = productVariants.map(async (productVariant) => {
-            const productVariantToUpdate = await this.findById(
-                productVariant.id
-            );
-            productVariantToUpdate.quantity = productVariant.quantity;
-            return this.repository.save(productVariantToUpdate);
-        });
-        return Promise.all(promise);
+        try {
+            return AppDataSource.transaction(async (transactionalEntityManager) => {
+                const promises = productVariants.map(async (productVariant) => {
+                    const productVariantToUpdate = await this.findById(productVariant.id);
+                    productVariantToUpdate.quantity = productVariant.quantity;
+                    return transactionalEntityManager.save(productVariantToUpdate);
+                });
+                return Promise.all(promises);
+            });
+        } catch (error) {
+            console.log('Error when update many product variant quantity: ', error);
+            throw new Error(error);
+        }
     }
 
     async save(productVariant: ProductVariant): Promise<ProductVariant> {

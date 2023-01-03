@@ -96,6 +96,9 @@ public class OrderService implements IOrderService {
         future.whenComplete((response, throwable) -> {
             if (throwable != null) {
                 System.out.println("Error: " + throwable.getMessage());
+                order.setStatus(OrderStatus.FAILED.getValue());
+                order.setMessage(throwable.getMessage());
+                save(order);
             } else {
                 postProcessReceiveRPCReply(response, order);
             }
@@ -104,10 +107,7 @@ public class OrderService implements IOrderService {
 
     private void postProcessReceiveRPCReply(RPCResult response, Order order) {
         String status = response.getStatus();
-        System.out.println("Status: " + status);
         if (status.equals(RPCReverseReplyResultType.SUCCESS.getValue())) {
-            System.out.println("Success case!!!");
-            System.out.println("Order: " + order);
             List<OrderItem> updatedOrderItemsList = updateOrderItemsSellingPrice(response.getProductVariantList(), order);
             order.setOrderItemList(updatedOrderItemsList);
             order.setStatus(OrderStatus.SUCCESS.getValue());
@@ -120,7 +120,7 @@ public class OrderService implements IOrderService {
 
     private List<OrderItem> updateOrderItemsSellingPrice(List<RPCReplyProductVariantType> productVariantList, Order order) {
         Map<String, OrderItem> orderItemMap = order.getOrderItemList().stream()
-                .collect(Collectors.toMap(item -> item.getId() + item.getColor() + item.getSize(), item -> item));
+                .collect(Collectors.toMap(item -> item.getProductId() + item.getColor() + item.getSize(), item -> item));
 
         for (RPCReplyProductVariantType productVariant : productVariantList) {
             OrderItem orderItem = orderItemMap.get(productVariant.getProductId() + productVariant.getColor() + productVariant.getSize());
