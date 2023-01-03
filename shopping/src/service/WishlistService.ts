@@ -15,16 +15,16 @@ export class WishlistService {
         return await this.wishlistRepository.getWishlistByUserId(userId);
     }
 
-    async addItemToWishlist(userId: string, productId: string): Promise<IWishlistModel | null> {
-        // const wishlist = await this.wishlistRepository.getWishlistByUserId(userId);
-        // if (!wishlist) {
-        //     return null;
-        // }
-        // if (wishlist.productIds.includes(productId)) {
-        //     return wishlist;
-        // }
-        // wishlist.productIds.push(productId);
-        // return await this.wishlistRepository.updateWishlist(userId, wishlist);
-        return null;
-    }
+    // async addItemToWishlist(userId: string, productId: string): Promise<IWishlistModel | null> {
+    //     // const wishlist = await this.wishlistRepository.getWishlistByUserId(userId);
+    //     // if (!wishlist) {
+    //     //     return null;
+    //     // }
+    //     // if (wishlist.productIds.includes(productId)) {
+    //     //     return wishlist;
+    //     // }
+    //     // wishlist.productIds.push(productId);
+    //     // return await this.wishlistRepository.updateWishlist(userId, wishlist);
+    //     return null;
+    // }
 }

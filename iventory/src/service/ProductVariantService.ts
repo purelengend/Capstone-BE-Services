@@ -1,3 +1,4 @@
+import { ShoppingRPCReplyProductVariantType } from './../types/shoppingRpcType';
 import {
     RPCReplyProductVariantUpdateType,
     RPCRequestProductVariantUpdateType,
@@ -189,6 +190,52 @@ export class ProductVariantService implements IService {
         return this.productVariantRepository.save(productVariant);
     }
 
+    async getProductVariantByProductIdColorSize(
+        productId: string,
+        color: string,
+        size: string
+    ): Promise<{ productVariant: ShoppingRPCReplyProductVariantType | null }> {
+        const productVariant =
+            await this.productVariantRepository.findByProductIdColorAndSize(
+                productId,
+                color,
+                size
+            );
+        const replyProductVariant = productVariant
+            ? {
+                  ...productVariant,
+                  color: productVariant.color.name,
+                  size: productVariant.size.name,
+              }
+            : null;
+        return {
+            productVariant: replyProductVariant,
+        };
+    }
+
+    async findByIdList(idList: string[]) {
+        const productVariantList = idList.map((id) =>
+            this.productVariantRepository.findById(id)
+        );
+        return Promise.all(productVariantList);
+    }
+
+    async serveRPCGetProductVariantListByIdList(
+        idList: string[]
+    ): Promise<ShoppingRPCReplyProductVariantType[]> {
+        const productVariantList = await this.findByIdList(idList);
+        const replyProductVariantList = productVariantList.map(
+            (productVariant) => {
+                return {
+                    ...productVariant,
+                    color: productVariant.color.name,
+                    size: productVariant.size.name,
+                };
+            }
+        );
+        return replyProductVariantList;
+    }
+
     subscribeEvents(_: string): void {
         throw new Error('Method not implemented.');
     }
@@ -203,6 +250,18 @@ export class ProductVariantService implements IService {
             case RPCTypes.RESERVE_PRODUCT_VARIANT_QUANTITY:
                 const { productVariantList } = data;
                 return this.reserveProductVariantsQuantity(productVariantList);
+            case RPCTypes.GET_PRODUCT_VARIANT_BY_PRODUCT_ID_COLOR_SIZE:
+                const { productId, color, size } = data;
+                return this.getProductVariantByProductIdColorSize(
+                    productId,
+                    color,
+                    size
+                );
+            case RPCTypes.GET_PRODUCT_VARIANT_LIST_BY_ID_LIST:
+                const { productVariantIdList } = data;
+                return this.serveRPCGetProductVariantListByIdList(
+                    productVariantIdList
+                );
             default:
                 throw new Error('Invalid RPC type');
         }

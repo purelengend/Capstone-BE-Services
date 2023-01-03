@@ -1,3 +1,3 @@
-import review from './review';
+import cart from './cart';
 
-export const reviewController = review;
+export const cartController = cart;

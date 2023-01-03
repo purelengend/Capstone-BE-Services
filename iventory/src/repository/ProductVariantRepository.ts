@@ -1,7 +1,7 @@
 import { RPCRequestProductVariantUpdateType } from './../types/orderRpcType';
 import { AppDataSource } from './../data-source';
 import { NotFoundError } from './../error/error-type/NotFoundError';
-import { EntityNotFoundError} from 'typeorm';
+import { EntityNotFoundError } from 'typeorm';
 import { ProductVariant } from './../entity/ProductVariant';
 
 export class ProductVariantRepository {
@@ -43,19 +43,31 @@ export class ProductVariantRepository {
     }
 
     async updateManyProductVariantQuantity(
-        productVariants: ProductVariant[],
+        productVariants: ProductVariant[]
     ): Promise<ProductVariant[]> {
         try {
-            return AppDataSource.transaction(async (transactionalEntityManager) => {
-                const promises = productVariants.map(async (productVariant) => {
-                    const productVariantToUpdate = await this.findById(productVariant.id);
-                    productVariantToUpdate.quantity = productVariant.quantity;
-                    return transactionalEntityManager.save(productVariantToUpdate);
-                });
-                return Promise.all(promises);
-            });
+            return AppDataSource.transaction(
+                async (transactionalEntityManager) => {
+                    const promises = productVariants.map(
+                        async (productVariant) => {
+                            const productVariantToUpdate = await this.findById(
+                                productVariant.id
+                            );
+                            productVariantToUpdate.quantity =
+                                productVariant.quantity;
+                            return transactionalEntityManager.save(
+                                productVariantToUpdate
+                            );
+                        }
+                    );
+                    return Promise.all(promises);
+                }
+            );
         } catch (error) {
-            console.log('Error when update many product variant quantity: ', error);
+            console.log(
+                'Error when update many product variant quantity: ',
+                error
+            );
             throw new Error(error);
         }
     }
@@ -98,6 +110,28 @@ export class ProductVariantRepository {
             }
             throw new Error(error);
         }
+    }
+
+    async findByProductIdColorAndSize(
+        productId: string,
+        colorName: string,
+        sizeName: string
+    ): Promise<ProductVariant | null> {
+        return this.repository.findOne({
+            relations: {
+                color: true,
+                size: true,
+            },
+            where: {
+                productId,
+                color: {
+                    name: colorName,
+                },
+                size: {
+                    name: sizeName,
+                },
+            },
+        });
     }
 
     // Find a list of product variants by a list that each item contains a productId and a color and a size
