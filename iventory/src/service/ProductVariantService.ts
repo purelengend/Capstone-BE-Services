@@ -194,7 +194,7 @@ export class ProductVariantService implements IService {
         productId: string,
         color: string,
         size: string
-    ): Promise<{ productVariant: ShoppingRPCReplyProductVariantType | null }> {
+    ): Promise<ShoppingRPCReplyProductVariantType | null> {
         const productVariant =
             await this.productVariantRepository.findByProductIdColorAndSize(
                 productId,
@@ -208,9 +208,7 @@ export class ProductVariantService implements IService {
                   size: productVariant.size.name,
               }
             : null;
-        return {
-            productVariant: replyProductVariant,
-        };
+        return replyProductVariant;
     }
 
     async findByIdList(idList: string[]) {

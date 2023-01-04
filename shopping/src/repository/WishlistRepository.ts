@@ -12,6 +12,11 @@ export class WishlistRepository {
         return wishlist;
     }
 
+    async createWishlist(wishlist: IWishlistModel): Promise<IWishlistModel> {
+        wishlist = await new wishlistModel(wishlist).save();
+        return wishlist;
+    }
+
     async updateWishlist(userId: string, wishlist: IWishlistModel) {
         const updatedWishlist = await wishlistModel.findOneAndUpdate(
             {userId},

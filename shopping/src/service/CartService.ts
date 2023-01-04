@@ -20,11 +20,13 @@ export class CartService {
     }
 
     async getCartByUserId(userId: string): Promise<CartDTO | null> {
-        const cart = await this.cartRepository.getCartByUserId(userId);
-        if (!cart) {
+        const cartModel = await this.cartRepository.getCartByUserId(userId);
+        console.log("cart: ", cartModel?.itemList);
+        
+        if (!cartModel) {
             return null;
         }
-        const productVariantIdList = cart.itemList.map(
+        const productVariantIdList = cartModel.itemList.map(
             (item) => item.productVariantId
         );
         const requestRPCpayload = {
@@ -38,6 +40,8 @@ export class CartService {
                 INVENTORY_RPC,
                 requestRPCpayload
             )) as IReplyProductVariant[]) ?? [];
+        console.log("rpcProductVariantList reply: ", rpcProductVariantList);
+            
         const productVariantMap = rpcProductVariantList.reduce(
             (acc, productVariant) => {
                 acc.set(productVariant.id, productVariant);
@@ -45,19 +49,27 @@ export class CartService {
             },
             new Map<string, IReplyProductVariant>()
         );
-        const itemList = cart.itemList.map((item) => {
+        const itemModelList = cartModel.itemList;
+        
+        const itemDTOList = itemModelList.map((item) => {
             const productVariant = productVariantMap.get(item.productVariantId);
             const { color, size, sellingPrice } = productVariant!;
             return {
-                ...item,
+                productId: item.productId,
+                productName: item.productName,
+                productPhotoUrl: item.productPhotoUrl,
+                productVariantId: item.productVariantId,
+                quantity: item.quantity,
                 color,
                 size,
                 sellingPrice,
             };
         }) as ItemDTO[];
+        console.log("itemList: ", itemDTOList);
+        
         return {
-            userId: cart.userId,
-            itemList,
+            userId: cartModel.userId,
+            itemList: itemDTOList,
         };
     }
 
@@ -89,22 +101,79 @@ export class CartService {
             INVENTORY_RPC,
             requestRPCPayload
         )) as IReplyProductVariant;
+        if (!rpcAddedProductVariant) {
+            return null;
+        }
+        
         const addItem: IItemModel = {
             ...itemDTO,
             productVariantId: rpcAddedProductVariant.id,
         };
+        
         let cartModel = await this.cartRepository.getCartByUserId(userId);
         if (!cartModel) {
             cartModel = await this.cartRepository.createCart({
                 userId,
                 itemList: [addItem],
             });
+        } else {
+            const existingItemIndex = cartModel.itemList.findIndex(
+                (item) => item.productVariantId === addItem.productVariantId
+            );
+            const itemList = cartModel.itemList;
+            if (existingItemIndex !== -1) {
+                addItem.quantity +=  itemList[existingItemIndex].quantity;
+                itemList[existingItemIndex] = itemList[itemList.length - 1];
+                itemList[itemList.length - 1] = addItem;
+                cartModel = await this.cartRepository.updateCart(userId, cartModel);
+                return await this.getCartByUserId(userId);
+            } else {
+                cartModel.itemList.push(addItem);
+            }
+            cartModel = await this.cartRepository.updateCart(userId, cartModel);
         }
-        cartModel.itemList.push(addItem);
-        cartModel = await this.cartRepository.updateCart(userId, cartModel);
 
         let cartDTO = await this.getCartByUserId(userId);
 
         return cartDTO;
+    }
+
+    async removeItemFromCart(
+        userId: string,
+        productVariantId: string
+    ): Promise<CartDTO | null> {
+        const cartModel = await this.cartRepository.getCartByUserId(userId);
+        if (!cartModel) {
+            return null;
+        }
+        const existingItemIndex = cartModel.itemList.findIndex(
+            (item) => item.productVariantId === productVariantId
+        );
+        if (existingItemIndex === -1) {
+            return null;
+        }
+        cartModel.itemList.splice(existingItemIndex, 1);
+        await this.cartRepository.updateCart(userId, cartModel);
+        return await this.getCartByUserId(userId);
+    }
+
+    async updateItemQuantity(
+        userId: string,
+        productVariantId: string,
+        quantity: number
+    ): Promise<IItemModel | null> {
+        const cartModel = await this.cartRepository.getCartByUserId(userId);
+        if (!cartModel) {
+            return null;
+        }
+        const existingItemIndex = cartModel.itemList.findIndex(
+            (item) => item.productVariantId === productVariantId
+        );
+        if (existingItemIndex === -1) {
+            return null;
+        }
+        cartModel.itemList[existingItemIndex].quantity = quantity;
+        const updatedCartModel = await this.cartRepository.updateCart(userId, cartModel);
+        return updatedCartModel!.itemList[existingItemIndex];
     }
 }

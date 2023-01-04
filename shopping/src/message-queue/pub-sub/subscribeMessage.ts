@@ -1,5 +1,5 @@
 import { IService } from '../../service/IService';
-import { REVIEW_SERVICE } from '../../config/index';
+import { SHOPPING_SERVICE } from '../../config/index';
 import { Channel } from "amqplib";
 import { EXCHANGE_NAME } from "../../config";
 
@@ -8,7 +8,7 @@ const subscribeMessage = async (channel: Channel, service: IService) => {
     const q = await channel.assertQueue('', { exclusive: true });
     console.log(` [*] Waiting for messages in ${q.queue}`);
 
-    channel.bindQueue(q.queue, EXCHANGE_NAME, REVIEW_SERVICE);
+    channel.bindQueue(q.queue, EXCHANGE_NAME, SHOPPING_SERVICE);
     channel.consume(
         q.queue,
         (msg) => {

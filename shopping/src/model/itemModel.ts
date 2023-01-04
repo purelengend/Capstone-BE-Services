@@ -21,7 +21,15 @@ export const itemSchema = new Schema<IItemModel>(
             transform(_, ret) {
                 delete ret.__v;
                 delete ret._id;
+                delete ret.__parentArray;
+                delete ret.__index;
+                delete ret.$__parent;
+                delete ret.$__;
+                delete ret._doc;
+                delete ret.$isNew;
+                // delete ret[Symbol(documentArrayParent)];
             },
         },
+        virtuals: true,
     }
 );
