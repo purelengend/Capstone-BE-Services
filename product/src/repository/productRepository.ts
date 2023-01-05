@@ -1,3 +1,4 @@
+import { ProductQueryFilterOptions } from './../types/product';
 // import { BaseError } from './../error/error-type/BaseError';
 import { NotFoundError } from './../error/error-type/NotFoundError';
 import ProductModel, { IProductModel } from '../model/productModel';
@@ -30,11 +31,18 @@ export class ProductRepository {
         }
     }
 
-    async updateProduct(id: string, product: IProductModel): Promise<IProductModel | null> {
+    async updateProduct(
+        id: string,
+        product: IProductModel
+    ): Promise<IProductModel | null> {
         try {
-            const updatedProduct = await ProductModel.findByIdAndUpdate(id, product, {
-                new: true,
-            });
+            const updatedProduct = await ProductModel.findByIdAndUpdate(
+                id,
+                product,
+                {
+                    new: true,
+                }
+            );
             return updatedProduct;
         } catch (error) {
             throw new Error('Product update failed in the database');
@@ -52,7 +60,19 @@ export class ProductRepository {
 
     async getProductsByCategory(category: string): Promise<IProductModel[]> {
         try {
-            const products = await ProductModel.find({ category
+            const products = await ProductModel.find({ category });
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getProductsByCategories(
+        categories: string[]
+    ): Promise<IProductModel[]> {
+        try {
+            const products = await ProductModel.find({
+                category: { $in: categories },
             });
             return products;
         } catch (error) {
@@ -60,9 +80,11 @@ export class ProductRepository {
         }
     }
 
-    async getProductsByCategories(categories: string[]): Promise<IProductModel[]> {
+    async getProductsByFilterOptions(
+        filterOptions: ProductQueryFilterOptions
+    ): Promise<IProductModel[]> {
         try {
-            const products = await ProductModel.find({ category: { $in: categories } });
+            const products = await ProductModel.find(filterOptions);
             return products;
         } catch (error) {
             throw new Error(error);

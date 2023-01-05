@@ -1,26 +1,86 @@
-import productModel, { IProductModel } from "./../../model/productModel";
-import { Filter } from "./Filter";
-import { FilterByVariantOPtions } from "./FilterByVariantOptions";
+import { ProductRepository } from './../../repository/productRepository';
+import {
+    ProductQueryFilterOptions,
+    ProductRetrieveResponseType,
+} from './../../types/product';
+import { Filter } from './Filter';
+import { FilterByVariantOptions } from './FilterByVariantOptions';
 
 export class ProductRetrieveMediator {
+    private productRepository: ProductRepository;
 
-    async retrieveProducts(filters: Filter[], page = 1, limit = 10) : Promise<IProductModel[] | null> {
-        // let query = productModel.find();
-        let filterOptions = {};
+    constructor() {
+        this.productRepository = new ProductRepository();
+    }
 
-        for (const filter of filters) {
-            if (!(filter instanceof FilterByVariantOPtions)) {
-                filterOptions = filter.filter(filterOptions);
-            }
+    async retrieveProducts(
+        filters: Filter[],
+        page = 1,
+        pageSize = 10
+    ): Promise<ProductRetrieveResponseType> {
+
+        let filterByVariantOptions = this.findFilterByVariantOptions(filters);
+        if (filterByVariantOptions) {
+            filters = this.removeFilterByVariantOptions(filters);
+        }
+        
+        let filterOptions: ProductQueryFilterOptions = {};
+        filters.forEach((filter) => {
+            filterOptions = filter.extendFilterOptions(filterOptions);
+        });
+
+        let productModelList =
+            await this.productRepository.getProductsByFilterOptions(
+                filterOptions
+            );
+
+        if (!this.validatePageParameters(page, pageSize)) {
+            page = 1;
+            pageSize = 4;
+        }
+        let total = productModelList.length;
+        page = page > total / pageSize ? Math.ceil(total / pageSize) : page;
+
+        if (!filterByVariantOptions) {
+            productModelList = productModelList.splice(
+                (page - 1) * pageSize,
+                pageSize
+            );
+            return {
+                productList: productModelList,
+                page,
+                total,
+            };
         }
 
-        let productModelList = await productModel.find(filterOptions);
-        let filteredProductModelList: IProductModel[] | null = null;
+        return await filterByVariantOptions.filterRPC(productModelList, page, pageSize);
+    }
+
+    findFilterByVariantOptions(
+        filters: Filter[]
+    ): FilterByVariantOptions | null {
         for (const filter of filters) {
-            if (filter instanceof FilterByVariantOPtions) {
-                filteredProductModelList = await filter.filterRPC(productModelList);
+            if (filter instanceof FilterByVariantOptions) {
+                return filter;
             }
         }
-        return filteredProductModelList;
+        return null;
+    }
+
+    removeFilterByVariantOptions(filters: Filter[]): Filter[] {
+        const newFilters: Filter[] = [];
+        for (const filter of filters) {
+            if (!(filter instanceof FilterByVariantOptions)) {
+                newFilters.push(filter);
+            }
+        }
+        return newFilters;
+    }
+
+    validatePageParameters(page: number, pageSize: number): boolean {
+        if (page < 1 || pageSize < 1) {
+            return false;
+        }
+        return true;
     }
 }

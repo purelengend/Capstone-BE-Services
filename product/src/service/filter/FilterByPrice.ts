@@ -1,4 +1,4 @@
-import { Model, Document } from 'mongoose';
+import { ProductQueryFilterOptions } from './../../types/product';
 import { Filter } from './Filter';
 export class FilterByCategories extends Filter {
     private priceRange: string;
@@ -8,8 +8,17 @@ export class FilterByCategories extends Filter {
         this.priceRange = priceRange;
     }
 
-    filter (filterOptions: Object) {
-        const [min, max] = this.priceRange.split('-').map((price) => parseInt(price));
-        return Object.assign(filterOptions, { basePrice: { $gte: min, $lte: max } })
+    extendFilterOptions(
+        filterOptions: ProductQueryFilterOptions
+    ): ProductQueryFilterOptions {
+        if (this.priceRange === 'all') {
+            return filterOptions;
+        }
+        const [min, max] = this.priceRange
+            .split('-')
+            .map((price) => parseInt(price));
+
+        filterOptions.basePrice = { $gte: min, $lte: max };
+        return filterOptions;
     }
 }

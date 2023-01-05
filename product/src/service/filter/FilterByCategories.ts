@@ -1,3 +1,4 @@
+import { ProductQueryFilterOptions } from './../../types/product';
 import { Filter } from './Filter';
 
 export class FilterByCategories extends Filter {
@@ -8,7 +9,10 @@ export class FilterByCategories extends Filter {
         this.categories = categories;
     }
 
-    filter (filterOptions: Object) {
-        return Object.assign(filterOptions, { categories: {$in: this.categories} })
+    extendFilterOptions(
+        filterOptions: ProductQueryFilterOptions
+    ): ProductQueryFilterOptions {
+        filterOptions.categories = { $in: this.categories };
+        return filterOptions;
     }
 }

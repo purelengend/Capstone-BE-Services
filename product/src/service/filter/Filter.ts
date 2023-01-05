@@ -1,3 +1,3 @@
 export abstract class Filter {
-    abstract filter(filterOptions: Object): Object;
+    abstract extendFilterOptions(filterOptions: Object): Object;
 }
