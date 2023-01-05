@@ -49,4 +49,23 @@ export class ProductRepository {
             throw new Error('Product delete failed in the database');
         }
     }
+
+    async getProductsByCategory(category: string): Promise<IProductModel[]> {
+        try {
+            const products = await ProductModel.find({ category
+            });
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getProductsByCategories(categories: string[]): Promise<IProductModel[]> {
+        try {
+            const products = await ProductModel.find({ category: { $in: categories } });
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }
