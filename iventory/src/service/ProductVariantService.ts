@@ -218,6 +218,10 @@ export class ProductVariantService implements IService {
         return Promise.all(productVariantList);
     }
 
+    async retrieveProductByVariantFilterOptions(filterOptions: any) {
+        
+    }
+
     async serveRPCGetProductVariantListByIdList(
         idList: string[]
     ): Promise<ShoppingRPCReplyProductVariantType[]> {
@@ -260,6 +264,8 @@ export class ProductVariantService implements IService {
                 return this.serveRPCGetProductVariantListByIdList(
                     productVariantIdList
                 );
+            case RPCTypes.FILTER_PRODUCT_BY_COLOR_AND_SIZE:
+                
             default:
                 throw new Error('Invalid RPC type');
         }

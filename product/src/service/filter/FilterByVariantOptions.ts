@@ -58,11 +58,11 @@ export class FilterByVariantOptions extends Filter {
                 total: productModelList.length,
             };
         }
-        const productId = productModelList.map((product) => product.id);
+        const productIdList = productModelList.map((product) => product.id);
         const requestPayload = {
-            type: RPCTypes.RESERVE_PRODUCT_VARIANT_QUANTITY,
+            type: RPCTypes.FILTER_PRODUCT_BY_COLOR_AND_SIZE,
             data: {
-                productId,
+                productIdList,
                 color: color || [],
                 size: size || [],
                 page,
