@@ -6,8 +6,8 @@ import { Filter } from './Filter';
 import { RPCTypes } from './../../types/rpcType';
 
 export type VariantOptionsType = {
-    color?: [string];
-    size?: [string];
+    colorList?: [string];
+    sizeList?: [string];
 };
 
 export class FilterByVariantOptions extends Filter {
@@ -18,40 +18,17 @@ export class FilterByVariantOptions extends Filter {
         this.variantOptions = variantOptions;
     }
 
-    async extendFilterOptions(data: IProductModel[]): Promise<IProductModel[]> {
-        const { color, size } = this.variantOptions;
-        if (!color && !size) {
-            return data;
-        }
-        const productId = data.map((product) => product.id);
-        const requestPayload = {
-            productId,
-            color: color || [],
-            size: size || [],
-        };
-        const productIdListRPCReply = (await requestRPC(
-            INVENTORY_RPC,
-            requestPayload
-        )) as string[];
-        const filteredProductList = data.filter((product) => {
-            const matchedId = productIdListRPCReply.find(
-                (productId) => productId === product.id
-            );
-            if (matchedId) {
-                return true;
-            }
-            return false;
-        });
-        return filteredProductList;
-    }
+    async extendFilterOptions(_: IProductModel[]) {}
 
-    async filterRPC(
+    async retrieveVariantRPC(
         productModelList: IProductModel[],
         page = 1,
         pageSize = 10
     ): Promise<ProductRetrieveResponseType> {
-        const { color, size } = this.variantOptions;
-        if (!color && !size) {
+        console.log('HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE============================');
+        
+        const { colorList, sizeList } = this.variantOptions;
+        if (!colorList && !sizeList) {
             return {
                 productList: productModelList,
                 page,
@@ -63,8 +40,8 @@ export class FilterByVariantOptions extends Filter {
             type: RPCTypes.FILTER_PRODUCT_BY_COLOR_AND_SIZE,
             data: {
                 productIdList,
-                color: color || [],
-                size: size || [],
+                colorList: colorList || [],
+                sizeList: sizeList || [],
                 page,
                 pageSize,
             },
@@ -74,15 +51,17 @@ export class FilterByVariantOptions extends Filter {
             requestPayload
         )) as { productIdList: string[]; page: number; total: number };
         const productIdRPCReplyList = filterRPCReply.productIdList;
+        console.log("🚀 ~ file: FilterByVariantOptions.ts:52 ~ FilterByVariantOptions ~ productIdRPCReplyList", productIdRPCReplyList)
         const filteredProductList = productModelList.filter((product) => {
             const matchedId = productIdRPCReplyList.find(
-                (productId) => productId === product.id
+                (productId) => productId === product.id?.toString()
             );
             if (matchedId) {
                 return true;
             }
             return false;
         });
+        console.log("🚀 ~ file: FilterByVariantOptions.ts:62 ~ FilterByVariantOptions ~ filteredProductList ~ filteredProductList", filteredProductList)
         return {
             productList: filteredProductList,
             page: filterRPCReply.page,

@@ -1,6 +1,6 @@
 import { ProductQueryFilterOptions } from './../../types/product';
 import { Filter } from './Filter';
-export class FilterByCategories extends Filter {
+export class FilterByPrice extends Filter {
     private priceRange: string;
 
     constructor(priceRange: string) {

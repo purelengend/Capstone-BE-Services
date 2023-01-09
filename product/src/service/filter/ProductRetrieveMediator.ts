@@ -1,7 +1,9 @@
+import { IProductModel } from './../../model/productModel';
 import { ProductRepository } from './../../repository/productRepository';
 import {
     ProductQueryFilterOptions,
     ProductRetrieveResponseType,
+    SortFieldProduct,
 } from './../../types/product';
 import { Filter } from './Filter';
 import { FilterByVariantOptions } from './FilterByVariantOptions';
@@ -9,21 +11,22 @@ import { FilterByVariantOptions } from './FilterByVariantOptions';
 export class ProductRetrieveMediator {
     private productRepository: ProductRepository;
 
-    constructor() {
-        this.productRepository = new ProductRepository();
+    constructor(productRepository: ProductRepository) {
+        this.productRepository = productRepository;
     }
 
     async retrieveProducts(
         filters: Filter[],
         page = 1,
-        pageSize = 10
+        pageSize = 10,
+        orderBy?: SortFieldProduct,
+        sortBy?: 'asc' | 'desc'
     ): Promise<ProductRetrieveResponseType> {
-
-        let filterByVariantOptions = this.findFilterByVariantOptions(filters);
+        let filterByVariantOptions = this.findFilterVariantOptions(filters);
         if (filterByVariantOptions) {
-            filters = this.removeFilterByVariantOptions(filters);
+            filters = this.removeFilterVariantOptions(filters);
         }
-        
+
         let filterOptions: ProductQueryFilterOptions = {};
         filters.forEach((filter) => {
             filterOptions = filter.extendFilterOptions(filterOptions);
@@ -39,12 +42,19 @@ export class ProductRetrieveMediator {
             pageSize = 4;
         }
         let total = productModelList.length;
-        page = page > total / pageSize ? Math.ceil(total / pageSize) : page;
-
+        page = page > Math.ceil(total / pageSize) ? 1 : page;
+        // sort product list by basePrice or rating
+        if (orderBy && sortBy) {
+            productModelList = this.sortProductModelList(
+                productModelList,
+                orderBy as SortFieldProduct,
+                sortBy
+            );
+        }
         if (!filterByVariantOptions) {
-            productModelList = productModelList.splice(
+            productModelList = productModelList.slice(
                 (page - 1) * pageSize,
-                pageSize
+                pageSize * pageSize
             );
             return {
                 productList: productModelList,
@@ -53,12 +63,14 @@ export class ProductRetrieveMediator {
             };
         }
 
-        return await filterByVariantOptions.filterRPC(productModelList, page, pageSize);
+        return await filterByVariantOptions.retrieveVariantRPC(
+            productModelList,
+            page,
+            pageSize
+        );
     }
 
-    findFilterByVariantOptions(
-        filters: Filter[]
-    ): FilterByVariantOptions | null {
+    findFilterVariantOptions(filters: Filter[]): FilterByVariantOptions | null {
         for (const filter of filters) {
             if (filter instanceof FilterByVariantOptions) {
                 return filter;
@@ -67,7 +79,7 @@ export class ProductRetrieveMediator {
         return null;
     }
 
-    removeFilterByVariantOptions(filters: Filter[]): Filter[] {
+    removeFilterVariantOptions(filters: Filter[]): Filter[] {
         const newFilters: Filter[] = [];
         for (const filter of filters) {
             if (!(filter instanceof FilterByVariantOptions)) {
@@ -82,5 +94,37 @@ export class ProductRetrieveMediator {
             return false;
         }
         return true;
+    }
+
+    sortProductModelList(
+        productModelList: IProductModel[],
+        orderBy?: SortFieldProduct,
+        sortBy?: 'asc' | 'desc'
+    ) {
+        if (!orderBy || !sortBy) {
+            return productModelList;
+        }
+        if (sortBy === 'asc') {
+            productModelList.sort((a, b) => {
+                if (a[orderBy]! > b[orderBy]!) {
+                    return 1;
+                }
+                if (a[orderBy]! < b[orderBy]!) {
+                    return -1;
+                }
+                return 0;
+            });
+        } else {
+            productModelList.sort((a, b) => {
+                if (a[orderBy]! > b[orderBy]!) {
+                    return -1;
+                }
+                if (a[orderBy]! < b[orderBy]!) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+        return productModelList;
     }
 }

@@ -1,12 +1,12 @@
-export type variantFilterRPCRequest = {
+export type VariantFilterRPCRequest = {
     productIdList: string[];
-    color: string[];
-    size: string[];
+    colorList: string[];
+    sizeList: string[];
     page: number;
     pageSize: number;
-}
+};
 
-export type variantFilterRPCResponse = {
+export type VariantFilterRPCResponse = {
     productIdList: string[];
     page: number;
     total: number;

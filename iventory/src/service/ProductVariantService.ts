@@ -1,3 +1,7 @@
+import {
+    VariantFilterRPCRequest,
+    VariantFilterRPCResponse,
+} from './../types/productVariant';
 import { ShoppingRPCReplyProductVariantType } from './../types/shoppingRpcType';
 import {
     RPCReplyProductVariantUpdateType,
@@ -11,7 +15,7 @@ import { ProductVariant } from './../entity/ProductVariant';
 import { RPCPayload } from './../types/utilTypes';
 import { ColorService } from './ColorService';
 import { SizeService } from './SizeService';
-import UpdateProductVariantDTO from 'src/dto/UpdateProductVariantDTO';
+import UpdateProductVariantDTO from './../dto/UpdateProductVariantDTO';
 
 export class ProductVariantService implements IService {
     private productVariantRepository: ProductVariantRepository;
@@ -76,7 +80,7 @@ export class ProductVariantService implements IService {
         requestProductList: RPCRequestProductVariantUpdateType[]
     ) {
         const productVariantList =
-            await this.productVariantRepository.findByProductIdAndColorAndSizeList(
+            await this.productVariantRepository.findByListProductIdAndColorAndSize(
                 requestProductList
             );
 
@@ -218,8 +222,46 @@ export class ProductVariantService implements IService {
         return Promise.all(productVariantList);
     }
 
-    async retrieveProductByVariantFilterOptions(filterOptions: any) {
+    async retrieveProductByVariantFilterOptions(
+        filterOptions: VariantFilterRPCRequest
+    ): Promise<VariantFilterRPCResponse> {
+        const { colorList, sizeList } = filterOptions;
+        let { productIdList, page, pageSize } = filterOptions;
+
+        // findByProductIdListAndColorListAndSizeList will return a list of product id
+        let productVariantFilteredList =
+            await this.productVariantRepository.findInStockByProductIdListAndColorListAndSizeList(
+                productIdList,
+                colorList,
+                sizeList
+            );
+        let productIdFilteredList = productVariantFilteredList.map(
+            (productVariant) => productVariant.productId
+        );
+        const productIdSet = new Set(productIdFilteredList);
         
+        const total = productIdSet.size;
+    
+        // using productIdList to guarantee the order of product id that could be sorted in product service
+        productIdList = productIdList.filter((productId) => {
+            return productIdSet.has(productId);
+        });
+        // Slice the product id list by page and pageSize
+        if (page > Math.ceil(total / pageSize) || page < 1) {
+            page = 1;
+        }
+        if (pageSize < 1) {
+            pageSize = 10;
+        }
+        productIdList = productIdList.slice(
+            (page - 1) * pageSize,
+            page * pageSize
+        );
+        return {
+            productIdList,
+            page,
+            total,
+        };
     }
 
     async serveRPCGetProductVariantListByIdList(
@@ -260,12 +302,17 @@ export class ProductVariantService implements IService {
                     size
                 );
             case RPCTypes.GET_PRODUCT_VARIANT_LIST_BY_ID_LIST:
-                const { productVariantIdList } = data;
+                const { productVariantIdList } = data as {
+                    productVariantIdList: string[];
+                };
                 return this.serveRPCGetProductVariantListByIdList(
                     productVariantIdList
                 );
             case RPCTypes.FILTER_PRODUCT_BY_COLOR_AND_SIZE:
-                
+                const filterOptions = data as VariantFilterRPCRequest;
+                return this.retrieveProductByVariantFilterOptions(
+                    filterOptions
+                );
             default:
                 throw new Error('Invalid RPC type');
         }

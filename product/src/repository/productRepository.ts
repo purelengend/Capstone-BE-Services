@@ -2,6 +2,7 @@ import { ProductQueryFilterOptions } from './../types/product';
 // import { BaseError } from './../error/error-type/BaseError';
 import { NotFoundError } from './../error/error-type/NotFoundError';
 import ProductModel, { IProductModel } from '../model/productModel';
+import CategoryModel from './../model/categoryModel';
 
 export class ProductRepository {
     async getProductById(id: string): Promise<IProductModel | null> {
@@ -80,12 +81,70 @@ export class ProductRepository {
         }
     }
 
+    async paginateProducts(
+        page: number,
+        pageSize: number,
+        orderBy?: string,
+        sortBy?: 'asc' | 'desc'
+    ): Promise<IProductModel[]> {
+        try {
+            if (orderBy === 'price' && sortBy) {
+                const products = await ProductModel.find()
+                    .skip((page - 1) * pageSize)
+                    .limit(pageSize)
+                    .sort({ basePrice: sortBy });
+                return products;
+            }
+            if (orderBy === 'rating' && sortBy) {
+                const products = await ProductModel.find()
+                    .skip((page - 1) * pageSize)
+                    .limit(pageSize)
+                    .sort({ rating: sortBy });
+                return products;
+            }
+            const products = await ProductModel.find()
+                .skip((page - 1) * pageSize)
+                .limit(pageSize);
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     async getProductsByFilterOptions(
         filterOptions: ProductQueryFilterOptions
     ): Promise<IProductModel[]> {
         try {
-            const products = await ProductModel.find(filterOptions);
-            return products;
+            const { categories, basePrice } = filterOptions;
+
+            if (categories && basePrice) {
+                return await CategoryModel.find({
+                    name: { $in: categories.$in },
+                }).then((categories) => {
+                    const categoryIds = categories.map(
+                        (category) => category._id
+                    );
+                    return ProductModel.find({
+                        basePrice,
+                        categories: { $all: categoryIds },
+                    });
+                });
+            } else if (categories) {
+                return await CategoryModel.find({
+                    name: { $in: categories.$in },
+                }).then((categories) => {
+                    const categoryIds = categories.map(
+                        (category) => category._id
+                    );
+                    return ProductModel.find({
+                        categories: { $all: categoryIds },
+                    });
+                });
+            } else if (basePrice) {
+                return await ProductModel.find(basePrice);
+            } else {
+                return await ProductModel.find();
+            }
         } catch (error) {
             throw new Error(error);
         }

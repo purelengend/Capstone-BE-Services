@@ -1,7 +1,7 @@
 import { RPCRequestProductVariantUpdateType } from './../types/orderRpcType';
 import { AppDataSource } from './../data-source';
 import { NotFoundError } from './../error/error-type/NotFoundError';
-import { EntityNotFoundError } from 'typeorm';
+import { EntityNotFoundError, In, MoreThan } from 'typeorm';
 import { ProductVariant } from './../entity/ProductVariant';
 
 export class ProductVariantRepository {
@@ -135,7 +135,7 @@ export class ProductVariantRepository {
     }
 
     // Find a list of product variants by a list that each item contains a productId and a color and a size
-    async findByProductIdAndColorAndSizeList(
+    async findByListProductIdAndColorAndSize(
         productIdColorSizeList: RPCRequestProductVariantUpdateType[]
     ): Promise<ProductVariant[]> {
         try {
@@ -175,5 +175,37 @@ export class ProductVariantRepository {
         } catch (error) {
             throw new Error(error);
         }
+    }
+
+    async findInStockByProductIdListAndColorListAndSizeList(
+        productIdList: string[],
+        colorList: string[],
+        sizeList: string[]
+    ) {
+        const colorQueryCondition = {
+            color: {
+                name: In(colorList),
+            },
+        };
+        const sizeQueryCondition = {
+            size: {
+                name: In(sizeList),
+            },
+        };
+        return this.repository.find({
+            select: {
+                productId: true,
+            },
+            relations: {
+                color: true,
+                size: true,
+            },
+            where: {
+                productId: In(productIdList),
+                quantity: MoreThan(0),
+                ...(colorList.length > 0 ? colorQueryCondition : {}),
+                ...(sizeList.length > 0 ? sizeQueryCondition : {}),
+            },
+        });
     }
 }

@@ -1,3 +1,10 @@
+import { FilterBySize } from './filter/FilterBySize';
+import { FilterByColor } from './filter/FilterByColor';
+import {
+    FilterProductRequest,
+    RetrieveProductRequest,
+} from './../types/product';
+import { ProductRetrieveMediator } from './filter/ProductRetrieveMediator';
 import EventType from '../types/eventType';
 import { difference } from '../util/util';
 import { ValidationError } from '../error/error-type/ValidationError';
@@ -8,14 +15,25 @@ import { EventPayload, RPCPayload } from '../types/utilTypes';
 import { IProductModel } from '../model/productModel';
 import { ProductRepository } from '../repository/ProductRepository';
 import CategoryService from './categoryService';
+import { FilterByCategories } from './filter/FilterByCategories';
+import { FilterByPrice } from './filter/FilterByPrice';
+import { Filter } from './filter/Filter';
+import {
+    FilterByVariantOptions,
+    VariantOptionsType,
+} from './filter/FilterByVariantOptions';
 
 export default class ProductService implements IService {
     private productRepository: ProductRepository;
     private categoryService: CategoryService;
+    private productRetrieveMediator: ProductRetrieveMediator;
 
     constructor() {
         this.productRepository = new ProductRepository();
         this.categoryService = new CategoryService();
+        this.productRetrieveMediator = new ProductRetrieveMediator(
+            this.productRepository
+        );
     }
 
     async getProducts() {
@@ -107,6 +125,114 @@ export default class ProductService implements IService {
         product.rating = averageRating;
         product.reviewed = reviewCount;
         await this.productRepository.updateProduct(productId, product);
+    }
+
+    async paginateProducts(page: number, limit: number) {
+        return await this.productRepository.paginateProducts(page, limit);
+    }
+
+    async sortProducts(
+        page: number,
+        limit: number,
+        orderBy: string,
+        sortBy: 'asc' | 'desc'
+    ) {
+        return await this.productRepository.paginateProducts(
+            page,
+            limit,
+            orderBy,
+            sortBy
+        );
+    }
+
+    async retrieveProductByFilters(
+        retrieveProductRequest: RetrieveProductRequest
+    ) {
+        const {
+            page,
+            pageSize,
+            orderBy,
+            sortBy,
+            filters: filterOptionsRequest,
+        } = retrieveProductRequest;
+        
+        const filterCommands = this.createFilterCommandsFromRequest(
+            filterOptionsRequest!,
+            this.filterByEntityFieldCommandFactory
+        );
+        const filterByRPCVariantCommands = this.createFilterCommandsFromRequest(
+            filterOptionsRequest!,
+            this.filterByRPCVariantCommandFactory
+        );
+        const variantFilterOptions = this.createVariantOptionsType(
+            filterByRPCVariantCommands
+        );
+
+        if (variantFilterOptions) {
+            filterCommands.push(
+                new FilterByVariantOptions(variantFilterOptions)
+            );
+        }
+        return await this.productRetrieveMediator.retrieveProducts(
+            filterCommands,
+            page,
+            pageSize,
+            orderBy,
+            sortBy
+        );
+    }
+
+    createVariantOptionsType(FilterByVariants: Filter[]) {
+        if (!FilterByVariants || FilterByVariants.length === 0) {
+            return null;
+        }
+        const filterByVariantOptions = {};
+        for (const filter of FilterByVariants) {
+            filter.extendFilterOptions(filterByVariantOptions);
+        }
+        return filterByVariantOptions as VariantOptionsType;
+    }
+
+    createFilterCommandsFromRequest(
+        filterOptionsRequest: FilterProductRequest,
+        filterFactoryFunction: (
+            name: string,
+            value: string | string[]
+        ) => Filter | null
+    ) {
+        const filters = [];
+        for (const [key, value] of Object.entries(filterOptionsRequest)) {
+            if (value) {
+                const filter = filterFactoryFunction(key, value);
+                if (!filter) {
+                    continue;
+                }
+                filters.push(filter);
+            }
+        }
+        return filters;
+    }
+
+    filterByEntityFieldCommandFactory(name: string, value: string | string[]) {
+        switch (name) {
+            case 'category':
+                return new FilterByCategories(value as string[]);
+            case 'priceRange':
+                return new FilterByPrice(value as string);
+            default:
+                return null;
+        }
+    }
+
+    filterByRPCVariantCommandFactory(name: string, value: string[] | string) {
+        switch (name) {
+            case 'color':
+                return new FilterByColor(value as string[]);
+            case 'size':
+                return new FilterBySize(value as string[]);
+            default:
+                return null;
+        }
     }
 
     subscribeEvents(payload: string): void {
