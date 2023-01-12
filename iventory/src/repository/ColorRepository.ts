@@ -19,8 +19,6 @@ export class ColorRepository {
             if (error instanceof EntityNotFoundError) {
                 throw new NotFoundError(`Color with id ${id} not found`);
             }
-            console.log(error);
-
             throw new Error(error);
         }
     }

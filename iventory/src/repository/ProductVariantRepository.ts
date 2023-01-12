@@ -83,6 +83,7 @@ export class ProductVariantRepository {
         try {
             let productVariantToUpdate = await this.findById(id);
             productVariantToUpdate = {
+                ...productVariantToUpdate,
                 ...productVariant,
             };
             return this.repository.save(productVariantToUpdate);
