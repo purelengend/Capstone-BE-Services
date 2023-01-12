@@ -1,3 +1,4 @@
-import cart from './cart';
+import cartController from './cart';
+import wishlistController from './wishlist';
 
-export const cartController = cart;
+export { cartController, wishlistController };

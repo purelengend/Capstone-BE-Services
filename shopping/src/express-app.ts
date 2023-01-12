@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-import { cartController } from './api/index';
+import { cartController, wishlistController } from './api/index';
 // import createChannel from './message-queue/createChannel';
 
 export default async (app: Application) => {
@@ -12,4 +12,5 @@ export default async (app: Application) => {
     // const channel = await createChannel();
 
     cartController(app);
+    wishlistController(app);
 };

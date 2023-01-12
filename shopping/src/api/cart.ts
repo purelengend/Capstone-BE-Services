@@ -1,3 +1,5 @@
+import { AuthorizeError } from './../error/error-type/AuthorizedError';
+import { decodeTokenInRequest } from './../middleware/auth';
 import { ItemDTO } from './../dto/ItemDTO';
 import { Application } from 'express';
 import { CartService } from './../service/CartService';
@@ -21,6 +23,10 @@ export default (app: Application) => {
             if (!userId) {
                 throw new Error('Missing userId in query');
             }
+            const decodedToken = decodeTokenInRequest(req);
+            if (decodedToken && decodedToken.userId !== userId) {
+                throw new AuthorizeError('User is not authorized to get cart');
+            }
             const cart = await cartService.getCartByUserId(userId);
             return res.status(200).json(cart);
         } catch (error) {
@@ -31,9 +37,18 @@ export default (app: Application) => {
 
     app.post('/addToCart', async (req, res, next) => {
         try {
-            const { userId, itemDTO } = req.body as { userId: string; itemDTO: ItemDTO };
+            const { userId, itemDTO } = req.body as {
+                userId: string;
+                itemDTO: ItemDTO;
+            };
             if (!userId || !itemDTO) {
                 throw new Error('Missing userId or itemDTO in request body');
+            }
+            const decodedToken = decodeTokenInRequest(req);
+            if (decodedToken && decodedToken.userId !== userId) {
+                throw new AuthorizeError(
+                    'User is not authorized to add item to cart'
+                );
             }
             const newCart = await cartService.addItemToCart(userId, itemDTO);
             return res.status(200).json(newCart);
@@ -45,11 +60,17 @@ export default (app: Application) => {
 
     app.put('/removeFromCart', async (req, res, next) => {
         try {
-            const { userId, productVariantId } = req.body as { userId: string; productVariantId: string };
+            const { userId, productVariantId } = req.body as {
+                userId: string;
+                productVariantId: string;
+            };
             if (!userId || !productVariantId) {
                 throw new Error('Missing userId or itemDTO in request body');
             }
-            const newCart = await cartService.removeItemFromCart(userId, productVariantId);
+            const newCart = await cartService.removeItemFromCart(
+                userId,
+                productVariantId
+            );
             return res.status(200).json(newCart);
         } catch (error) {
             next(error);
@@ -59,14 +80,22 @@ export default (app: Application) => {
 
     app.put('/updateCartItemQuantity', async (req, res, next) => {
         try {
-            const { userId, productVariantId, quantity } = req.body as { userId: string; productVariantId: string; quantity: number };
+            const { userId, productVariantId, quantity } = req.body as {
+                userId: string;
+                productVariantId: string;
+                quantity: number;
+            };
             if (!userId || !productVariantId || !quantity) {
                 throw new Error('Missing userId or itemDTO in request body');
             }
             if (quantity <= 0) {
                 throw new Error('Quantity must be greater than 0');
             }
-            const updatedCart = await cartService.updateItemQuantity(userId, productVariantId, quantity);
+            const updatedCart = await cartService.updateItemQuantity(
+                userId,
+                productVariantId,
+                quantity
+            );
             return res.status(200).json(updatedCart);
         } catch (error) {
             next(error);

@@ -6,7 +6,7 @@ import { RPCTypes } from './../types/rpcType';
 import { WishlistDTO } from './../dto/WishListDTO';
 import { IWishlistModel } from './../model/wishlistModel';
 import { WishlistRepository } from './../repository/WishlistRepository';
-import { requestRPC } from 'src/message-queue/rpc/requestRPC';
+import { requestRPC } from './../message-queue/rpc/requestRPC';
 export class WishlistService {
     private wishlistRepository: WishlistRepository;
 

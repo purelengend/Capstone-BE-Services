@@ -1,5 +1,5 @@
 import { IWishlistModel } from './../model/wishlistModel';
-import wishlistModel from "src/model/wishlistModel";
+import wishlistModel from './../model/wishlistModel';
 
 export class WishlistRepository {
     async getAllWishlists(): Promise<IWishlistModel[]> {
@@ -8,7 +8,7 @@ export class WishlistRepository {
     }
 
     async getWishlistByUserId(userId: string): Promise<IWishlistModel | null> {
-        const wishlist = await wishlistModel.findOne({userId})
+        const wishlist = await wishlistModel.findOne({ userId });
         return wishlist;
     }
 
@@ -19,7 +19,7 @@ export class WishlistRepository {
 
     async updateWishlist(userId: string, wishlist: IWishlistModel) {
         const updatedWishlist = await wishlistModel.findOneAndUpdate(
-            {userId},
+            { userId },
             wishlist,
             {
                 new: true,

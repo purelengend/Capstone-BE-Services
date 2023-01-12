@@ -34,11 +34,12 @@ export class AuthService {
     }
 
     async register(userDTO: CreateUserDTO) {
-        const newUser = await this.userService.createCustomer(userDTO);
+        let newUser = await this.userService.createCustomer(userDTO);
         return {
             id: newUser.id,
             username: newUser.username,
             accessToken: this.createUserToken('accessToken', newUser),
+            refreshToken: this.createUserToken('refreshToken', newUser),
         }
     }
 
@@ -67,6 +68,7 @@ export class AuthService {
         const payload: UserTokenPayload = {
             userId: user.id,
             username: user.username,
+            role: user.role.name
         }
         return sign(
             payload,

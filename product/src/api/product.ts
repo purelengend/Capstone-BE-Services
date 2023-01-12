@@ -1,3 +1,4 @@
+import { verifyAdminAuthorization } from './../middleware/auth';
 import { RetrieveProductRequest } from './../types/product';
 import { Channel } from 'amqplib';
 import { Application, NextFunction, Request, Response } from 'express';
@@ -37,6 +38,7 @@ export default (app: Application, channel: Channel) => {
 
     app.post(
         '/create',
+        verifyAdminAuthorization,
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const product = req.body as IProductModel;
