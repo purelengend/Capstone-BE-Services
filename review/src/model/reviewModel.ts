@@ -23,7 +23,6 @@ const userSchema = new Schema<IUserModel>(
     {
         toJSON: {
             transform(_, ret) {
-                ret.id = ret._id;
                 delete ret._id;
                 delete ret.__v;
             },

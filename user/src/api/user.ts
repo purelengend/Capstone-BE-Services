@@ -1,9 +1,13 @@
+import { USER_RPC } from './../config/index';
 import { CreateUserDTO } from './../dto/user/CreateUserDTO';
 import { UserService } from './../service/UserService';
 import { Application } from "express";
+import observerRPC from './../message-queue/rpc/observerRPC';
 
 export default (app: Application) => {
     const userService = new UserService();
+
+    observerRPC(USER_RPC, userService)
 
     app.get('/user', async (_, res, next) => {
         try {
@@ -18,6 +22,16 @@ export default (app: Application) => {
         try {
             const { id } = req.params;
             return res.status(200).json(await userService.getUserById(id));
+        } catch (error) {
+            next(error);
+            return;
+        }
+    });
+
+    app.post('/user/createAdmin', async (req, res, next) => {
+        try {
+            const userDTO = req.body as CreateUserDTO;
+            return res.status(200).json(await userService.createAdmin(userDTO));
         } catch (error) {
             next(error);
             return;

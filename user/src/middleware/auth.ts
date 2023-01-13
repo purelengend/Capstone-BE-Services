@@ -1,4 +1,5 @@
-import { UserRoleType, UserTokenPayload } from './../types/auth';
+import { UserTokenPayload } from './../types/UserTokenPayload';
+import { UserRoleType } from './../types/userRoleType';
 import { Secret, verify } from 'jsonwebtoken';
 import { AuthorizeError } from './../error/error-type/AuthorizedError';
 import { Request, Response, NextFunction } from 'express';
@@ -39,7 +40,7 @@ export const verifyUserAuthentication = async (
     }
 };
 
-export const decodeTokenInRequest = (req: Request): UserTokenPayload => {
+export const decodeTokenInRequest = (req: Request) => {
     // authHeader here is "Bearer accessToken"
     const [, accessToken] = req.header('Authorization')?.split(' ') || [];
 
@@ -50,5 +51,18 @@ export const decodeTokenInRequest = (req: Request): UserTokenPayload => {
         accessToken,
         process.env.ACCESS_TOKEN_SECRET as Secret
     ) as UserTokenPayload;
+    let arr = [12, 434, 54];
+    arr.filter((item) => item > 10);
     return decodedToken;
+};
+
+export const verifyUserToken = (
+    req: Request,
+    userId: string,
+    filter: (decodedToken: UserTokenPayload, userId: string) => boolean
+) => {
+    const decodedToken = decodeTokenInRequest(req);
+    if (!filter(decodedToken, userId)) {
+        throw new AuthorizeError('You are not authorized to access this route');
+    }
 };

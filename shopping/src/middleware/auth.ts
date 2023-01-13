@@ -1,4 +1,4 @@
-import { UserTokenPayload } from './../types/auth';
+import { UserRoleType, UserTokenPayload } from './../types/auth';
 import { Secret, verify } from 'jsonwebtoken';
 import { AuthorizeError } from './../error/error-type/AuthorizedError';
 import { Request, Response, NextFunction } from 'express';
@@ -10,14 +10,14 @@ export const verifyAdminAuthorization = async (
 ) => {
     try {
         const decodedToken = decodeTokenInRequest(req);
-        if (decodedToken.role !== 'admin') {
+        if (decodedToken.role !== UserRoleType.ADMIN) {
             throw new AuthorizeError(
                 'You are not authorized to access this route'
             );
         }
         next();
     } catch (error) {
-        throw new Error(error);
+        next(error);
     }
 };
 
@@ -35,14 +35,13 @@ export const verifyUserAuthentication = async (
         }
         next();
     } catch (error) {
-        throw new Error(error);
+        next(error);
     }
 };
 
 export const decodeTokenInRequest = (req: Request) => {
     // authHeader here is "Bearer accessToken"
-    const authHeader = req.header('Authorization');
-    const accessToken = authHeader && authHeader.split(' ')[1];
+    const [, accessToken] = req.header('Authorization')?.split(' ') || [];
 
     if (!accessToken) {
         throw new AuthorizeError('Access token is required');

@@ -1,11 +1,11 @@
+import { RPCTypes } from './../types/rpcType';
 import { NotFoundError } from './../error/error-type/NotFoundError';
-// import { IUserModel } from './../model/reviewModel';
-// import { USER_RPC } from './../config/index';
+import { USER_RPC } from './../config/index';
 import { requestRPC } from './../message-queue/rpc/requestRPC';
 import { EventPayload, RPCPayload } from './../types/utilTypes';
 import EventType from './../types/eventType';
 import { ReviewRepository } from './../repository/reviewRepository';
-import { IReviewModel } from '../model/reviewModel';
+import { IReviewModel, IUserModel } from './../model/reviewModel';
 import { DeleteType } from '../types/utilTypes';
 import { IService } from './IService';
 export class ReviewService implements IService {
@@ -23,27 +23,27 @@ export class ReviewService implements IService {
         review: IReviewModel,
         userId: string
     ): Promise<IReviewModel> {
-        const fakeAuthor = {
-            id: userId,
-            username: 'fake name',
-            avatarUrl: 'fake avatarUrl',
-        };
-        // const userResponse = (await requestRPC(USER_RPC, {
-        //     type: 'GET-USER',
-        //     data: userId,
-        // })) as IUserModel;
-        const productResponse = await requestRPC('PRODUCT_RPC', {
-            type: 'GET_PRODUCT_BY_ID',
-            data: {
-                id: review.productId,
-            },
-        });
-        if (!productResponse) {
-            throw new NotFoundError('Product not found');
+        // const fakeAuthor = {
+        //     id: userId,
+        //     username: 'fake name',
+        //     avatarUrl: 'fake avatarUrl',
+        // };
+        const userResponse = (await requestRPC(USER_RPC, {
+            type: RPCTypes.GET_USER_INFO_BY_USER_ID,
+            data: userId,
+        })) as IUserModel;
+        // const productResponse = await requestRPC('PRODUCT_RPC', {
+        //     type: 'GET_PRODUCT_BY_ID',
+        //     data: {
+        //         id: review.productId,
+        //     },
+        // });
+        if (!userResponse) {
+            throw new NotFoundError('User not found');
         }
-        console.log('[*] product response from RPC: ', productResponse);
+        console.log('[*] userResponse response from RPC: ', userResponse);
 
-        return await this.reviewRepository.createReview(review, fakeAuthor);
+        return await this.reviewRepository.createReview(review, userResponse);
     }
 
     async updateReview(
