@@ -1,6 +1,6 @@
-import { AppDataSource } from './../data-source';
-import { NotFoundError } from './../error/error-type/NotFoundError';
-import { Color } from './../entity/Color';
+import { AppDataSource } from '../data-source';
+import { NotFoundError } from '../error/error-type/NotFoundError';
+import { Color } from '../entity/Color';
 import { EntityNotFoundError } from 'typeorm';
 
 export class ColorRepository {

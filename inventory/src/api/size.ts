@@ -1,14 +1,14 @@
-import { ColorService } from './../service/ColorService';
+import { SizeService } from '../service/SizeService';
 import { Application, Request, Response, NextFunction } from 'express';
 
 export default (app: Application): void => {
-    const colorService = new ColorService();
+    const sizeService = new SizeService();
 
     app.get(
-        '/color/all',
+        '/size/all',
         async (_: Request, res: Response, next: NextFunction) => {
             try {
-                const sizes = await colorService.getAll();
+                const sizes = await sizeService.getAll();
                 return res.status(200).json(sizes);
             } catch (error) {
                 next(error);
@@ -18,10 +18,10 @@ export default (app: Application): void => {
     );
 
     app.get(
-        '/color/:name',
+        '/size/:name',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
-                const size = await colorService.findByName(req.params.name);
+                const size = await sizeService.findByName(req.params.name);
                 return res.status(200).json(size);
             } catch (error) {
                 next(error);
@@ -31,10 +31,10 @@ export default (app: Application): void => {
     );
 
     app.post(
-        '/color',
+        '/size',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
-                const size = await colorService.createColor(req.body.name);
+                const size = await sizeService.createSize(req.body.name);
                 return res.status(200).json(size);
             } catch (error) {
                 next(error);
@@ -44,11 +44,11 @@ export default (app: Application): void => {
     );
 
     app.put(
-        '/color/:id',
+        '/size/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = parseInt(req.params.id);
-                const size = await colorService.updateColor(id, req.body.name);
+                const size = await sizeService.updateSize(id, req.body.name);
                 return res.status(200).json(size);
             } catch (error) {
                 next(error);
@@ -58,11 +58,11 @@ export default (app: Application): void => {
     );
 
     app.delete(
-        '/color/:id',
+        '/size/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = parseInt(req.params.id);
-                const size = await colorService.deleteColor(id);
+                const size = await sizeService.deleteSize(id);
                 return res.status(200).json(size);
             } catch (error) {
                 next(error);

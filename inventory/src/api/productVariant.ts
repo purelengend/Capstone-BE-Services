@@ -1,8 +1,8 @@
-import { INVENTORY_RPC } from './../config/index';
+import { INVENTORY_RPC } from '../config/index';
 import { Application, Request, Response, NextFunction } from 'express';
-import { ProductVariantService } from './../service/ProductVariantService';
+import { ProductVariantService } from '../service/ProductVariantService';
 import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
-import observerRPC from './../message-queue/rpc/observerRPC';
+import observerRPC from '../message-queue/rpc/observerRPC';
 
 export default (app: Application): void => {
     const productVariantService = new ProductVariantService();

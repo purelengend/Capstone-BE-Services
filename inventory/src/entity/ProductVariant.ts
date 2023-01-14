@@ -22,8 +22,10 @@ export class ProductVariant {
     quantity: number;
 
     @Column()
+    @Check('"basePrice" >= 0')
     basePrice: number;
 
     @Column()
+    @Check('"sellingPrice" >= 0')
     sellingPrice: number;
 }

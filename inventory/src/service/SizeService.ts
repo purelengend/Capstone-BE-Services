@@ -1,8 +1,8 @@
-import { Size } from './../entity/Size';
-import { SizeRepository } from './../repository/SizeRepository';
+import { Size } from '../entity/Size';
+import { SizeRepository } from '../repository/SizeRepository';
 export class SizeService {
     private sizeRepository: SizeRepository;
-    
+
     constructor() {
         this.sizeRepository = new SizeRepository();
     }

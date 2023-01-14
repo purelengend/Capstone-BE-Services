@@ -2,6 +2,7 @@ import { IService } from '../../service/IService';
 import { INVENTORY_SERVICE } from '../../config/index';
 import { Channel } from "amqplib";
 import { EXCHANGE_NAME } from "../../config";
+import { EventPayload } from './../../types/utilTypes';
 
 const subscribeMessage = async (channel: Channel, service: IService) => {
     channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: true });
@@ -15,7 +16,8 @@ const subscribeMessage = async (channel: Channel, service: IService) => {
             if (msg?.content) {
                 const message = msg.content.toString();
                 console.log(` [x] Received ${msg.fields.routingKey} : ${message}`);
-                service.subscribeEvents(message);
+                const payload: EventPayload = JSON.parse(message);
+                service.subscribeEvents(payload);
             }
         },
         { noAck: true }

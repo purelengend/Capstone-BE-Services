@@ -1,9 +1,9 @@
-import { Color } from "./../entity/Color";
-import { ColorRepository } from "./../repository/ColorRepository";
+import { Color } from '../entity/Color';
+import { ColorRepository } from '../repository/ColorRepository';
 
 export class ColorService {
     private colorRepository: ColorRepository;
-    
+
     constructor() {
         this.colorRepository = new ColorRepository();
     }

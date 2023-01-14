@@ -1,21 +1,22 @@
 import {
     VariantFilterRPCRequest,
     VariantFilterRPCResponse,
-} from './../types/productVariant';
-import { ShoppingRPCReplyProductVariantType } from './../types/shoppingRpcType';
+} from '../types/productVariant';
+import { ShoppingRPCReplyProductVariantType } from '../types/shoppingRpcType';
 import {
     RPCReplyProductVariantUpdateType,
     RPCRequestProductVariantUpdateType,
-} from './../types/orderRpcType';
+} from '../types/orderRpcType';
 import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
-import { RPCTypes } from './../types/rpcType';
-import { ProductVariantRepository } from './../repository/ProductVariantRepository';
-import { IService } from './../service/IService';
-import { ProductVariant } from './../entity/ProductVariant';
-import { RPCPayload } from './../types/utilTypes';
+import { RPCTypes } from '../types/rpcType';
+import { ProductVariantRepository } from '../repository/ProductVariantRepository';
+import { IService } from './IService';
+import { ProductVariant } from '../entity/ProductVariant';
+import { EventPayload, RPCPayload } from '../types/utilTypes';
 import { ColorService } from './ColorService';
 import { SizeService } from './SizeService';
-import UpdateProductVariantDTO from './../dto/UpdateProductVariantDTO';
+import UpdateProductVariantDTO from '../dto/UpdateProductVariantDTO';
+import EventType from './../types/eventType';
 
 export class ProductVariantService implements IService {
     private productVariantRepository: ProductVariantRepository;
@@ -83,11 +84,6 @@ export class ProductVariantService implements IService {
             await this.productVariantRepository.findByListProductIdAndColorAndSize(
                 requestProductList
             );
-
-        console.log(
-            '🚀 ~ file: ProductVariantService.ts:78 ~ ProductVariantService ~ productVariantList',
-            productVariantList
-        );
 
         const productVariantMap =
             this.createProductVariantMapByList(productVariantList);
@@ -239,9 +235,9 @@ export class ProductVariantService implements IService {
             (productVariant) => productVariant.productId
         );
         const productIdSet = new Set(productIdFilteredList);
-        
+
         const total = productIdSet.size;
-    
+
         // using productIdList to guarantee the order of product id that could be sorted in product service
         productIdList = productIdList.filter((productId) => {
             return productIdSet.has(productId);
@@ -280,8 +276,76 @@ export class ProductVariantService implements IService {
         return replyProductVariantList;
     }
 
-    subscribeEvents(_: string): void {
-        throw new Error('Method not implemented.');
+    async launchDiscountOnProductVariant(
+        productIdList: string[],
+        value: number
+    ): Promise<void> {
+        const productVariantList =
+            await this.productVariantRepository.findByProductIdList(
+                productIdList
+            );
+        if (value >= 1) {
+            this.updateSellingPriceOfProductVariantByDiscountValue(
+                productVariantList,
+                value
+            );
+        } else if (value > 0 && value < 1) {
+            this.updatePriceOfProductVariantByDiscountPercentage(
+                productVariantList,
+                value
+            );
+        }
+        await this.productVariantRepository.updateManyProductVariantSellingPrice(
+            productVariantList
+        );
+    }
+
+    async endDiscountOnProductVariant(productIdList: string[]): Promise<void> {
+        const productVariantList =
+            await this.productVariantRepository.findByProductIdList(
+                productIdList
+            );
+        productVariantList.forEach(async (productVariant) => {
+            productVariant.sellingPrice = productVariant.basePrice;
+            await this.productVariantRepository.save(productVariant);
+        });
+    }
+
+    updateSellingPriceOfProductVariantByDiscountValue(
+        productVariantList: ProductVariant[],
+        value: number
+    ): void {
+        productVariantList.forEach((productVariant) => {
+            productVariant.sellingPrice -= value;
+        });
+    }
+
+    updatePriceOfProductVariantByDiscountPercentage(
+        productVariantList: ProductVariant[],
+        percentage: number
+    ): void {
+        productVariantList.forEach((productVariant) => {
+            productVariant.sellingPrice -=
+                productVariant.basePrice * percentage;
+        });
+    }
+
+    subscribeEvents(payload: EventPayload): void {
+        const { event, data } = payload;
+        switch (event) {
+            case EventType.LAUNCH_DISCOUNT: {
+                const { productIdList, value } = data;
+                this.launchDiscountOnProductVariant(productIdList, value);
+                break;
+            }
+            case EventType.END_DISCOUNT: {
+                const { productIdList } = data;
+                this.endDiscountOnProductVariant(productIdList);
+                break;
+            }
+            default:
+                return;
+        }
     }
     serveRPCRequest(payload: RPCPayload) {
         const { type, data } = payload;

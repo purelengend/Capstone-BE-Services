@@ -1,8 +1,8 @@
-import { RPCRequestProductVariantUpdateType } from './../types/orderRpcType';
-import { AppDataSource } from './../data-source';
-import { NotFoundError } from './../error/error-type/NotFoundError';
+import { RPCRequestProductVariantUpdateType } from '../types/orderRpcType';
+import { AppDataSource } from '../data-source';
+import { NotFoundError } from '../error/error-type/NotFoundError';
 import { EntityNotFoundError, In, MoreThan } from 'typeorm';
-import { ProductVariant } from './../entity/ProductVariant';
+import { ProductVariant } from '../entity/ProductVariant';
 
 export class ProductVariantRepository {
     private repository = AppDataSource.getRepository(ProductVariant);
@@ -45,6 +45,33 @@ export class ProductVariantRepository {
     async updateManyProductVariantQuantity(
         productVariants: ProductVariant[]
     ): Promise<ProductVariant[]> {
+        return this.updateManyTransaction(
+            productVariants,
+            (updateProductVariant, productVariantToUpdate) => {
+                productVariantToUpdate.quantity = updateProductVariant.quantity;
+            }
+        );
+    }
+
+    async updateManyProductVariantSellingPrice(
+        productVariants: ProductVariant[]
+    ): Promise<ProductVariant[]> {
+        return this.updateManyTransaction(
+            productVariants,
+            (updateProductVariant, productVariantToUpdate) => {
+                productVariantToUpdate.sellingPrice =
+                    updateProductVariant.sellingPrice;
+            }
+        );
+    }
+
+    async updateManyTransaction(
+        productVariants: ProductVariant[],
+        updatePropertyCallback: (
+            updateProductVariant: ProductVariant,
+            productVariantToUpdate: ProductVariant
+        ) => void
+    ): Promise<ProductVariant[]> {
         try {
             return AppDataSource.transaction(
                 async (transactionalEntityManager) => {
@@ -53,8 +80,10 @@ export class ProductVariantRepository {
                             const productVariantToUpdate = await this.findById(
                                 productVariant.id
                             );
-                            productVariantToUpdate.quantity =
-                                productVariant.quantity;
+                            updatePropertyCallback(
+                                productVariant,
+                                productVariantToUpdate
+                            );
                             return transactionalEntityManager.save(
                                 productVariantToUpdate
                             );
@@ -206,6 +235,16 @@ export class ProductVariantRepository {
                 quantity: MoreThan(0),
                 ...(colorList.length > 0 ? colorQueryCondition : {}),
                 ...(sizeList.length > 0 ? sizeQueryCondition : {}),
+            },
+        });
+    }
+
+    async findByProductIdList(
+        productIdList: string[]
+    ): Promise<ProductVariant[]> {
+        return this.repository.find({
+            where: {
+                productId: In(productIdList),
             },
         });
     }

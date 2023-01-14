@@ -1,5 +1,5 @@
-import amqplib, { Channel, Connection } from "amqplib";
-import { EXCHANGE_NAME, MESSAGE_BROKER_URL } from "./../config";
+import amqplib, { Channel, Connection } from 'amqplib';
+import { EXCHANGE_NAME, MESSAGE_BROKER_URL } from '../config';
 
 let amqplibConnection: Connection | null = null;
 
@@ -8,18 +8,20 @@ export const getChannel = async (): Promise<Channel> => {
         amqplibConnection = await amqplib.connect(MESSAGE_BROKER_URL);
     }
     return await amqplibConnection.createChannel();
-}
+};
 
-const createChannel = async () : Promise<Channel> => {
+const createChannel = async (): Promise<Channel> => {
     try {
         const channel = await getChannel();
-        await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: true });
+        await channel.assertExchange(EXCHANGE_NAME, 'direct', {
+            durable: true,
+        });
         return channel;
     } catch (error) {
         console.log(error);
         throw error;
     }
-}
+};
 
 export default createChannel;
 
