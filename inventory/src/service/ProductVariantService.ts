@@ -80,10 +80,19 @@ export class ProductVariantService implements IService {
     async reserveProductVariantsQuantity(
         requestProductList: RPCRequestProductVariantUpdateType[]
     ) {
+        console.log({requestProductList});
+        
         const productVariantList =
             await this.productVariantRepository.findByListProductIdAndColorAndSize(
                 requestProductList
             );
+
+        if (productVariantList.length !== requestProductList.length) {
+            return {
+                status: 'FAILED',
+                message: 'Product variant not found',
+            };
+        }
 
         const productVariantMap =
             this.createProductVariantMapByList(productVariantList);
