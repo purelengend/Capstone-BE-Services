@@ -332,6 +332,8 @@ export class ProductVariantService implements IService {
 
     subscribeEvents(payload: EventPayload): void {
         const { event, data } = payload;
+        console.log('Event received: =========== =======', payload);
+        
         switch (event) {
             case EventType.LAUNCH_DISCOUNT: {
                 const { productIdList, value } = data;

@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-// import createChannel from './message-queue/createChannel';
+import createChannel from './message-queue/createChannel';
 import { color, size, productVariant } from './api';
 
 export default async (app: Application) => {
@@ -9,9 +9,9 @@ export default async (app: Application) => {
     app.use(cors());
     app.use(express.static(__dirname + '/public'));
 
-    // const channel = await createChannel();
+    const channel = await createChannel();
 
     color(app);
     size(app);
-    productVariant(app);
+    productVariant(app, channel);
 };

@@ -3,11 +3,14 @@ import { Application, Request, Response, NextFunction } from 'express';
 import { ProductVariantService } from '../service/ProductVariantService';
 import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
 import observerRPC from '../message-queue/rpc/observerRPC';
+import subscribeMessage from './../message-queue/pub-sub/subscribeMessage';
+import { Channel } from 'amqplib';
 
-export default (app: Application): void => {
+export default (app: Application, channel: Channel): void => {
     const productVariantService = new ProductVariantService();
 
     observerRPC(INVENTORY_RPC, productVariantService);
+    subscribeMessage(channel, productVariantService);
 
     app.get(
         '/productVariant/all',
