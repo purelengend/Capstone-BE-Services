@@ -3,7 +3,7 @@ import { FilterByColor } from './filter/FilterByColor';
 import {
     FilterProductRequest,
     RetrieveProductRequest,
-} from './../types/product';
+} from '../types/product';
 import { ProductRetrieveMediator } from './filter/ProductRetrieveMediator';
 import EventType from '../types/eventType';
 import { difference } from '../util/util';
@@ -14,7 +14,7 @@ import { RPCTypes } from '../types/rpcType';
 import { EventPayload, RPCPayload } from '../types/utilTypes';
 import { IProductModel } from '../model/productModel';
 import { ProductRepository } from '../repository/ProductRepository';
-import CategoryService from './categoryService';
+import CategoryService from './CategoryService';
 import { FilterByCategories } from './filter/FilterByCategories';
 import { FilterByPrice } from './filter/FilterByPrice';
 import { Filter } from './filter/Filter';

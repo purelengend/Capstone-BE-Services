@@ -1,6 +1,6 @@
 import { ICategoryModel } from './../model/categoryModel';
 import { Application, NextFunction, Request, Response } from 'express';
-import CategoryService from '../service/categoryService';
+import CategoryService from '../service/CategoryService';
 
 export default (app: Application) => {
     const categoryService = new CategoryService();

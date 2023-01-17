@@ -1,5 +1,5 @@
 import { IProductModel } from './../../model/productModel';
-import { ProductRepository } from './../../repository/productRepository';
+import { ProductRepository } from '../../repository/ProductRepository';
 import {
     ProductQueryFilterOptions,
     ProductRetrieveResponseType,

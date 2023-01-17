@@ -1,8 +1,8 @@
-import { ProductQueryFilterOptions } from './../types/product';
+import { ProductQueryFilterOptions } from '../types/product';
 // import { BaseError } from './../error/error-type/BaseError';
-import { NotFoundError } from './../error/error-type/NotFoundError';
+import { NotFoundError } from '../error/error-type/NotFoundError';
 import ProductModel, { IProductModel } from '../model/productModel';
-import CategoryModel from './../model/categoryModel';
+import CategoryModel from '../model/categoryModel';
 
 export class ProductRepository {
     async getProductById(id: string): Promise<IProductModel | null> {
