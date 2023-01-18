@@ -7,6 +7,8 @@ services:
     ports:
       - 3002:3002
     environment:
+      PORT: 3002
+      NODE_ENV: production
       DATABASE_URL: postgres://postgres:1@postgres:5432/fu-capstone-inventory
     working_dir: /usr/src/app
     command: sh -c "yarn typeorm migration:run -d ./src/data-source.ts && yarn start"
