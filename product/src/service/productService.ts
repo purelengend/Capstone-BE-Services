@@ -155,7 +155,7 @@ export default class ProductService implements IService {
             sortBy,
             filters: filterOptionsRequest,
         } = retrieveProductRequest;
-        
+
         const filterCommands = this.createFilterCommandsFromRequest(
             filterOptionsRequest!,
             this.filterByEntityFieldCommandFactory
@@ -235,13 +235,67 @@ export default class ProductService implements IService {
         }
     }
 
+    async launchDiscountOnProducts(productIdList: string[], discountValue: number) {
+        const productList = await this.productRepository.getProductsByIdList(productIdList);
+        if (productList.length === 0) {
+            throw new NotFoundError('No product found with given product id list');
+        }
+        if (discountValue >= 1) {
+            this.updateSellingPriceOfProductByDiscountValue(
+                productList,
+                discountValue
+            );
+        } else if (discountValue > 0 && discountValue < 1) {
+            this.updatePriceOfProductByDiscountPercentage(
+                productList,
+                discountValue
+            );
+        }
+        productList.forEach((product) => {
+            this.productRepository.updateProduct(product.id!, product);
+        });
+    }
+
+    updateSellingPriceOfProductByDiscountValue(
+        productList: IProductModel[],
+        value: number
+    ): void {
+        productList.forEach((product) => {
+            product.sellingPrice -= value;
+        });
+    }
+
+    updatePriceOfProductByDiscountPercentage(
+        productList: IProductModel[],
+        percentage: number
+    ): void {
+        productList.forEach((product) => {
+            product.sellingPrice -=
+                product.basePrice * percentage;
+        });
+    }
+
+    async endDiscountOnProducts(productIdList: string[]) {
+        const productList = await this.productRepository.getProductsByIdList(productIdList);
+        if (productList.length === 0) {
+            throw new NotFoundError('No product found with given product id list');
+        }
+        productList.forEach((product) => {
+            product.sellingPrice = product.basePrice;
+        });
+
+        productList.forEach((product) => {
+            this.productRepository.updateProduct(product.id!, product);
+        });
+    }
+
     subscribeEvents(payload: string): void {
         const eventPayload: EventPayload = JSON.parse(payload);
         const { event, data } = eventPayload;
 
         switch (event) {
             case EventType.CREATE_REVIEW:
-            case EventType.DELETE_REVIEW:
+            case EventType.DELETE_REVIEW: {
                 const { productId, averageRating, reviewCount } = data;
                 this.updateProductReviewStatistics(
                     productId,
@@ -249,6 +303,17 @@ export default class ProductService implements IService {
                     reviewCount
                 );
                 break;
+            }
+            case EventType.LAUNCH_DISCOUNT: {
+                const { productIdList, discountValue } = data;
+                this.launchDiscountOnProducts(productIdList, discountValue);
+                break;
+            }
+            case EventType.END_DISCOUNT: {
+                const { productIdList } = data;
+                this.endDiscountOnProducts(productIdList);
+                break;
+            }
             default:
                 break;
         }

@@ -5,6 +5,7 @@ export interface IProductModel {
     name: string;
     description: string;
     basePrice: number;
+    sellingPrice: number;
     quantity: number;
     coverPhoto: string;
     photoUrls: string[];
@@ -18,6 +19,7 @@ const productSchema = new Schema<IProductModel>(
         name: { type: String, required: true },
         description: { type: String, required: true },
         basePrice: { type: Number, required: true, min: 0 },
+        sellingPrice: { type: Number, required: false, min: 0 },
         quantity: { type: Number, required: true },
         coverPhoto: { type: String, required: true },
         photoUrls: [{ type: String, required: false }],

@@ -81,6 +81,15 @@ export class ProductRepository {
         }
     }
 
+    async getProductsByIdList(idList: string[]): Promise<IProductModel[]> {
+        try {
+            const products = await ProductModel.find({ _id: { $in: idList } });
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     async paginateProducts(
         page: number,
         pageSize: number,

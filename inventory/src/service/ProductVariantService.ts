@@ -80,8 +80,8 @@ export class ProductVariantService implements IService {
     async reserveProductVariantsQuantity(
         requestProductList: RPCRequestProductVariantUpdateType[]
     ) {
-        console.log({requestProductList});
-        
+        console.log({ requestProductList });
+
         const productVariantList =
             await this.productVariantRepository.findByListProductIdAndColorAndSize(
                 requestProductList
@@ -119,14 +119,14 @@ export class ProductVariantService implements IService {
         const responseReverseProductList =
             updatedProductVariantList.map<RPCReplyProductVariantUpdateType>(
                 (productVariant) => {
-                    const { productId, color, size, sellingPrice, quantity } =
+                    const { productId, color, size, basePrice, sellingPrice, quantity } =
                         productVariant;
                     return {
                         productId,
                         color: color.name,
                         size: size.name,
                         quantity,
-                        sellingPrice,
+                        sellingPrice: sellingPrice || basePrice,
                     };
                 }
             );
@@ -212,10 +212,10 @@ export class ProductVariantService implements IService {
             );
         const replyProductVariant = productVariant
             ? {
-                  ...productVariant,
-                  color: productVariant.color.name,
-                  size: productVariant.size.name,
-              }
+                ...productVariant,
+                color: productVariant.color.name,
+                size: productVariant.size.name,
+            }
             : null;
         return replyProductVariant;
     }
@@ -287,21 +287,25 @@ export class ProductVariantService implements IService {
 
     async launchDiscountOnProductVariant(
         productIdList: string[],
-        value: number
+        discountValue: number
     ): Promise<void> {
         const productVariantList =
             await this.productVariantRepository.findByProductIdList(
                 productIdList
             );
-        if (value >= 1) {
+
+        if (productVariantList.length === 0) {
+            throw new Error('Product variant not found');
+        }
+        if (discountValue >= 1) {
             this.updateSellingPriceOfProductVariantByDiscountValue(
                 productVariantList,
-                value
+                discountValue
             );
-        } else if (value > 0 && value < 1) {
+        } else if (discountValue > 0 && discountValue < 1) {
             this.updatePriceOfProductVariantByDiscountPercentage(
                 productVariantList,
-                value
+                discountValue
             );
         }
         await this.productVariantRepository.updateManyProductVariantSellingPrice(
@@ -341,12 +345,12 @@ export class ProductVariantService implements IService {
 
     subscribeEvents(payload: EventPayload): void {
         const { event, data } = payload;
-        console.log('Event received: =========== =======', payload);
-        
+        console.log('Event payload received: ', payload);
+
         switch (event) {
             case EventType.LAUNCH_DISCOUNT: {
-                const { productIdList, value } = data;
-                this.launchDiscountOnProductVariant(productIdList, value);
+                const { productIdList, discountValue } = data;
+                this.launchDiscountOnProductVariant(productIdList, discountValue);
                 break;
             }
             case EventType.END_DISCOUNT: {
