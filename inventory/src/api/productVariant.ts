@@ -1,4 +1,4 @@
-import { INVENTORY_RPC } from '../config/index';
+import { INVENTORY_RPC, DISCOUNT_SERVICE } from '../config/index';
 import { Application, Request, Response, NextFunction } from 'express';
 import { ProductVariantService } from '../service/ProductVariantService';
 import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
@@ -11,6 +11,7 @@ export default (app: Application, channel: Channel): void => {
 
     observerRPC(INVENTORY_RPC, productVariantService);
     subscribeMessage(channel, productVariantService);
+    subscribeMessage(channel, productVariantService, DISCOUNT_SERVICE);
 
     app.get(
         '/productVariant/all',

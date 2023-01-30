@@ -1,4 +1,4 @@
-import { verifyAdminAuthorization } from './../middleware/auth';
+// import { verifyAdminAuthorization } from './../middleware/auth';
 import { RetrieveProductRequest } from './../types/product';
 import { Channel } from 'amqplib';
 import { Application, NextFunction, Request, Response } from 'express';
@@ -7,14 +7,15 @@ import { IProductModel } from '../model/productModel';
 import ProductService from '../service/ProductService';
 import publishMessage from '../message-queue/pub-sub/publishMessage';
 import EventType from './../types/eventType';
-import { REVIEW_SERVICE } from './../config';
+import { REVIEW_SERVICE, DISCOUNT_SERVICE } from './../config';
 import subscribeMessage from './../message-queue/pub-sub/subscribeMessage';
 
 export default (app: Application, channel: Channel) => {
     const productService = new ProductService();
-
+    
     observerRPC('PRODUCT_RPC', productService);
     subscribeMessage(channel, productService);
+    subscribeMessage(channel, productService, DISCOUNT_SERVICE);
 
     app.get('/', async (_: Request, res: Response, next: NextFunction) => {
         try {
@@ -38,7 +39,7 @@ export default (app: Application, channel: Channel) => {
 
     app.post(
         '/create',
-        verifyAdminAuthorization,
+        // verifyAdminAuthorization,
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const product = req.body as IProductModel;
