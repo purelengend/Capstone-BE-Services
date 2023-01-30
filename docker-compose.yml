@@ -1,0 +1,67 @@
+version: '3'
+services:
+  # Invetory service
+  inventory:
+    build: 
+      context: ./inventory
+      dockerfile: Dockerfile
+    image: inventory
+    container_name: inventory
+    ports:
+      - 3002:3002
+    environment:
+      PORT: 3002
+      NODE_ENV: production
+      DATABASE_URL: postgres://postgres:1@inventory-db:5432/fu-capstone-inventory
+    working_dir: /usr/src/app
+    command: sh -c "yarn typeorm migration:run -d ./src/data-source.ts && yarn start"
+    depends_on:
+      - inventory-db
+    links:
+      - inventory-db
+  inventory-db:
+    image: postgres
+    # ports: 
+    #   - '5432:5432'
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: fu-capstone-inventory
+
+  # Order service
+  order:
+    build:
+        context: ./order
+        dockerfile: Dockerfile
+    image: order
+    container_name: order
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-db:5432/fu-capstone-order
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1
+    depends_on:
+      - order-db
+    links:
+      - order-db
+  order-db:
+    image: postgres:latest
+    # ports:
+    #   - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: fu-capstone-order
+
+  #proxy
+  nginx-proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    image: nginx-proxy
+    depends_on:
+      - inventory
+      - order
+    ports:
+      - 8001:80

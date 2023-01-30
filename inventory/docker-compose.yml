@@ -4,6 +4,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    image: inventory
     ports:
       - 3002:3002
     environment:

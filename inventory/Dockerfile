@@ -10,7 +10,7 @@ RUN yarn install
 # Copy source files
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3002
 
 # Compile TypeScript code
 RUN yarn build
