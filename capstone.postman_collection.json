@@ -1,0 +1,1212 @@
+{
+	"info": {
+		"_postman_id": "dd026ee9-a101-4fbc-a840-cd83e82d296e",
+		"name": "capstone",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "inventory",
+			"item": [
+				{
+					"name": "size",
+					"item": [
+						{
+							"name": "GetAllSize",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/size/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"size",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetSizeByName",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/size/29",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"size",
+										"29"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateSize",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"L\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3002/size",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"size"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteSize",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/size/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"size",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "color",
+					"item": [
+						{
+							"name": "GetAllColor",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/color/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"color",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetColorByName",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/color/yellow",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"color",
+										"yellow"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateColor",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"black\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3002/color",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"color"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteColor",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost3002/color/1",
+									"protocol": "http",
+									"host": [
+										"localhost3002"
+									],
+									"path": [
+										"color",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "productVariant",
+					"item": [
+						{
+							"name": "GetAllProductVariant",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/productVariant/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"productVariant",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetProductVariantById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/productVariant/8cec0b41-0ea7-4134-a8db-ed0c065b7367",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"productVariant",
+										"8cec0b41-0ea7-4134-a8db-ed0c065b7367"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateProductVariant",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": \"63b990748083e160bc5dee9c\",\r\n    \"colorId\": 1,\r\n    \"sizeId\": 2,\r\n    \"quantity\": 90,\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 1000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3002/productVariant",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"productVariant"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletelProductVariant",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/productVariant/123",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"productVariant",
+										"123"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateProductVariant",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\": \"p4566\",\r\n    \"colorId\": 2,\r\n    \"sizeId\": 2,\r\n    \"quantity\": 120,\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3002/productVariant/5afe847d-4b2f-439d-8154-5dfaf530c115",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"productVariant",
+										"5afe847d-4b2f-439d-8154-5dfaf530c115"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ReverseProductVariantQuantity",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productVariantId\": \"5afe847d-4b2f-439d-8154-5dfaf530c115\",\r\n    \"quantity\": 101\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3002/productVariantReverse",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"productVariantReverse"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "order",
+			"item": [
+				{
+					"name": "GetAllOrder",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/order/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"deliveryAddress\": \"12 Wall strest\",\r\n    \"phone\": \"090123456789\",\r\n    \"deliveryFee\": 1.23,\r\n    \"paymentMethod\": \"COD\",\r\n    \"orderItemDTOList\": [\r\n        {\r\n            \"productId\": \"63b990748083e160bc5dee9c\",\r\n            \"productName\": \"productName 1\",\r\n            \"color\": \"yellow\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/order/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "shopping",
+			"item": [
+				{
+					"name": "cart",
+					"item": [
+						{
+							"name": "GetAllCart",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3003/cart/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"cart",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCartByUserId",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3003/cart?userId=u123",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"cart"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "u123"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AddItemToCart",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"itemDTO\": {\r\n        \"productId\": \"p123\",\r\n        \"productName\": \"product name 123\",\r\n        \"productPhotoUrl\": \"this is photo url\",\r\n        \"color\": \"red\",\r\n        \"size\": \"29\",\r\n        \"quantity\": 10\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3003/addToCart",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"addToCart"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCartItemQuantity",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"productVariantId\": \"ebc71613-d44c-4410-a1c2-ab7695a9f833\",\r\n    \"quantity\": 8\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3003/updateCartItemQuantity",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"updateCartItemQuantity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RemoveItemFromCart",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"productVariantId\": \"8cec0b41-0ea7-4134-a8db-ed0c065b7367\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3003/removeFromCart",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"removeFromCart"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "wishlist",
+					"item": [
+						{
+							"name": "GetAllWishlist",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3003/cart/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"cart",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetWishlistByUserId",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3003/cart?userId=u123",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"cart"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "u123"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AddItemToWishlist",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"itemDTO\": {\r\n        \"productId\": \"p123\",\r\n        \"productName\": \"product name 123\",\r\n        \"productPhotoUrl\": \"this is photo url\",\r\n        \"color\": \"red\",\r\n        \"size\": \"29\",\r\n        \"quantity\": 10\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3003/addToCart",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"addToCart"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RemoveItemFromWishlist",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3003/removeFromCart",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"removeFromCart"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "product",
+			"item": [
+				{
+					"name": "category",
+					"item": [
+						{
+							"name": "CreateCategory",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"jacket\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/category/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"category",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllCategories",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/category/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"category",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCategoryById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/category/63a2a98806d2c7b052374f6e",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"category",
+										"63a2a98806d2c7b052374f6e"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetProduct",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/63cd4d49adfa955548f9a2fc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"63cd4d49adfa955548f9a2fc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateProduct",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZDQyMjdlMi1jODQ5LTRkZDctYmZjOC1iNGI5ZjAyYTE2MzUiLCJ1c2VybmFtZSI6ImRvYW5odGh1Y2RuMDEiLCJyb2xlIjoiQ1VTVE9NRVIiLCJpYXQiOjE2NzM1MzgyNTcsImV4cCI6MTY3MzUzOTE1N30.a8UW65z75ZeURyPHUluCJE-cAM9fUX5iVh5efJ_Kam8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"tao san pham qua co selling price\",\r\n    \"description\": \"product description\",\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 1000,\r\n    \"quantity\": 80,\r\n    \"coverPhoto\": \"fake women jacket pants image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63b98c258083e160bc5dee81\", \"63b98c448083e160bc5dee87\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProduct",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"fake product\",\r\n    \"description\": \"product description\",\r\n    \"basePrice\": 15000,\r\n    \"quantity\": 9911,\r\n    \"coverPhoto\": \"fake image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 6\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63a2a98806d2c7b052374f6e\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/update/63a2a9e306d2c7b052374f73",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"update",
+								"63a2a9e306d2c7b052374f73"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteProduct",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/delete/63a2ce16b7b1bdfbb3422df7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"delete",
+								"63a2ce16b7b1bdfbb3422df7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FilterProduct",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filters\": {\r\n        \"priceRange\": \"all\"\r\n    },\r\n    \"page\": 2,\r\n    \"pageSize\": 2,\r\n    \"orderBy\": \"basePrice\",\r\n    \"sortBy\": \"desc\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/retrieveProduct",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"retrieveProduct"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "review",
+			"item": [
+				{
+					"name": "GetRview",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateReview",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\": \"63a2ce16b7b1bdfbb3422df7\",\r\n    \"rating\": 5,\r\n    \"comment\": \"good product 2\",\r\n    \"userId\": \"u123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "role",
+					"item": [
+						{
+							"name": "GetAllRole",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/role",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"role"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetRoleById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/role/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"role",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetRoleByName",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/role",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"role"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateRole",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"CUSTOMER\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3004/role",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"role"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "GetAllUser",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/user",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetUserById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/user/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"user",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateUser",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3004/user",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"user"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"doanhthuc\",\r\n    \"password\": \"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3004/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"doanhthucdn01\",\r\n    \"password\": \"123456\",\r\n    \"email\": \"doanhthuc@3005.gmail.com\",\r\n    \"phoneNumber\": \"0123456789\",\r\n    \"gender\": \"MALE\",\r\n    \"address\": \"02. wall street\",\r\n    \"avatarUrl\": \"fake avatar url\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3004/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "discount",
+			"item": [
+				{
+					"name": "CreateDiscount",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"discount product\",\r\n    \"startDate\": \"2023-01-22T22:01:00\",\r\n    \"endDate\": \"2023-01-22T22:12:00\",\r\n    \"type\": \"value\",\r\n    \"value\": 0.15,\r\n    \"listProductId\": [\"63cd4d49adfa955548f9a2fc\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7241/Discount",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7241",
+							"path": [
+								"Discount"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
