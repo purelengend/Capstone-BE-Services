@@ -4,6 +4,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    image: user
+    # container_name: inventory
     ports:
       - 3004:3004
     environment:

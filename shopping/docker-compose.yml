@@ -1,0 +1,16 @@
+version: '3'
+services:
+  shopping:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: shopping
+    # container_name: shopping
+    ports:
+      - 3003:3003
+    environment:
+      PORT: 3003
+      NODE_ENV: production
+      # DATABASE_URL: postgres://postgres:1@postgres:5432/fu-capstone-inventory
+    # working_dir: /usr/src/app
+    # command: sh -c "yarn start"

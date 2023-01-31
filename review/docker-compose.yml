@@ -1,0 +1,16 @@
+version: '3'
+services:
+  review:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: review
+    # container_name: review
+    ports:
+      - 3001:3001
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+      # DATABASE_URL: postgres://postgres:1@postgres:5432/fu-capstone-inventory
+    # working_dir: /usr/src/app
+    # command: sh -c "yarn start"

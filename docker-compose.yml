@@ -1,5 +1,31 @@
 version: '3'
 services:
+  # Product service 
+  product:
+    build: 
+      context: ./product
+      dockerfile: Dockerfile
+    image: product
+    container_name: product
+    ports:
+      - 3000:3000
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+
+  # Review service
+  review:
+    build: 
+      context: ./review
+      dockerfile: Dockerfile
+    image: review
+    container_name: review
+    ports:
+      - 3001:3001
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+
   # Invetory service
   inventory:
     build: 
@@ -27,6 +53,47 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: fu-capstone-inventory
+
+  # Shopping service
+  shopping:
+    build: 
+      context: ./shopping
+      dockerfile: Dockerfile
+    image: shopping
+    # container_name: shopping
+    ports:
+      - 3003:3003
+    environment:
+      PORT: 3003
+      NODE_ENV: production
+
+  # User service
+  user:
+    build: 
+      context: ./user
+      dockerfile: Dockerfile
+    image: user
+    container_name: user
+    ports:
+      - 3004:3004
+    environment:
+      PORT: 3004
+      NODE_ENV: production
+      DATABASE_URL: postgres://postgres:1@user-db:5432/fu-capstone-user
+    working_dir: /usr/src/app
+    command: sh -c "yarn typeorm migration:run -d ./src/data-source.ts && yarn start"
+    depends_on:
+      - user-db
+    links:
+      - user-db
+  user-db:
+    image: postgres
+    # ports: 
+    #   - '5434:5432'
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: fu-capstone-user
 
   # Order service
   order:
@@ -63,5 +130,9 @@ services:
     depends_on:
       - inventory
       - order
+      - product
+      - review
+      - shopping
+      - user
     ports:
       - 8001:80
