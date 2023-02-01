@@ -15,5 +15,7 @@ EXPOSE 3002
 # Compile TypeScript code
 RUN yarn build
 
+# RUN yarn typeorm migration:run -d ./src/data-source.ts
+
 # Start the server
 CMD ["yarn", "start"]

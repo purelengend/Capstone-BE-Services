@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: inventory-service-deployment
+spec: 
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: inventory-service
+  template: 
+    metadata:
+      labels:
+        app: inventory-service
+    spec:
+      containers:
+        - name: inventory
+          image: doanhthuc/inventory-service
+          ports:
+          - containerPort: 3002
+        # env:
+        # - name: DATABASE_URL
+        #   value: postgres://postgres:1@postgres:5432/fu-capstone-inventory
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: inventory-service-service
+spec: 
+  selector:
+    app: inventory-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3002
+  type: LoadBalancer
