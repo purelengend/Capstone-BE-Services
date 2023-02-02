@@ -17,20 +17,24 @@ spec:
           image: doanhthuc/inventory-service
           ports:
           - containerPort: 3002
-        # env:
-        # - name: DATABASE_URL
-        #   value: postgres://postgres:1@postgres:5432/fu-capstone-inventory
+          command: ["/bin/sh","-c"]
+          args: ["yarn typeorm migration:run -d ./src/data-source.ts && yarn start"]
+          env:
+          - name: NODE_ENV
+            value: production
+          - name: DATABASE_URL
+            value: postgres://postgres:1@inventory-db:5432/fu-capstone-inventory
 ---
 apiVersion: v1
 kind: Service
 metadata: 
-  name: inventory-service-service
+  name: inventory-service
 spec: 
   selector:
     app: inventory-service
   ports:
     - name: http
       protocol: TCP
-      port: 80
+      port: 3002
       targetPort: 3002
   type: LoadBalancer

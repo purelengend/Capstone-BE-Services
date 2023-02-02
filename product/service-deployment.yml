@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: product-service-deployment
+spec: 
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: product-service
+  template: 
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+        - name: product
+          image: doanhthuc/product-service
+          ports:
+          - containerPort: 3000
+          env:
+          - name: NODE_ENV
+            value: production
+          # - name: DATABASE_URL
+          #   value: postgres://postgres:1@inventory-db:5432/fu-capstone-inventory
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: product-service
+spec: 
+  selector:
+    app: product-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer

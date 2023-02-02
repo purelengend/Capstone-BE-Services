@@ -6,7 +6,7 @@ services:
       context: ./product
       dockerfile: Dockerfile
     image: product
-    container_name: product
+    container_name: product-service
     ports:
       - 3000:3000
     environment:
@@ -19,7 +19,7 @@ services:
       context: ./review
       dockerfile: Dockerfile
     image: review
-    container_name: review
+    container_name: review-service
     ports:
       - 3001:3001
     environment:
@@ -32,7 +32,7 @@ services:
       context: ./inventory
       dockerfile: Dockerfile
     image: inventory
-    container_name: inventory
+    container_name: inventory-service
     ports:
       - 3002:3002
     environment:
@@ -60,7 +60,7 @@ services:
       context: ./shopping
       dockerfile: Dockerfile
     image: shopping
-    # container_name: shopping
+    container_name: shopping-service
     ports:
       - 3003:3003
     environment:
@@ -73,7 +73,7 @@ services:
       context: ./user
       dockerfile: Dockerfile
     image: user
-    container_name: user
+    container_name: user-service
     ports:
       - 3004:3004
     environment:
@@ -101,7 +101,7 @@ services:
         context: ./order
         dockerfile: Dockerfile
     image: order
-    container_name: order
+    container_name: order-service
     ports:
       - "8080:8080"
     environment:
