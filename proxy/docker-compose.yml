@@ -1,0 +1,9 @@
+version: '3'
+services:
+  nginx-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nginx-proxy
+    ports:
+      - 8001:80
