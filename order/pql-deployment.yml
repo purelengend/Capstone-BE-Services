@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inventory-db-deployment # Sets Deployment name
+  name: order-db-deployment # Sets Deployment name
 spec:
   replicas: 1
   selector:
@@ -13,7 +13,7 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
+      - name: order-db-container
         image: postgres # Sets Image
         imagePullPolicy: "IfNotPresent"
         ports:
@@ -27,25 +27,25 @@ spec:
         - name: POSTGRES_PASSWORD
           value: "1"
         - name: POSTGRES_DB
-          value: fu-capstone-inventory
-        volumeMounts:
-          - mountPath: /var/lib/postgresql/data
-            name: postgres-data
-      volumes:
-        - name: postgres-data
-          persistentVolumeClaim:
-            claimName: inventory-db-pv-claim
+          value: fu-capstone-order
+      #   volumeMounts:
+      #     - mountPath: /var/lib/postgresql/data
+      #       name: postgres-data
+      # volumes:
+      #   - name: postgres-data
+      #     persistentVolumeClaim:
+      #       claimName: order-db-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: inventory-db # Sets service name
+  name: order-db # Sets service name
   labels:
     app: postgres # Labels and Selectors
 spec:
   selector:
     app: postgres
   ports:
-    - port: 5432 # Sets port to run the postgres application
+    - port: 5433 # Sets port to run the postgres application
       targetPort: 5432
   type: ClusterIP # Sets service type 
