@@ -26,7 +26,7 @@ const requestData = async (RPC_QUEUE_NAME: string, requestPayload: Object, uuid:
         return new Promise((resolve, reject) => {
             const timeOut = setTimeout(() => {
                 channel.close();
-                resolve('timeout and API could not fulfill the request');
+                reject('timeout and API could not fulfill the request');
             }, 5000);
             channel.consume(
                 responseQueue.queue,

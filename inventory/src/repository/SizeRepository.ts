@@ -1,7 +1,7 @@
 import { AppDataSource } from '../data-source';
 import { NotFoundError } from '../error/error-type/NotFoundError';
 import { Size } from '../entity/Size';
-import { EntityNotFoundError } from 'typeorm';
+import { EntityNotFoundError, In } from 'typeorm';
 
 export class SizeRepository {
     private repository = AppDataSource.getRepository(Size);
@@ -14,9 +14,6 @@ export class SizeRepository {
         try {
             return this.repository.findOneOrFail({
                 where: { name },
-                relations: {
-                    productVariants: true,
-                },
             });
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
@@ -30,6 +27,9 @@ export class SizeRepository {
         try {
             return this.repository.findOneOrFail({
                 where: { id },
+                relations: {
+                    productVariants: true,
+                },
             });
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
@@ -68,5 +68,13 @@ export class SizeRepository {
             }
             throw new Error(error);
         }
+    }
+
+    async findSizesByNameList(nameList: string[]): Promise<Size[]> {     
+        return await this.repository.find({
+            where: {
+                name: In(nameList),
+            },
+        });
     }
 }

@@ -1,3 +1,4 @@
+import { ICreateProductDto } from './../dto/IProductDto';
 // import { verifyAdminAuthorization } from './../middleware/auth';
 import { RetrieveProductRequest } from './../types/product';
 import { Channel } from 'amqplib';
@@ -42,7 +43,7 @@ export default (app: Application, channel: Channel) => {
         // verifyAdminAuthorization,
         async (req: Request, res: Response, next: NextFunction) => {
             try {
-                const product = req.body as IProductModel;
+                const product = req.body as ICreateProductDto;
                 const createdProduct = await productService.createProduct(
                     product
                 );

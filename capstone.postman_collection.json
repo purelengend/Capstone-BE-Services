@@ -37,7 +37,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3002/size/29",
+									"raw": "http://localhost:3002/size/M",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -45,7 +45,7 @@
 									"port": "3002",
 									"path": [
 										"size",
-										"29"
+										"M"
 									]
 								}
 							},
@@ -130,7 +130,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3002/color/yellow",
+									"raw": "http://localhost:3002/color/red",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -138,7 +138,7 @@
 									"port": "3002",
 									"path": [
 										"color",
-										"yellow"
+										"red"
 									]
 								}
 							},
@@ -151,7 +151,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"black\"\r\n}",
+									"raw": "{\r\n    \"name\": \"red\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -243,7 +243,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productId\": \"63b990748083e160bc5dee9c\",\r\n    \"colorId\": 1,\r\n    \"sizeId\": 2,\r\n    \"quantity\": 90,\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 1000\r\n}",
+									"raw": "{\r\n    \"productId\": \"63b990748083e160bc5dee9c\",\r\n    \"color\": \"red\",\r\n    \"size\": \"S\",\r\n    \"quantity\": 90,\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 1000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -291,7 +291,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productId\": \"p4566\",\r\n    \"colorId\": 2,\r\n    \"sizeId\": 2,\r\n    \"quantity\": 120,\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900\r\n}",
+									"raw": "{\r\n    \"productId\": \"p4566\",\r\n    \"color\": \"blue\",\r\n    \"size\": \"S\",\r\n    \"quantity\": 120,\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -670,7 +670,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"jacket\"\r\n}",
+									"raw": "{\r\n    \"name\": \"vay\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -752,14 +752,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/63cd4d49adfa955548f9a2fc",
+							"raw": "http://localhost:3000/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"63cd4d49adfa955548f9a2fc"
+								""
 							]
 						}
 					},
@@ -782,7 +782,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"tao san pham qua co selling price\",\r\n    \"description\": \"product description\",\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 1000,\r\n    \"quantity\": 80,\r\n    \"coverPhoto\": \"fake women jacket pants image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63b98c258083e160bc5dee81\", \"63b98c448083e160bc5dee87\"]\r\n}",
+							"raw": "{\r\n    \"name\": \"ao nu 2\",\r\n    \"description\": \"product description\",\r\n    \"basePrice\": 1700,\r\n    \"sellingPrice\": 1700,\r\n    \"coverPhoto\": \"fake women jacket pants image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63df6cbe30a67c3bfdb6fbfe\", \"63df6cc530a67c3bfdb6fc00\"],\r\n    \"productVariants\": [\r\n        {\r\n            \"color\": \"red\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        },\r\n        {\r\n            \"color\": \"red\",\r\n            \"size\": \"M\",\r\n            \"quantity\": 200,\r\n            \"basePrice\": 1500,\r\n            \"sellingPrice\": 1250\r\n        }\r\n    ]\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -859,7 +859,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"filters\": {\r\n        \"priceRange\": \"all\"\r\n    },\r\n    \"page\": 2,\r\n    \"pageSize\": 2,\r\n    \"orderBy\": \"basePrice\",\r\n    \"sortBy\": \"desc\"\r\n}",
+							"raw": "{\r\n    \"filters\": {\r\n        \"priceRange\": \"1600-2000\",\r\n        \"category\": [\"nu\"],\r\n        \"color\": [],\r\n        \"size\": []\r\n    },\r\n    \"page\": 1,\r\n    \"pageSize\": 2,\r\n    \"orderBy\": \"basePrice\",\r\n    \"sortBy\": \"desc\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

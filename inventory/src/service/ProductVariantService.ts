@@ -1,3 +1,4 @@
+import { CreateVariantRPCRequest } from './../types/productVariant';
 import {
     VariantFilterRPCRequest,
     VariantFilterRPCResponse,
@@ -40,11 +41,13 @@ export class ProductVariantService implements IService {
     async createProductVariant(
         productVariantDTO: CreateProductVariantDTO
     ): Promise<ProductVariant> {
-        const { colorId, sizeId } = productVariantDTO;
         const [color, size] = await Promise.all([
-            this.colorService.findById(colorId),
-            this.sizeService.findById(sizeId),
+            this.colorService.findByName(productVariantDTO.color),
+            this.sizeService.findByName(productVariantDTO.size),
         ]);
+        if (!color || !size) {
+            throw new Error('Color or size not found');
+        }
         const productVariant = Object.assign(
             new ProductVariant(),
             productVariantDTO,
@@ -59,10 +62,9 @@ export class ProductVariantService implements IService {
         id: string,
         productVariantDTO: UpdateProductVariantDTO
     ): Promise<ProductVariant> {
-        const { colorId, sizeId } = productVariantDTO;
         const [color, size] = await Promise.all([
-            this.colorService.findById(colorId),
-            this.sizeService.findById(sizeId),
+            this.colorService.findByName(productVariantDTO.color),
+            this.sizeService.findByName(productVariantDTO.size),
         ]);
 
         const productVariant = await this.findById(id);
@@ -75,6 +77,18 @@ export class ProductVariantService implements IService {
 
     async deleteProductVariant(id: string): Promise<ProductVariant> {
         return this.productVariantRepository.deleteProductVariant(id);
+    }
+
+    async getStockQuantityByProductIdAndColorAndSize(
+        productId: string,
+        color: string,
+        size: string
+    ): Promise<number> {
+        return await this.productVariantRepository.getStockQuantityByProductIdAndColorAndSize(
+            productId,
+            color,
+            size
+        );
     }
 
     async reserveProductVariantsQuantity(
@@ -343,6 +357,43 @@ export class ProductVariantService implements IService {
         });
     }
 
+    async serveCreateVariantRPCRequest(request: CreateVariantRPCRequest) {
+        const { productVariantList, colorNameList, sizeNameList } = request
+        const [sizes, colors] = await Promise.all([
+            this.sizeService.findSizesByNameList(sizeNameList),
+            this.colorService.findColorsByNameList(colorNameList)
+        ])
+
+        if (colorNameList.length !== colors.length || sizeNameList.length !== sizes.length) {
+            const notExistedColor = colorNameList.filter(colorName => !colors.find(color => color.name === colorName))
+            const notExistedSize = sizeNameList.filter(sizeName => !sizes.find(size => size.name === sizeName))
+            return {
+                status: 'FAILED',
+                message: `Color: ${notExistedColor} and size: ${notExistedSize} not found`
+            }
+        }
+        for (const variant of productVariantList) {
+            const color = colors.find(color => color.name === variant.color)
+            const size = sizes.find(size => size.name === variant.size)
+            if (!color || !size) {
+                return {
+                    status: 'FAILED',
+                    message: `Color: ${variant.color} or size: ${variant.size} not found`
+                }
+            }
+            const productVariant = Object.assign(
+                new ProductVariant(),
+                variant,
+                { color, size }
+            );
+            this.productVariantRepository.createProductVariant(productVariant);
+        }
+        return {
+            status: 'SUCCESS',
+            message: 'Create product variants successfully'
+        }
+    }
+
     subscribeEvents(payload: EventPayload): void {
         const { event, data } = payload;
         console.log('Event payload received: ', payload);
@@ -380,18 +431,23 @@ export class ProductVariantService implements IService {
                     color,
                     size
                 );
-            case RPCTypes.GET_PRODUCT_VARIANT_LIST_BY_ID_LIST:
+            case RPCTypes.GET_PRODUCT_VARIANT_LIST_BY_ID_LIST: {
                 const { productVariantIdList } = data as {
                     productVariantIdList: string[];
                 };
                 return this.serveRPCGetProductVariantListByIdList(
                     productVariantIdList
                 );
-            case RPCTypes.FILTER_PRODUCT_BY_COLOR_AND_SIZE:
+            }
+            case RPCTypes.FILTER_PRODUCT_BY_COLOR_AND_SIZE: {
                 const filterOptions = data as VariantFilterRPCRequest;
                 return this.retrieveProductByVariantFilterOptions(
                     filterOptions
                 );
+            }
+            case RPCTypes.INVENTORY_CREATE_VARIANT: {
+                return this.serveCreateVariantRPCRequest(data as CreateVariantRPCRequest)
+            }
             default:
                 throw new Error('Invalid RPC type');
         }

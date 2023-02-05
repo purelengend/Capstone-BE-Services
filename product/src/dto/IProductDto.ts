@@ -1,10 +1,18 @@
-export interface IProductDto {
+export interface ICreateProductDto {
     id?: string;
     name: string;
     description: string;
     basePrice: number;
-    quantity: number;  
-    coverPhotoUrl: string;
-    categoryIds?: string[];
+    sellingPrice: number;
+    coverPhoto: string;
+    photoUrls: string[];
+    categories?: string[];
     photosUrls?: string[];
+    productVariants: {
+        color: string;
+        size: string;
+        quantity: number;
+        basePrice: number;
+        sellingPrice: number;
+    }[];
 }

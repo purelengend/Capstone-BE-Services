@@ -22,8 +22,8 @@ export type ProductRetrieveResponseType = {
 };
 
 export type ProductQueryFilterOptions = {
-    categories?: { $in: string[] };
-    basePrice?: { $gte: number; $lte: number };
+    categories?: string[];
+    basePrice?: { min: number; max: number };
 };
 
 export type VariantFilterOptions = {

@@ -18,7 +18,7 @@ export class FilterByPrice extends Filter {
             .split('-')
             .map((price) => parseInt(price));
 
-        filterOptions.basePrice = { $gte: min, $lte: max };
+        filterOptions.basePrice = { min, max };
         return filterOptions;
     }
 }

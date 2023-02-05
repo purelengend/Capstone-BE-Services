@@ -1,3 +1,5 @@
+import CreateProductVariantDTO from "src/dto/CreateProductVariantDTO";
+
 export type VariantFilterRPCRequest = {
     productIdList: string[];
     colorList: string[];
@@ -17,4 +19,10 @@ export type VariantFilterOptions = {
     size: string[];
     page: number;
     pageSize: number;
+};
+
+export type CreateVariantRPCRequest = {
+    productVariantList: CreateProductVariantDTO[];
+    colorNameList: string[];
+    sizeNameList: string[];
 };

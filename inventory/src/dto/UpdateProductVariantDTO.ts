@@ -1,7 +1,7 @@
 export default class UpdateProductVariantDTO {
     productId: string;
-    colorId: number;
-    sizeId: number;
+    color: string;
+    size: string;
     quantity: number;
     basePrice: number;
     sellingPrice: number;

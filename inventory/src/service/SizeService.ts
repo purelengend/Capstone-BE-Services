@@ -30,4 +30,8 @@ export class SizeService {
     async getAll(): Promise<Size[]> {
         return this.sizeRepository.getAll();
     }
+
+    async findSizesByNameList(names: string[]): Promise<Size[]> {
+        return await this.sizeRepository.findSizesByNameList(names);
+    }
 }

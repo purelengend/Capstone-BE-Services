@@ -54,7 +54,7 @@ export class ProductRetrieveMediator {
         if (!filterByVariantOptions) {
             productModelList = productModelList.slice(
                 (page - 1) * pageSize,
-                pageSize * pageSize
+                page * pageSize
             );
             return {
                 productList: productModelList,

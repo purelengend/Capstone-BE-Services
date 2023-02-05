@@ -128,19 +128,19 @@ export class ProductRepository {
 
             if (categories && basePrice) {
                 return await CategoryModel.find({
-                    name: { $in: categories.$in },
+                    name: { $in: categories },
                 }).then((categories) => {
                     const categoryIds = categories.map(
                         (category) => category._id
                     );
                     return ProductModel.find({
-                        basePrice,
+                        basePrice: { $gte: basePrice.min, $lte: basePrice.max },
                         categories: { $all: categoryIds },
                     });
                 });
             } else if (categories) {
                 return await CategoryModel.find({
-                    name: { $in: categories.$in },
+                    name: { $in: categories },
                 }).then((categories) => {
                     const categoryIds = categories.map(
                         (category) => category._id
@@ -150,7 +150,9 @@ export class ProductRepository {
                     });
                 });
             } else if (basePrice) {
-                return await ProductModel.find(basePrice);
+                return await ProductModel.find({
+                    basePrice: { $gte: basePrice.min, $lte: basePrice.max }
+                });
             } else {
                 return await ProductModel.find();
             }

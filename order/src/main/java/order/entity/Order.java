@@ -22,8 +22,15 @@ public class Order {
     @Column(name = "id", nullable = false)
     private String id;
     private String userId;
+    private String firstName;
+    private String lastName;
+    private String companyName;
+    private String country;
+    private String streetAddress;
+    private String city;
+    private String state;
+    private String zipCode;
     private String status;
-    private String deliveryAddress;
     private String phone;
     private String deliveryFee;
     private String paymentMethod;

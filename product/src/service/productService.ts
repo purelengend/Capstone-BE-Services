@@ -1,3 +1,5 @@
+// import { CreateProductRPCResponse } from './../types/rpcType';
+// import { INVENTORY_RPC } from './../config/index';
 import { FilterBySize } from './filter/FilterBySize';
 import { FilterByColor } from './filter/FilterByColor';
 import {
@@ -22,6 +24,8 @@ import {
     FilterByVariantOptions,
     VariantOptionsType,
 } from './filter/FilterByVariantOptions';
+import { ICreateProductDto } from './../dto/IProductDto';
+// import { requestRPC } from './../message-queue/rpc/requestRPC';
 
 export default class ProductService implements IService {
     private productRepository: ProductRepository;
@@ -48,11 +52,58 @@ export default class ProductService implements IService {
         return product;
     }
 
-    async createProduct(product: IProductModel) {
+    async createProduct(createProductDto: ICreateProductDto) {
+        const colorSet = new Set<string>(), sizeSet = new Set<string>();
+        const variantSet = new Set<string>();
+        createProductDto.productVariants.forEach((variant) => {
+            variant.color = variant.color.toLowerCase();
+            variant.size = variant.size.toUpperCase();
+            if (variantSet.has(variant.color + variant.size)) {
+                throw new ValidationError(`duplicate variant color: ${variant.color} size: ${variant.size}`);
+            }
+            variantSet.add(variant.color + variant.size);
+            colorSet.add(variant.color);
+            sizeSet.add(variant.size);
+        });
+        const colors = Array.from(colorSet);
+        const sizes = Array.from(sizeSet);
+
+        let product: IProductModel = {
+            ...createProductDto,
+            colors,
+            sizes,
+        }
         product = await this.productRepository.createProduct(product);
         if (!product) {
             throw new ValidationError('product create body did not match');
         }
+
+        /* const createVariantPayload = {
+            type: RPCTypes.INVENTORY_CREATE_VARIANT,
+            data: {
+                productVariantList: createProductDto.productVariants.map(variant => {
+                    return {
+                        productId: product.id,
+                        ...variant,
+                    }
+                }),
+                sizeNameList: sizes,
+                colorNameList: colors,
+            }
+        }
+
+        try {
+            const createVariantResponse = await requestRPC(INVENTORY_RPC, createVariantPayload) as CreateProductRPCResponse;
+            if (createVariantResponse.status === 'FAILED') {
+                this.productRepository.deleteProduct(product.id!);
+                throw new ValidationError(createVariantResponse.message);
+            }
+        } catch (error) {
+            console.log("🚀 ~ file: productService.ts:94 ~ ProductService ~ createProduct ~ error", error);
+            this.productRepository.deleteProduct(product.id!);
+            throw new Error(error);
+        } */
+
         await this.categoryService.addProductToCategories(
             product.id!,
             product.categories

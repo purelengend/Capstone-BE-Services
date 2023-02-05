@@ -12,7 +12,7 @@ export class FilterByCategories extends Filter {
     extendFilterOptions(
         filterOptions: ProductQueryFilterOptions
     ): ProductQueryFilterOptions {
-        filterOptions.categories = { $in: this.categories };
+        filterOptions.categories = this.categories || [];
         return filterOptions;
     }
 }

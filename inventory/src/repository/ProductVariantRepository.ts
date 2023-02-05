@@ -248,4 +248,34 @@ export class ProductVariantRepository {
             },
         });
     }
+
+    async getStockQuantityByProductIdAndColorAndSize(
+        productId: string,
+        colorName: string,
+        sizeName: string
+    ): Promise<number> {
+        const productVariant = await this.repository.findOne({
+            select: {
+                quantity: true,
+            },
+            relations: {
+                color: true,
+                size: true,
+            },
+            where: {
+                productId,
+                color: {
+                    name: colorName,
+                },
+                size: {
+                    name: sizeName,
+                },
+            },
+        })
+        if (productVariant) {
+            return productVariant.quantity;
+        }
+        return 0;
+    }
+
 }

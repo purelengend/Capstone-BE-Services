@@ -5,6 +5,7 @@ import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
 import observerRPC from '../message-queue/rpc/observerRPC';
 import subscribeMessage from './../message-queue/pub-sub/subscribeMessage';
 import { Channel } from 'amqplib';
+import UpdateProductVariantDTO from './../dto/UpdateProductVariantDTO';
 
 export default (app: Application, channel: Channel): void => {
     const productVariantService = new ProductVariantService();
@@ -41,6 +42,24 @@ export default (app: Application, channel: Channel): void => {
         }
     );
 
+    app.get('/productVariant/stock', async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { productId, sizeName, colorName } = req.query;
+            if (!productId || !sizeName || !colorName) {
+                throw new Error('Missing query params');
+            }
+            return res.status(200).json(await 
+                productVariantService
+                .getStockQuantityByProductIdAndColorAndSize(
+                    productId.toString(), 
+                    colorName.toString(), 
+                    sizeName.toString()));
+        } catch (error) {
+            next(error);
+            return;
+        }
+    });
+
     app.post(
         '/productVariant',
         async (req: Request, res: Response, next: NextFunction) => {
@@ -64,7 +83,7 @@ export default (app: Application, channel: Channel): void => {
             try {
                 console.log(req.body);
 
-                const productVariant = req.body as CreateProductVariantDTO;
+                const productVariant = req.body as UpdateProductVariantDTO;
                 console.log(productVariant);
                 const updatedProductVariant =
                     await productVariantService.updateProductVariant(

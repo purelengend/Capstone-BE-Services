@@ -13,9 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderDTO {
     private String userId;
-
-    private String deliveryAddress;
-
+    private String firstName;
+    private String lastName;
+    private String companyName;
+    private String country;
+    private String streetAddress;
+    private String city;
+    private String state;
+    private String zipCode;
     private String phone;
 
     private float deliveryFee;

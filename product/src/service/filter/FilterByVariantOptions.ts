@@ -6,8 +6,8 @@ import { Filter } from './Filter';
 import { RPCTypes } from './../../types/rpcType';
 
 export type VariantOptionsType = {
-    colorList?: [string];
-    sizeList?: [string];
+    colorList?: string[];
+    sizeList?: string[];
 };
 
 export class FilterByVariantOptions extends Filter {
@@ -24,11 +24,9 @@ export class FilterByVariantOptions extends Filter {
         productModelList: IProductModel[],
         page = 1,
         pageSize = 10
-    ): Promise<ProductRetrieveResponseType> {
-        console.log('HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE============================');
-        
+    ): Promise<ProductRetrieveResponseType> {        
         const { colorList, sizeList } = this.variantOptions;
-        if (!colorList && !sizeList) {
+        if ((!colorList && !sizeList) || (colorList!.length === 0 && sizeList!.length === 0)) {
             return {
                 productList: productModelList,
                 page,

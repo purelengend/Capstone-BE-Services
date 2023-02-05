@@ -1,7 +1,7 @@
 import { AppDataSource } from '../data-source';
 import { NotFoundError } from '../error/error-type/NotFoundError';
 import { Color } from '../entity/Color';
-import { EntityNotFoundError } from 'typeorm';
+import { EntityNotFoundError, In } from 'typeorm';
 
 export class ColorRepository {
     private repository = AppDataSource.getRepository(Color);
@@ -14,6 +14,9 @@ export class ColorRepository {
         try {
             return this.repository.findOneOrFail({
                 where: { id },
+                relations: {
+                    productVariants: true,
+                },
             });
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
@@ -27,9 +30,6 @@ export class ColorRepository {
         try {
             return this.repository.findOneOrFail({
                 where: { name },
-                relations: {
-                    productVariants: true,
-                },
             });
         } catch (error) {
             if (error instanceof EntityNotFoundError) {
@@ -72,5 +72,13 @@ export class ColorRepository {
             }
             throw new Error(error);
         }
+    }
+
+    async findColorsByNameList(nameList: string[]): Promise<Color[]> {
+        return await this.repository.find({
+            where: {
+                name: In(nameList),
+            }
+        })
     }
 }

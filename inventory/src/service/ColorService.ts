@@ -31,4 +31,8 @@ export class ColorService {
     async deleteColor(id: number): Promise<Color> {
         return this.colorRepository.deleteColor(id);
     }
+
+    async findColorsByNameList(names: string[]): Promise<Color[]> {
+        return await this.colorRepository.findColorsByNameList(names);
+    }
 }
