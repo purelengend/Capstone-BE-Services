@@ -8,7 +8,12 @@ export class ProductVariantRepository {
     private repository = AppDataSource.getRepository(ProductVariant);
 
     async getAll(): Promise<ProductVariant[]> {
-        return this.repository.find();
+        return this.repository.find({
+            relations: {
+                color: true,
+                size: true,
+            },
+        });
     }
 
     async findById(id: string): Promise<ProductVariant> {
@@ -253,8 +258,8 @@ export class ProductVariantRepository {
         productId: string,
         colorName: string,
         sizeName: string
-    ): Promise<number> {
-        const productVariant = await this.repository.findOne({
+    ): Promise<number> {        
+        const productVariant = await this.repository.find({
             select: {
                 quantity: true,
             },
@@ -271,9 +276,10 @@ export class ProductVariantRepository {
                     name: sizeName,
                 },
             },
-        })
+        });
+    
         if (productVariant) {
-            return productVariant.quantity;
+            return productVariant[0].quantity;
         }
         return 0;
     }

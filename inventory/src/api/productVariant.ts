@@ -27,21 +27,6 @@ export default (app: Application, channel: Channel): void => {
         }
     );
 
-    app.get(
-        '/productVariant/:id',
-        async (req: Request, res: Response, next: NextFunction) => {
-            try {
-                const size = await productVariantService.findById(
-                    req.params.id
-                );
-                return res.status(200).json(size);
-            } catch (error) {
-                next(error);
-                return;
-            }
-        }
-    );
-
     app.get('/productVariant/stock', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { productId, sizeName, colorName } = req.query;
@@ -59,6 +44,21 @@ export default (app: Application, channel: Channel): void => {
             return;
         }
     });
+
+    app.get(
+        '/productVariant/:id',
+        async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                const size = await productVariantService.findById(
+                    req.params.id
+                );
+                return res.status(200).json(size);
+            } catch (error) {
+                next(error);
+                return;
+            }
+        }
+    );
 
     app.post(
         '/productVariant',

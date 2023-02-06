@@ -1,5 +1,5 @@
-// import { CreateProductRPCResponse } from './../types/rpcType';
-// import { INVENTORY_RPC } from './../config/index';
+import { CreateProductRPCResponse } from './../types/rpcType';
+import { INVENTORY_RPC } from './../config/index';
 import { FilterBySize } from './filter/FilterBySize';
 import { FilterByColor } from './filter/FilterByColor';
 import {
@@ -25,7 +25,7 @@ import {
     VariantOptionsType,
 } from './filter/FilterByVariantOptions';
 import { ICreateProductDto } from './../dto/IProductDto';
-// import { requestRPC } from './../message-queue/rpc/requestRPC';
+import { requestRPC } from './../message-queue/rpc/requestRPC';
 
 export default class ProductService implements IService {
     private productRepository: ProductRepository;
@@ -50,6 +50,10 @@ export default class ProductService implements IService {
             throw new NotFoundError('Product id did not match');
         }
         return product;
+    }
+
+    async searchProducts(searchTerm: string) {
+        return await this.productRepository.searchProducts(searchTerm);
     }
 
     async createProduct(createProductDto: ICreateProductDto) {
@@ -78,7 +82,7 @@ export default class ProductService implements IService {
             throw new ValidationError('product create body did not match');
         }
 
-        /* const createVariantPayload = {
+        const createVariantPayload = {
             type: RPCTypes.INVENTORY_CREATE_VARIANT,
             data: {
                 productVariantList: createProductDto.productVariants.map(variant => {
@@ -102,7 +106,7 @@ export default class ProductService implements IService {
             console.log("🚀 ~ file: productService.ts:94 ~ ProductService ~ createProduct ~ error", error);
             this.productRepository.deleteProduct(product.id!);
             throw new Error(error);
-        } */
+        }
 
         await this.categoryService.addProductToCategories(
             product.id!,

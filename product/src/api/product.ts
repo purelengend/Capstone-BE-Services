@@ -38,6 +38,20 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
+    app.post('/search', async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const searchTerm = req.body.searchTerm as string;
+            if (!searchTerm || searchTerm.length < 2) {
+                return res.status(200).json([]);
+            }
+            const products = await productService.searchProducts(searchTerm);
+            return res.status(200).json(products);
+        } catch (error) {
+            next(error);
+            return;
+        }
+    });
+
     app.post(
         '/create',
         // verifyAdminAuthorization,

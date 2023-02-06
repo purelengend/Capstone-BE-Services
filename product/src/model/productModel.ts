@@ -18,7 +18,7 @@ export interface IProductModel {
 const productSchema = new Schema<IProductModel>(
     {   
         name: { type: String, required: true },
-        description: { type: String, required: true },
+        description: { type: String, required: true, text: true },
         basePrice: { type: Number, required: true, min: 0 },
         sellingPrice: { type: Number, required: false, min: 0 },
         coverPhoto: { type: String, required: true },

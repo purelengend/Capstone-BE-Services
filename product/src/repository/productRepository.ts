@@ -23,6 +23,19 @@ export class ProductRepository {
         }
     }
 
+    async searchProducts(searchTerm: string) {
+        try {
+            const products = await ProductModel.find({
+                name: { 
+                    $regex: searchTerm, $options: 'im'
+                }
+            });
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     async createProduct(product: IProductModel): Promise<IProductModel> {
         try {
             product = await new ProductModel(product).save();

@@ -83,12 +83,13 @@ export class ProductVariantService implements IService {
         productId: string,
         color: string,
         size: string
-    ): Promise<number> {
-        return await this.productVariantRepository.getStockQuantityByProductIdAndColorAndSize(
+    ): Promise<{ stock: number }> {
+        const stock = await this.productVariantRepository.getStockQuantityByProductIdAndColorAndSize(
             productId,
             color,
             size
         );
+        return { stock }
     }
 
     async reserveProductVariantsQuantity(

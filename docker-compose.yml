@@ -53,6 +53,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: fu-capstone-inventory
+    volumes:
+      # - ./inventory/db-data:/var/lib/postgresql/data
+      - inventory-postgres-data:/var/lib/postgresql/data
 
   # Shopping service
   shopping:
@@ -94,6 +97,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: fu-capstone-user
+    volumes:
+      # - ./user/db-data:/var/lib/postgresql/data
+      - user-postgres-data:/var/lib/postgresql/data
 
   # Order service
   order:
@@ -120,6 +126,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: fu-capstone-order
+    volumes:
+      # - ./order/db-data:/var/lib/postgresql/data
+      - order-postgres-data:/var/lib/postgresql/data
 
   #proxy
   nginx-proxy:
@@ -136,3 +145,9 @@ services:
       - user
     ports:
       - 8001:80
+
+volumes:
+  inventory-postgres-data:
+  user-postgres-data:
+  order-postgres-data:
+  
