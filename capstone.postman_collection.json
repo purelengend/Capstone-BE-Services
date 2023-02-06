@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "dd026ee9-a101-4fbc-a840-cd83e82d296e",
+		"_postman_id": "d4945de9-a262-4ab8-aa2e-6ec1690f13ff",
 		"name": "capstone",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -58,7 +58,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"L\"\r\n}",
+									"raw": "{\r\n    \"name\": \"l\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -151,7 +151,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"red\"\r\n}",
+									"raw": "{\r\n    \"name\": \"grey\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -314,31 +314,34 @@
 							"response": []
 						},
 						{
-							"name": "ReverseProductVariantQuantity",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
+							"name": "GetStockQuantityByProductIdAndColorAndSize",
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"productVariantId\": \"5afe847d-4b2f-439d-8154-5dfaf530c115\",\r\n    \"quantity\": 101\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "http://localhost:3002/productVariantReverse",
+									"raw": "http://localhost:3002/productVariant/stock?productId=63e07f32733f637975df14f7&colorName=black&sizeName=S",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3002",
 									"path": [
-										"productVariantReverse"
+										"productVariant",
+										"stock"
+									],
+									"query": [
+										{
+											"key": "productId",
+											"value": "63e07f32733f637975df14f7"
+										},
+										{
+											"key": "colorName",
+											"value": "black"
+										},
+										{
+											"key": "sizeName",
+											"value": "S"
+										}
 									]
 								}
 							},
@@ -377,14 +380,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/",
+							"raw": "http://localhost:8080/order/362e55da-38aa-492d-85e9-6dab02a603c0",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								""
+								"order",
+								"362e55da-38aa-492d-85e9-6dab02a603c0"
 							]
 						}
 					},
@@ -397,7 +401,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"deliveryAddress\": \"12 Wall strest\",\r\n    \"phone\": \"090123456789\",\r\n    \"deliveryFee\": 1.23,\r\n    \"paymentMethod\": \"COD\",\r\n    \"orderItemDTOList\": [\r\n        {\r\n            \"productId\": \"63b990748083e160bc5dee9c\",\r\n            \"productName\": \"productName 1\",\r\n            \"color\": \"yellow\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"firstName\": \"Thuc\",\r\n    \"lastName\": \"Doanh\",\r\n    \"companyName\": \"fsoft\",\r\n    \"country\": \"Vietnam\",\r\n    \"streetAddress\": \"02 Wall st\",\r\n    \"city\": \"Danang\",\r\n    \"state\": \"\",\r\n    \"zipCode\": \"5555000\",\r\n    \"phone\": \"090123456789\",\r\n    \"deliveryFee\": 1.23,\r\n    \"paymentMethod\": \"COD\",\r\n    \"orderItemDTOList\": [\r\n        {\r\n            \"productId\": \"63e07f32733f637975df14f7\",\r\n            \"productName\": \"ao nam 1\",\r\n            \"color\": \"black\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -782,7 +786,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"ao nu 2\",\r\n    \"description\": \"product description\",\r\n    \"basePrice\": 1700,\r\n    \"sellingPrice\": 1700,\r\n    \"coverPhoto\": \"fake women jacket pants image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63df6cbe30a67c3bfdb6fbfe\", \"63df6cc530a67c3bfdb6fc00\"],\r\n    \"productVariants\": [\r\n        {\r\n            \"color\": \"red\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        },\r\n        {\r\n            \"color\": \"red\",\r\n            \"size\": \"M\",\r\n            \"quantity\": 200,\r\n            \"basePrice\": 1500,\r\n            \"sellingPrice\": 1250\r\n        }\r\n    ]\r\n\r\n}",
+							"raw": "{\r\n    \"name\": \"vay nu 1\",\r\n    \"description\": \"product description line 1\\nproduct description line 2\\nproduct description line 3\",\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900,\r\n    \"coverPhoto\": \"fake women skirt image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63df6cd230a67c3bfdb6fc04\", \"63df6cbe30a67c3bfdb6fbfe\"],\r\n    \"productVariants\": [\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"M\",\r\n            \"quantity\": 200,\r\n            \"basePrice\": 1500,\r\n            \"sellingPrice\": 1250\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"L\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        }\r\n    ]\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -838,7 +842,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/delete/63a2ce16b7b1bdfbb3422df7",
+							"raw": "http://localhost:3000/delete/63e0a96f64ffe763df5b2c14",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -846,7 +850,7 @@
 							"port": "3000",
 							"path": [
 								"delete",
-								"63a2ce16b7b1bdfbb3422df7"
+								"63e0a96f64ffe763df5b2c14"
 							]
 						}
 					},
@@ -859,7 +863,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"filters\": {\r\n        \"priceRange\": \"1600-2000\",\r\n        \"category\": [\"nu\"],\r\n        \"color\": [],\r\n        \"size\": []\r\n    },\r\n    \"page\": 1,\r\n    \"pageSize\": 2,\r\n    \"orderBy\": \"basePrice\",\r\n    \"sortBy\": \"desc\"\r\n}",
+							"raw": "{\r\n    \"filters\": {\r\n        \"priceRange\": \"all\",\r\n        \"category\": [\"nam\"],\r\n        \"color\": [\"red\"],\r\n        \"size\": [\"S\"]\r\n    },\r\n    \"page\": 1,\r\n    \"pageSize\": 2,\r\n    \"orderBy\": \"basePrice\",\r\n    \"sortBy\": \"desc\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -875,6 +879,34 @@
 							"port": "3000",
 							"path": [
 								"retrieveProduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SearchProduct",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"searchTerm\": \"ao\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"search"
 							]
 						}
 					},
