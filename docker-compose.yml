@@ -12,6 +12,25 @@ services:
     environment:
       PORT: 3000
       NODE_ENV: production
+      MONGO_URI: mongodb://product-db:27017/
+      MONGO_INITDB_DATABASE: fu-capstone-product
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    depends_on:
+      - product-db
+  product-db:
+    image: mongo
+    container_name: product-mongo-db
+    # ports: 
+    #   - '27017:27017'
+    environment: 
+      MONGO_INITDB_DATABASE: fu-capstone-product
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    # enable auth for mongo
+    command: --auth 
+    volumes:
+      - product-mongo-data:/data/db
 
   # Review service
   review:
@@ -25,6 +44,25 @@ services:
     environment:
       PORT: 3001
       NODE_ENV: production
+      MONGO_URI: mongodb://review-db:27017/
+      MONGO_INITDB_DATABASE: fu-capstone-review
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    depends_on:
+      - review-db
+  review-db:
+    image: mongo
+    container_name: review-mongo-db
+    # ports: 
+    #   - '27017:27017'
+    environment: 
+      MONGO_INITDB_DATABASE: fu-capstone-review
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    # enable auth for mongo
+    command: --auth 
+    volumes:
+      - review-mongo-data:/data/db
 
   # Invetory service
   inventory:
@@ -69,6 +107,25 @@ services:
     environment:
       PORT: 3003
       NODE_ENV: production
+      MONGO_URI: mongodb://shopping-db:27017/
+      MONGO_INITDB_DATABASE: fu-capstone-shopping
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    depends_on:
+      - shopping-db
+  shopping-db:
+    image: mongo
+    container_name: shopping-mongo-db
+    # ports: 
+    #   - '27017:27017'
+    environment: 
+      MONGO_INITDB_DATABASE: fu-capstone-shopping
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    # enable auth for mongo
+    command: --auth 
+    volumes:
+      - shopping-mongo-data:/data/db
 
   # User service
   user:
@@ -150,4 +207,7 @@ volumes:
   inventory-postgres-data:
   user-postgres-data:
   order-postgres-data:
+  product-mongo-data:
+  review-mongo-data:
+  shopping-mongo-data:
   

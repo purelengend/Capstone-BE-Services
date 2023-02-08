@@ -15,8 +15,6 @@ services:
     command: sh -c "yarn typeorm migration:run -d ./src/data-source.ts && yarn start"
     depends_on:
       - postgres
-    links:
-      - postgres
   postgres:
     image: postgres
     ports: 
@@ -25,3 +23,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: fu-capstone-inventory
+    volumes:
+      # - ./inventory/db-data:/var/lib/postgresql/data
+      - inventory-postgres-data:/var/lib/postgresql/data
+volumes:
+  inventory-postgres-data:

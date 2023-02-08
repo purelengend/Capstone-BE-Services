@@ -5,12 +5,30 @@ services:
       context: .
       dockerfile: Dockerfile
     image: product
-    # container_name: product
+    container_name: product-service
     ports:
       - 3000:3000
     environment:
       PORT: 3000
       NODE_ENV: production
-      # DATABASE_URL: postgres://postgres:1@postgres:5432/fu-capstone-inventory
-    # working_dir: /usr/src/app
-    # command: sh -c "yarn start"
+      MONGO_URI: mongodb://product-db:27017/
+      MONGO_INITDB_DATABASE: fu-capstone-product
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    depends_on:
+      - product-db
+  product-db:
+    image: mongo
+    container_name: product-mongo-db
+    # ports: 
+    #   - '27017:27017'
+    environment: 
+      MONGO_INITDB_DATABASE: fu-capstone-product
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    # enable auth for mongo
+    command: --auth 
+    volumes:
+      - product-mongo-data:/data/db
+volumes:
+  product-mongo-data:
