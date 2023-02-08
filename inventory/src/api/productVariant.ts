@@ -114,4 +114,20 @@ export default (app: Application, channel: Channel): void => {
             }
         }
     );
+
+    app.get(
+        '/getProductVariantByProductId/:productId',
+        async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                const productVariant =
+                    await productVariantService.findByProductId(
+                        req.params.productId
+                    );
+                return res.status(200).json(productVariant);
+            } catch (error) {
+                next(error);
+                return;
+            }
+        }
+    );
 };

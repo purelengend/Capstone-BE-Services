@@ -38,6 +38,10 @@ export class ProductVariantService implements IService {
         return this.productVariantRepository.findById(id);
     }
 
+    async findByProductId(productId: string): Promise<ProductVariant[]> {
+        return this.productVariantRepository.findByProductId(productId);
+    }
+
     async createProductVariant(
         productVariantDTO: CreateProductVariantDTO
     ): Promise<ProductVariant> {

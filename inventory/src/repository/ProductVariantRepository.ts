@@ -284,4 +284,17 @@ export class ProductVariantRepository {
         return 0;
     }
 
+    async findByProductId(
+        productId: string
+    ): Promise<ProductVariant[]> {
+        return this.repository.find({
+            relations: {
+                color: true,
+                size: true,
+            },
+            where: {
+                productId,
+            },
+        });
+    }
 }
