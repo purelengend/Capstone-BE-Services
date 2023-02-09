@@ -6,6 +6,7 @@ import order.dto.OrderItemDTO;
 import order.entity.Order;
 import order.entity.OrderItem;
 import order.mapper.OrderMapper;
+import order.message.CustomerOrderSuccessMessage;
 import order.message.mapper.RPCRequestProductVariantTypeMapper;
 import order.message.type.*;
 import order.repository.IOrderRepository;
@@ -101,8 +102,21 @@ public class OrderService implements IOrderService {
                 save(order);
             } else {
                 postProcessReceiveRPCReply(response, order);
+                publishCustomerOrderSuccessMessage(order, "REVIEW_SERVICE");
             }
         });
+    }
+
+    private void publishCustomerOrderSuccessMessage(Order order, String routingKey) {
+        CustomerOrderSuccessMessage message = CustomerOrderSuccessMessage.builder()
+                .userId(order.getUserId())
+                .productIdList(order.getOrderItemList().stream().map(OrderItem::getProductId).collect(Collectors.toList()))
+                .build();
+        PublishMessagePayload payload = PublishMessagePayload.builder()
+                .event(MessageEventType.CUSTOMER_ORDER_SUCCESS.getValue())
+                .data(message)
+                .build();
+        rabbitTemplate.convertAndSend("CAPSTONE_EXCHANGE", routingKey, payload);
     }
 
     private void postProcessReceiveRPCReply(RPCResult response, Order order) {

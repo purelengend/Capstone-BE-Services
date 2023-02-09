@@ -35,7 +35,7 @@ const reviewSchema = new Schema<IReviewModel>(
     {
         productId: { type: String, required: true },
         rating: { type: Number, required: true },
-        comment: { type: String, required: true },
+        comment: { type: String, required: false },
         user: { type: userSchema, required: false },
     },
     {

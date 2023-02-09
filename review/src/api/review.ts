@@ -55,27 +55,56 @@ export default (app: Application, channel: Channel) => {
         }
     );
 
+    // Get comment of user for a product
+    app.get(
+        '/reviewOfUserForProduct',
+        async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                const { productId, userId } = req.query;
+                if (!productId || !userId) {
+                    throw new ValidationError(
+                        'Missing productId or userId in query'
+                    );
+                }
+                const review = await reviewService.getReviewByProductIdAndUserId(productId as string, userId as string);
+                return res.status(200).json(review);
+            } catch (error) {
+                next(error);
+                return;
+            }
+        }
+    );  
+
     app.post(
         '/create',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
-                const { productId, rating, comment, userId } = req.body;
+                const { id, productId, rating, comment, userId } = req.body;
                 const review = {
                     productId,
                     rating,
                     comment,
                 } as IReviewModel;
-
+                if (!id || !review) {
+                    throw new ValidationError('Missing review or id in body');
+                }
                 if (review && userId) {
-                    const newReview = await reviewService.createReview(
-                        review,
-                        userId
+                    // const newReview = await reviewService.createReview(
+                    //     review,
+                    //     userId
+                    // );
+    
+                    const updatedReview = await reviewService.updateReview(
+                        id,
+                        review
                     );
-                    
+                    if (!updatedReview) {
+                        throw new ValidationError('Review not found');
+                    }
                     // Publish message to product service
-                    await publishReviewEvent(productId, EventType.CREATE_REVIEW);
+                    await publishReviewEvent(updatedReview.productId, EventType.CREATE_REVIEW);
 
-                    return res.status(200).json(newReview);
+                    return res.status(200).json(updatedReview);
                 } else {
                     throw new ValidationError(
                         'Missing review or authorId in body'

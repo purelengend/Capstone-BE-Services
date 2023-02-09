@@ -22,7 +22,7 @@ export class ReviewRepository {
             review = await new reviewModel(review).save();
             return review;
         } catch (error) {
-            throw new Error('Review creation failed in the database');
+            throw new Error(error);
         }
     }
 
@@ -69,7 +69,7 @@ export class ReviewRepository {
     async deleteReviewsByAuthorId(userId: string): Promise<DeleteType> {
         try {
             const data = await reviewModel.deleteMany({
-                'user._id': userId,
+                'user.id': userId,
             });
             console.log('return data of delete reviews by userId', data);
             return data;
@@ -79,12 +79,16 @@ export class ReviewRepository {
         }
     }
 
+    // count reviews that have rating is not 0 for a product
     async getReviewCountByProductId(productId: string): Promise<number> {
         try {
-            const count = await reviewModel.countDocuments({ productId });
+            const count = await reviewModel.countDocuments({
+                productId,
+                rating: { $ne: 0 },
+            });
             return count;
         } catch (error) {
-            throw new Error('Error in getCountReviewsByProductId');
+            throw new Error('Error in getReviewCountByProductId');
         }
     }
 
@@ -123,9 +127,13 @@ export class ReviewRepository {
         }
     }
 
+    // Get average rating of all products in the database that rating is not 0
     async getAllAverageRatingOfAllProducts(): Promise<any> {
         try {
             const averageRating = await reviewModel.aggregate([
+                {
+                    $match: { rating: { $ne: 0 } },
+                },
                 {
                     $group: {
                         _id: '$productId',
@@ -152,6 +160,40 @@ export class ReviewRepository {
             };
         } catch (error) {
             throw new Error('Error in getAverageRatingAndCountByProductId');
+        }
+    }
+
+    async checkIfUserHasReviewedProduct(
+        productId: string,
+        userId: string
+    ): Promise<boolean> {
+        try {
+            const count = await reviewModel.countDocuments({
+                productId,
+                'user.id': userId,
+                rating: { $ne: 0 },
+                comment: { $ne: '' },
+            });
+            return count > 0;
+        } catch (error) {
+            console.log('Error in checkIfUserHasReviewedProduct', error);
+            
+            throw new Error(error);
+        }
+    }
+
+    async getReviewByProductIdAndUserId(
+        productId: string,
+        userId: string
+    ): Promise<IReviewModel | null> {
+        try {
+            const review = await reviewModel.findOne({
+                productId,
+                'user.id': userId,
+            });
+            return review;
+        } catch (error) {
+            throw new Error('Error in getReviewByProductIdAndUserId');
         }
     }
 }

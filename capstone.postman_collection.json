@@ -346,6 +346,26 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "GetProductVariantsByProductId",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3002/getProductVariantByProductId/p123122452",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3002",
+									"path": [
+										"getProductVariantByProductId",
+										"p123122452"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				}
@@ -935,14 +955,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/",
+							"raw": "http://localhost:3001/getByProductId/63e4bc6105b47a9aeddaad2c",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3001",
 							"path": [
-								""
+								"getByProductId",
+								"63e4bc6105b47a9aeddaad2c"
 							]
 						}
 					},
@@ -955,7 +976,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productId\": \"63a2ce16b7b1bdfbb3422df7\",\r\n    \"rating\": 5,\r\n    \"comment\": \"good product 2\",\r\n    \"userId\": \"u123\"\r\n}",
+							"raw": "{\r\n    \"id\": \"63e4c7a7d039cb529785ed97\",\r\n    \"productId\": \"63e4bc6105b47a9aeddaad2c\",\r\n    \"rating\": 5,\r\n    \"comment\": \"good product 2\",\r\n    \"userId\": \"u123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -971,6 +992,35 @@
 							"port": "3001",
 							"path": [
 								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetReviewOfUserForProduct",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/reviewOfUserForProduct?productId=63e4bc6105b47a9aeddaad2c&userId=u123",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"reviewOfUserForProduct"
+							],
+							"query": [
+								{
+									"key": "productId",
+									"value": "63e4bc6105b47a9aeddaad2c"
+								},
+								{
+									"key": "userId",
+									"value": "u123"
+								}
 							]
 						}
 					},
