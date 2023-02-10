@@ -26,6 +26,10 @@ export class UserService implements IService{
         return await this.userRepository.findById(id)
     }
 
+    async getUserAndAddressById(id: string): Promise<User | null> {
+        return await this.userRepository.findUserAndAddressById(id);
+    }
+
     async getUserByUsername(username: string): Promise<User | null> {
         return await this.userRepository.findByUsername(username)
     }
@@ -94,6 +98,25 @@ export class UserService implements IService{
         }
     }
 
+    async serveRPCGetUserBillingInfoById(id: string) {
+        const user = await this.getUserAndAddressById(id);
+        if (!user || !user.address) {
+            return null;
+        }
+        return {
+            id: user.id,
+            username: user.username,
+            phoneNumber: user.phoneNumber,
+            email: user.email,
+            streetAddress: user.address.streetAddress,
+            district: user.address.district || '',
+            city: user.address.city,
+            state: user.address.state || '',
+            country: user.address.country,
+            zipCode: user.address.zipCode || '',
+        }
+    }
+
     subscribeEvents(_: string): void {
         throw new Error('Method not implemented.');
     }
@@ -102,6 +125,9 @@ export class UserService implements IService{
         switch (type) {
             case RPCTypes.GET_USER_INFO_BY_USER_ID:
                 return this.serveRPCGetUserInfoById(data);
+            case RPCTypes.GET_USER_BILLING_INFO_BY_USER_ID:
+                return this.serveRPCGetUserBillingInfoById(data);
+
             default:
                 return;
         }

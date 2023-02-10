@@ -30,6 +30,21 @@ export class UserRepository {
         }
     }
 
+    async findUserAndAddressById(id: string): Promise<User | null> {
+        try {
+            return this.repository.findOne({
+                where: {
+                    id: id
+                },
+                relations: {
+                    address: true
+                }
+            })
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+
     async findAddressOfUser(id: string): Promise<Address> {
         try {
             const user = await this.repository.findOne({
