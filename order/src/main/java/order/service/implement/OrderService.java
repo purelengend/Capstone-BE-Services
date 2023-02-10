@@ -59,6 +59,11 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public List<Order> findAllOrdersByUserId(String userId) {
+        return this.orderRepository.findAllByUserId(userId);
+    }
+
+    @Override
     public Optional<Order> findById(String id) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isEmpty()) {

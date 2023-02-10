@@ -1,11 +1,9 @@
 package order.controller;
 
-import lombok.AllArgsConstructor;
 import order.dto.OrderDTO;
 import order.entity.Order;
 import order.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +24,11 @@ public class OrderController {
     @GetMapping("/all")
     public ResponseEntity<List<Order>> getAll() {
         return ResponseEntity.ok().body(orderService.findAll());
+    }
+
+    @GetMapping(value = "/getAllByUserId/{userId}")
+    public ResponseEntity<List<Order>> getAllByUserId(@PathVariable String userId) {
+        return ResponseEntity.ok().body(orderService.findAllOrdersByUserId(userId));
     }
 
     @GetMapping(value = "/{id}")
