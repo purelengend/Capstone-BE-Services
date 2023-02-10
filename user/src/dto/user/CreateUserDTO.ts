@@ -4,6 +4,5 @@ export class CreateUserDTO{
     email: string;
     phoneNumber: string;
     gender: string;
-    address: string;
     avatarUrl?: string;
 }

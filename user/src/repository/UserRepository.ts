@@ -1,5 +1,7 @@
+import { Address } from './../entity/Address';
 import { User } from './../entity/User';
 import { AppDataSource } from './../data-source';
+import { NotFoundError } from './../error/error-type/NotFoundError';
 export class UserRepository {
     private repository = AppDataSource.getRepository(User)
 
@@ -26,6 +28,26 @@ export class UserRepository {
         } catch (error) {
             throw new Error(error)
         }
+    }
+
+    async findAddressOfUser(id: string): Promise<Address> {
+        try {
+            const user = await this.repository.findOne({
+                select: ['address'],
+                where: {
+                    id
+                },
+                relations: {
+                    address: true
+                }
+            })
+            if (!user) {
+                throw new NotFoundError(`User with id ${id} not found`);
+            }
+            return user.address;
+        } catch (error) {
+            throw new Error(error)
+        } 
     }
 
     async findByUsername(username: string): Promise<User | null> {

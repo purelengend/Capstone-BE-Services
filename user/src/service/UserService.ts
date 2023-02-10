@@ -1,3 +1,4 @@
+import { Address } from './../entity/Address';
 import { RPCTypes } from './../types/rpcType';
 import { IService } from './IService';
 import { RoleService } from './RoleService';
@@ -29,7 +30,11 @@ export class UserService implements IService{
         return await this.userRepository.findByUsername(username)
     }
 
-    async createCustomer(userDTO: CreateUserDTO) {
+    async getAddressOfUser(id: string): Promise<Address | null> {
+        return await this.userRepository.findAddressOfUser(id);
+    }
+
+    async createCustomer(userDTO: CreateUserDTO, address?: Address): Promise<User> {
         const { username, password } = userDTO;
 
         const existingUser = await this.userRepository.findByUsername(username);
@@ -42,9 +47,19 @@ export class UserService implements IService{
         const role = await this.roleService.getRoleByName(UserRoleType.CUSTOMER);
         const newUser = Object.assign(new User(), userDTO, {
             role, 
-            password: hashedPassword
+            password: hashedPassword,
+            address
         });
 
+        return await this.userRepository.save(newUser);
+    }
+
+    async updateCustomer(id: string, userDTO: CreateUserDTO): Promise<User> {
+        const existingUser = await this.userRepository.findById(id);
+        if (!existingUser) {
+            throw new Error("User not found");
+        }
+        const newUser = Object.assign(existingUser, userDTO);
         return await this.userRepository.save(newUser);
     }
 

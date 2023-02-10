@@ -1,5 +1,6 @@
 import { Role } from './Role';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Address } from './Address';
 
 @Entity(
     {
@@ -44,11 +45,12 @@ export class User {
     gender: string;
 
     @Column()
-    address: string;
-
-    @Column()
     avatarUrl?: string;
 
     @ManyToOne(() => Role, (role) => role.users)
     role: Role;
+
+    @OneToOne(() => Address)
+    @JoinColumn()
+    address: Address;
 }

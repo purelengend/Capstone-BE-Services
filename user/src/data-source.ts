@@ -1,3 +1,4 @@
+import { Address } from './entity/Address';
 import { DataSource } from 'typeorm';
 import { __prod__ } from './config';
 import path from 'path';
@@ -19,7 +20,7 @@ export const AppDataSource = new DataSource({
           }),
     ...(__prod__ ? {} : { synchronize: true }),
     logging: false,
-    entities: [User, Role],
+    entities: [Address, User, Role],
     subscribers: [],
     migrations: [path.join(__dirname, '/migrations/*')],
 });

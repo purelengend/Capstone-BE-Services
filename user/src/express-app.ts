@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-import { AuthController, UserController, RoleController } from './api/index';
+import { AuthController, UserController, RoleController, AddressController } from './api/index';
 // import createChannel from './message-queue/createChannel';
 
 export default async (app: Application) => {
@@ -14,4 +14,5 @@ export default async (app: Application) => {
     RoleController(app);
     UserController(app);
     AuthController(app);
+    AddressController(app);
 };

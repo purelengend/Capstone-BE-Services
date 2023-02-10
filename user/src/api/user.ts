@@ -28,6 +28,16 @@ export default (app: Application) => {
         }
     });
 
+    app.get('/userAddress/:userId', async (req, res, next) => {
+        try {
+            const { userId } = req.params;
+            return res.status(200).json(await userService.getAddressOfUser(userId));
+        } catch (error) {
+            next(error);
+            return;
+        }
+    })
+
     app.post('/user/createAdmin', async (req, res, next) => {
         try {
             const userDTO = req.body as CreateUserDTO;
@@ -42,6 +52,17 @@ export default (app: Application) => {
         try {
             const userDTO = req.body as CreateUserDTO;
             return res.status(200).json(await userService.createCustomer(userDTO));
+        } catch (error) {
+            next(error);
+            return;
+        }
+    });
+
+    app.put('/user/:id', async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const userDTO = req.body as CreateUserDTO;
+            return res.status(200).json(await userService.updateCustomer(id, userDTO));
         } catch (error) {
             next(error);
             return;
