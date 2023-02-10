@@ -63,6 +63,20 @@ export class ReviewService implements IService {
         return await this.reviewRepository.updateReview(id, review);
     }
 
+    async updateReviewContent(
+        id: string,
+        rating: number,
+        comment: string
+    ): Promise<IReviewModel | null> {
+        const review = await this.reviewRepository.getReviewById(id);
+        if (!review) {
+            return null;
+        }
+        review.rating = rating;
+        review.comment = comment;
+        return await this.reviewRepository.updateReview(id, review);
+    }
+
     async deleteReview(id: string): Promise<IReviewModel | null> {
         return await this.reviewRepository.deleteReview(id);
     }

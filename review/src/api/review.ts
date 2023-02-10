@@ -123,14 +123,15 @@ export default (app: Application, channel: Channel) => {
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { id } = req.params;
-                const { review } = req.body;
-                if (!id || !review) {
+                const { rating, comment } = req.body;
+                if (!id || !rating || !comment) {
                     throw new ValidationError('Missing review or id in body');
                 }
 
-                const updatedReview = await reviewService.updateReview(
+                const updatedReview = await reviewService.updateReviewContent(
                     id,
-                    review
+                    rating,
+                    comment
                 );
                 return res.status(200).json(updatedReview);
             } catch (error) {

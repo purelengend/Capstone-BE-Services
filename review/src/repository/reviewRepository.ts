@@ -3,6 +3,14 @@ import reviewModel, { IUserModel, IReviewModel } from '../model/reviewModel';
 import { DeleteType } from '../types/utilTypes';
 
 export class ReviewRepository {
+    async getReviewById(id: string): Promise<IReviewModel | null> {
+        try {
+            return reviewModel.findById(id);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+    
     async getReviewsByProductId(productId: string): Promise<IReviewModel[]> {
         try {
             return await reviewModel.find({ productId });
