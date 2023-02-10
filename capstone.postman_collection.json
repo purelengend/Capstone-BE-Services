@@ -442,6 +442,27 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetAllOrderByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/order/getAllByUserId/u123",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"getAllByUserId",
+								"u123"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1025,6 +1046,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "UpdateReview",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating\": 4,\r\n    \"comment\": \"good product 2 edit\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/update/63e4c7a7d039cb529785ed97",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"update",
+								"63e4c7a7d039cb529785ed97"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1150,7 +1200,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3004/user/",
+									"raw": "http://localhost:3004/user/3f53e672-e5ae-4607-acea-11012b0b1df2",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1158,7 +1208,7 @@
 									"port": "3004",
 									"path": [
 										"user",
-										""
+										"3f53e672-e5ae-4607-acea-11012b0b1df2"
 									]
 								}
 							},
@@ -1204,7 +1254,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"doanhthuc\",\r\n    \"password\": \"123\"\r\n}",
+									"raw": "{\r\n    \"username\": \"doanhthucdn01\",\r\n    \"password\": \"123456\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1232,7 +1282,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"username\": \"doanhthucdn01\",\r\n    \"password\": \"123456\",\r\n    \"email\": \"doanhthuc@3005.gmail.com\",\r\n    \"phoneNumber\": \"0123456789\",\r\n    \"gender\": \"MALE\",\r\n    \"address\": \"02. wall street\",\r\n    \"avatarUrl\": \"fake avatar url\"\r\n}",
+									"raw": "{\r\n    \"username\": \"doanhthucdn01\",\r\n    \"password\": \"123456\",\r\n    \"email\": \"doanhthuc@3005.gmail.com\",\r\n    \"phoneNumber\": \"0123456789\",\r\n    \"gender\": \"MALE\",\r\n    \"avatarUrl\": \"fake avatar url\",\r\n\r\n    \"streetAddress\": \"02 Wall st\",\r\n    \"district\": \"Hai Chau\",\r\n    \"city\": \"Danang\",\r\n    \"country\": \"Vietnam\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1248,6 +1298,80 @@
 									"port": "3004",
 									"path": [
 										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "address",
+					"item": [
+						{
+							"name": "UpddateAddressOfUserWithAddressId",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"streetAddress\": \"02 Wall Street\",\r\n    \"district\": \"Hai Chau 1\",\r\n    \"city\": \"Da Nang\",\r\n    \"country\": \"Vietnam\",\r\n    \"zipCode\": \"5555000\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3004/address/0bee5879-9e6a-4fc2-a76c-992d050097b8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"address",
+										"0bee5879-9e6a-4fc2-a76c-992d050097b8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAddressOfUserByUserId",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/userAddress/3f53e672-e5ae-4607-acea-11012b0b1df2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"userAddress",
+										"3f53e672-e5ae-4607-acea-11012b0b1df2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllAddress",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/address/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"address",
+										""
 									]
 								}
 							},
