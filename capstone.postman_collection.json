@@ -632,14 +632,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3003/cart?userId=u123",
+									"raw": "http://localhost:3003/wishlist?userId=u123",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3003",
 									"path": [
-										"cart"
+										"wishlist"
 									],
 									"query": [
 										{
@@ -652,13 +652,13 @@
 							"response": []
 						},
 						{
-							"name": "AddItemToWishlist",
+							"name": "RemoveItemFromWishlist",
 							"request": {
-								"method": "POST",
+								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"itemDTO\": {\r\n        \"productId\": \"p123\",\r\n        \"productName\": \"product name 123\",\r\n        \"productPhotoUrl\": \"this is photo url\",\r\n        \"color\": \"red\",\r\n        \"size\": \"29\",\r\n        \"quantity\": 10\r\n    }\r\n}",
+									"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"productId\": \"p123\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -666,33 +666,71 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3003/addToCart",
+									"raw": "http://localhost:3003/removeFromWishlist",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3003",
 									"path": [
-										"addToCart"
+										"removeFromWishlist"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "RemoveItemFromWishlist",
+							"name": "ToggleAddWishlistItem",
 							"request": {
 								"method": "PUT",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"u123\",\r\n    \"item\": {\r\n        \"productId\": \"p123\",\r\n        \"productName\": \"fake product Name\",\r\n        \"productPhotoUrl\": \"fake product photo url\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "http://localhost:3003/removeFromCart",
+									"raw": "http://localhost:3003/toggleAddItemToWishlist",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3003",
 									"path": [
-										"removeFromCart"
+										"toggleAddItemToWishlist"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CheckItemInWishlist",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3003/checkItemInWishlist?userId=u123&productId=p123",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3003",
+									"path": [
+										"checkItemInWishlist"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "u123"
+										},
+										{
+											"key": "productId",
+											"value": "p123"
+										}
 									]
 								}
 							},

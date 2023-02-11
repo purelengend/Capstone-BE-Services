@@ -1,12 +1,8 @@
-import { IItemModel } from './../model/itemModel';
-import { ItemDTO } from './../dto/ItemDTO';
-import { IReplyProductVariant } from './../types/rpcInventoryType';
-import { INVENTORY_RPC } from './../config/index';
-import { RPCTypes } from './../types/rpcType';
+import { NotFoundError } from './../error/error-type/NotFoundError';
 import { WishlistDTO } from './../dto/WishListDTO';
-import { IWishlistModel } from './../model/wishlistModel';
+import { IWishlistItemModel, IWishlistModel } from './../model/wishlistModel';
 import { WishlistRepository } from './../repository/WishlistRepository';
-import { requestRPC } from './../message-queue/rpc/requestRPC';
+
 export class WishlistService {
     private wishlistRepository: WishlistRepository;
 
@@ -21,79 +17,15 @@ export class WishlistService {
     async getWishlistByUserId(userId: string): Promise<WishlistDTO | null> {
         const wishListModel = await this.wishlistRepository.getWishlistByUserId(userId);
         if (!wishListModel) {
-            return null;
+            throw new NotFoundError("Wishlist not found");
         }
-        const productVariantIdList = wishListModel.itemList.map(
-            (item) => item.productVariantId
-        );
-        const requestRPCpayload = {
-            type: RPCTypes.GET_PRODUCT_VARIANT_LIST_BY_ID_LIST,
-            data: {
-                productVariantIdList,
-            },
-        };
-        const rpcProductVariantList =
-            ((await requestRPC(
-                INVENTORY_RPC,
-                requestRPCpayload
-            )) as IReplyProductVariant[]) ?? [];
-        console.log("rpcProductVariantList reply: ", rpcProductVariantList);
-
-        const productVariantMap = rpcProductVariantList.reduce(
-            (acc, productVariant) => {
-                acc.set(productVariant.id, productVariant);
-                return acc;
-            },
-            new Map<string, IReplyProductVariant>()
-        );
-        const itemModelList = wishListModel.itemList;
-
-        const itemDTOList = itemModelList.map((item) => {
-            const productVariant = productVariantMap.get(item.productVariantId);
-            const { color, size, sellingPrice } = productVariant!;
-            return {
-                productId: item.productId,
-                productName: item.productName,
-                productPhotoUrl: item.productPhotoUrl,
-                productVariantId: item.productVariantId,
-                quantity: item.quantity,
-                color,
-                size,
-                sellingPrice,
-            };
-        }) as ItemDTO[];
-
-        return {
-            userId: wishListModel.userId,
-            itemList: itemDTOList,
-        };
+        return wishListModel;
     }
 
-    async addItemToWishlist(
+    async toggleAddItemToWishlist(
         userId: string,
-        itemDTO: ItemDTO
-    ): Promise<WishlistDTO | null> {
-        const { productId, color, size } = itemDTO;
-        const requestRPCPayload = {
-            type: RPCTypes.GET_PRODUCT_VARIANT_BY_PRODUCT_ID_COLOR_SIZE,
-            data: {
-                productId,
-                color,
-                size,
-            },
-        };
-        const rpcAddedProductVariant = (await requestRPC(
-            INVENTORY_RPC,
-            requestRPCPayload
-        )) as IReplyProductVariant;
-        if (!rpcAddedProductVariant) {
-            return null;
-        }
-        
-        const addItem: IItemModel = {
-            ...itemDTO,
-            productVariantId: rpcAddedProductVariant.id,
-        };
+        item: IWishlistItemModel
+    ): Promise<WishlistDTO | null> {    
         let wishlistModel = await this.wishlistRepository.getWishlistByUserId(
             userId
         );
@@ -102,29 +34,29 @@ export class WishlistService {
             wishlistModel = await this.wishlistRepository.createWishlist(
                 {
                     userId,
-                    itemList: [addItem],
+                    itemList: [item],
                 }
             );
         } else {
             const itemIndex = wishlistModel.itemList.findIndex(
-                (item) => item.productVariantId === addItem.productVariantId
+                (existingItem) => existingItem.productId === item.productId
             );
             if (itemIndex === -1) {
-                wishlistModel.itemList.push(addItem);
+                wishlistModel.itemList.push(item);
             } else {
-                wishlistModel.itemList[itemIndex].quantity += addItem.quantity;
+                wishlistModel.itemList.splice(itemIndex, 1);
             }
             wishlistModel = await this.wishlistRepository.updateWishlist(
                 userId,
                 wishlistModel
             );
         }
-        return this.getWishlistByUserId(userId);
+        return wishlistModel;
     }
 
     async removeItemFromWishlist(
         userId: string,
-        productVariantId: string
+        productId: string
     ): Promise<WishlistDTO | null> {
         const wishlistModel = await this.wishlistRepository.getWishlistByUserId(
             userId
@@ -133,9 +65,25 @@ export class WishlistService {
             return null;
         }
         wishlistModel.itemList = wishlistModel.itemList.filter(
-            (item) => item.productVariantId !== productVariantId
+            (item) => item.productId !== productId
         );
-        await this.wishlistRepository.updateWishlist(userId, wishlistModel);
-        return this.getWishlistByUserId(userId);
+        return await this.wishlistRepository.updateWishlist(userId, wishlistModel);
     }
+
+    async checkItemInWishlist(
+        userId: string,
+        productId: string
+    ): Promise<boolean> {
+        const wishlistModel = await this.wishlistRepository.getWishlistByUserId(
+            userId
+        );
+        if (!wishlistModel) {
+            return false;
+        }
+        const itemIndex = wishlistModel.itemList.findIndex(
+            (item) => item.productId === productId
+        );
+        return itemIndex !== -1;
+    }
+
 }

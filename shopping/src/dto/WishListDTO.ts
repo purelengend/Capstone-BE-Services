@@ -1,6 +1,6 @@
-import { ItemDTO } from "./ItemDTO";
+import { IWishlistItemModel } from './../model/wishlistModel';
 
 export class WishlistDTO {
     userId: string;
-    itemList: ItemDTO[];
+    itemList: IWishlistItemModel[];
 }

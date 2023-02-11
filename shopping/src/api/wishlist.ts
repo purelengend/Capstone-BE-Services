@@ -1,5 +1,5 @@
+import { IWishlistItemModel } from './../model/wishlistModel';
 import { AuthorizeError } from './../error/error-type/AuthorizedError';
-import { ItemDTO } from './../dto/ItemDTO';
 import { Application } from 'express';
 import { WishlistService } from './../service/WishlistService';
 import { decodeTokenInRequest } from './../middleware/auth';
@@ -25,21 +25,38 @@ export default (app: Application) => {
                     'User is not authorized to get wishlist'
                 );
             }
-            const cart = await wishlistService.getWishlistByUserId(userId);
-            return res.status(200).json(cart);
+            const wishlist = await wishlistService.getWishlistByUserId(userId);
+            return res.status(200).json(wishlist);
         } catch (error) {
             next(error);
             return;
         }
     });
 
-    app.put('/addToWishlist', async (req, res, next) => {
+    app.get('/checkItemInWishlist', async (req, res, next) => {
         try {
-            const { userId, itemDTO } = req.body as {
+            const { userId, productId } = req.query as {
                 userId: string;
-                itemDTO: ItemDTO;
+                productId: string;
             };
-            if (!userId || !itemDTO) {
+            if (!userId || !productId) {
+                throw new Error('Missing userId or productId in query');
+            }
+            const isExisting = await wishlistService.checkItemInWishlist(userId, productId); 
+            return res.status(200).json(isExisting);
+        } catch (error) {
+            next(error);
+            return;
+        }
+    });
+
+    app.put('/toggleAddItemToWishlist', async (req, res, next) => {
+        try {
+            const { userId, item } = req.body as {
+                userId: string;
+                item: IWishlistItemModel;
+            };
+            if (!userId || !item) {
                 throw new Error('Missing userId or itemDTO in request body');
             }
             const decodedToken = decodeTokenInRequest(req);
@@ -48,9 +65,9 @@ export default (app: Application) => {
                     'User is not authorized to get wishlist'
                 );
             }
-            const newCart = await wishlistService.addItemToWishlist(
+            const newCart = await wishlistService.toggleAddItemToWishlist(
                 userId,
-                itemDTO
+                item
             );
             return res.status(200).json(newCart);
         } catch (error) {
@@ -61,18 +78,18 @@ export default (app: Application) => {
 
     app.put('/removeFromWishlist', async (req, res, next) => {
         try {
-            const { userId, productVariantId } = req.body as {
+            const { userId, productId } = req.body as {
                 userId: string;
-                productVariantId: string;
+                productId: string;
             };
-            if (!userId || !productVariantId) {
+            if (!userId || !productId) {
                 throw new Error('Missing userId or itemDTO in request body');
             }
-            const newCart = await wishlistService.removeItemFromWishlist(
+            const updatedWishlist = await wishlistService.removeItemFromWishlist(
                 userId,
-                productVariantId
+                productId
             );
-            return res.status(200).json(newCart);
+            return res.status(200).json(updatedWishlist);
         } catch (error) {
             next(error);
             return;
