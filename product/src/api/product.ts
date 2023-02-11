@@ -74,7 +74,7 @@ export default (app: Application, channel: Channel) => {
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = req.params.id;
-                const product = req.body as IProductModel;
+                const product = req.body as ICreateProductDto;
                 const updatedProduct = await productService.updateProduct(
                     id,
                     product

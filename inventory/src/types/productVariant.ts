@@ -26,3 +26,7 @@ export type CreateVariantRPCRequest = {
     colorNameList: string[];
     sizeNameList: string[];
 };
+
+export type UpdateVariantRPCRequest = CreateVariantRPCRequest & {
+    productId: string;
+};

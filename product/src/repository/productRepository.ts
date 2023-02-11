@@ -59,7 +59,7 @@ export class ProductRepository {
             );
             return updatedProduct;
         } catch (error) {
-            throw new Error('Product update failed in the database');
+            throw new Error(error);
         }
     }
 

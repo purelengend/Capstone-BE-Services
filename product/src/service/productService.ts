@@ -1,5 +1,5 @@
-import { CreateProductRPCResponse } from './../types/rpcType';
-import { INVENTORY_RPC } from './../config/index';
+import { CreateProductRPCResponse } from '../types/rpcType';
+import { INVENTORY_RPC } from '../config/index';
 import { FilterBySize } from './filter/FilterBySize';
 import { FilterByColor } from './filter/FilterByColor';
 import {
@@ -24,8 +24,8 @@ import {
     FilterByVariantOptions,
     VariantOptionsType,
 } from './filter/FilterByVariantOptions';
-import { ICreateProductDto } from './../dto/IProductDto';
-import { requestRPC } from './../message-queue/rpc/requestRPC';
+import { ICreateProductDto } from '../dto/IProductDto';
+import { requestRPC } from '../message-queue/rpc/requestRPC';
 
 export default class ProductService implements IService {
     private productRepository: ProductRepository;
@@ -56,7 +56,9 @@ export default class ProductService implements IService {
         return await this.productRepository.searchProducts(searchTerm);
     }
 
-    async createProduct(createProductDto: ICreateProductDto) {
+    createColorAndSizeVariants(
+        createProductDto: ICreateProductDto
+    ) {
         const colorSet = new Set<string>(), sizeSet = new Set<string>();
         const variantSet = new Set<string>();
         createProductDto.productVariants.forEach((variant) => {
@@ -71,6 +73,15 @@ export default class ProductService implements IService {
         });
         const colors = Array.from(colorSet);
         const sizes = Array.from(sizeSet);
+
+        return {
+            colors,
+            sizes,
+        }
+    }
+
+    async createProduct(createProductDto: ICreateProductDto) {
+        const { colors, sizes } = this.createColorAndSizeVariants(createProductDto);
 
         let product: IProductModel = {
             ...createProductDto,
@@ -115,16 +126,54 @@ export default class ProductService implements IService {
         return product;
     }
 
-    async updateProduct(id: string, updateProduct: IProductModel) {
+    async updateProduct(id: string, updateProductDTO: ICreateProductDto) {
         const existingProduct = await this.productRepository.getProductById(id);
         if (!existingProduct) {
             throw new NotFoundError('Product id did not match');
         }
+        const { colors, sizes } = this.createColorAndSizeVariants(updateProductDTO);
+        let product: IProductModel = {
+            ...updateProductDTO,
+            colors,
+            sizes,
+        }
+        const updatedProduct = await this.productRepository.updateProduct(id, product);
+        if (!updatedProduct) {
+            throw new ValidationError('product update body did not match');
+        }
+
+        const updateVariantPayload = {
+            type: RPCTypes.INVENTORY_UPDATE_VARIANT,
+            data: {
+                productId: id,
+                productVariantList: updateProductDTO.productVariants.map(variant => {
+                    return {
+                        productId: product.id,
+                        ...variant,
+                    }
+                }),
+                sizeNameList: sizes,
+                colorNameList: colors,
+            }
+        }
+
+        try {
+            const createVariantResponse = await requestRPC(INVENTORY_RPC, updateVariantPayload) as CreateProductRPCResponse;
+            if (createVariantResponse.status === 'FAILED') {
+                this.productRepository.updateProduct(id, existingProduct);
+                throw new ValidationError(createVariantResponse.message);
+            }
+        } catch (error) {
+            console.log("🚀 ~ file: productService.ts:94 ~ ProductService ~ createProduct ~ error", error);
+            this.productRepository.updateProduct(id, existingProduct);
+            throw new Error(error);
+        }
+
         await this.modifyCategoriesOfProduct(
             existingProduct,
-            updateProduct.categories || []
+            updateProductDTO.categories || []
         );
-        return await this.productRepository.updateProduct(id, updateProduct);
+        return updatedProduct;
     }
 
     async modifyCategoriesOfProduct(

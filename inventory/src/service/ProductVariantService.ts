@@ -1,4 +1,4 @@
-import { CreateVariantRPCRequest } from './../types/productVariant';
+import { CreateVariantRPCRequest, UpdateVariantRPCRequest } from './../types/productVariant';
 import {
     VariantFilterRPCRequest,
     VariantFilterRPCResponse,
@@ -399,6 +399,24 @@ export class ProductVariantService implements IService {
         }
     }
 
+    async serveUpdateVariantRPCRequest(request: UpdateVariantRPCRequest) {
+        const { productId, productVariantList, colorNameList, sizeNameList } = request;
+        try {
+            await this.productVariantRepository.deleteProductVariantByProductId(productId);
+        } catch (error) {
+            console.log("🚀 ~ file: ProductVariantService.ts:408 ~ ProductVariantService ~ serveUpdateVariantRPCRequest ~ error", error)
+            return {
+                status: 'FAILED',
+                message: 'Delete product variant failed'
+            }
+        }
+        return await this.serveCreateVariantRPCRequest({
+            productVariantList,
+            colorNameList,
+            sizeNameList
+        });
+    }
+
     subscribeEvents(payload: EventPayload): void {
         const { event, data } = payload;
         console.log('Event payload received: ', payload);
@@ -452,6 +470,9 @@ export class ProductVariantService implements IService {
             }
             case RPCTypes.INVENTORY_CREATE_VARIANT: {
                 return this.serveCreateVariantRPCRequest(data as CreateVariantRPCRequest)
+            }
+            case RPCTypes.INVENTORY_UPDATE_VARIANT: {
+                return this.serveUpdateVariantRPCRequest(data as UpdateVariantRPCRequest)
             }
             default:
                 throw new Error('Invalid RPC type');

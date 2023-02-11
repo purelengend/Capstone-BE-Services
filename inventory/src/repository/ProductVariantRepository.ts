@@ -147,6 +147,14 @@ export class ProductVariantRepository {
         }
     }
 
+    async deleteProductVariantByProductId(productId: string): Promise<void> {
+        try {
+            await this.repository.delete({ productId });
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     async findByProductIdColorAndSize(
         productId: string,
         colorName: string,
