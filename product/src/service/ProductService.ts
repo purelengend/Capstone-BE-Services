@@ -148,7 +148,7 @@ export default class ProductService implements IService {
                 productId: id,
                 productVariantList: updateProductDTO.productVariants.map(variant => {
                     return {
-                        productId: product.id,
+                        productId: updatedProduct.id,
                         ...variant,
                     }
                 }),

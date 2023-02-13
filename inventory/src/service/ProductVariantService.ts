@@ -401,7 +401,6 @@ export class ProductVariantService implements IService {
 
     async serveUpdateVariantRPCRequest(request: UpdateVariantRPCRequest) {
         const { productId, productVariantList, colorNameList, sizeNameList } = request;
-        console.log("🚀 ~ file: ProductVariantService.ts:404 ~ ProductVariantService ~ serveUpdateVariantRPCRequest ~ productVariantList", productVariantList)
         try {
             await this.productVariantRepository.deleteProductVariantByProductId(productId);
         } catch (error) {
