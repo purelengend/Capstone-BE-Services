@@ -1,11 +1,10 @@
 import { INVENTORY_RPC, DISCOUNT_SERVICE } from '../config/index';
 import { Application, Request, Response, NextFunction } from 'express';
 import { ProductVariantService } from '../service/ProductVariantService';
-import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
 import observerRPC from '../message-queue/rpc/observerRPC';
 import subscribeMessage from './../message-queue/pub-sub/subscribeMessage';
 import { Channel } from 'amqplib';
-import UpdateProductVariantDTO from './../dto/UpdateProductVariantDTO';
+import ProductVariantDTO from '../dto/ProductVariantDTO';
 
 export default (app: Application, channel: Channel): void => {
     const productVariantService = new ProductVariantService();
@@ -64,7 +63,7 @@ export default (app: Application, channel: Channel): void => {
         '/productVariant',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
-                const productVariant = req.body as CreateProductVariantDTO;
+                const productVariant = req.body as ProductVariantDTO;
                 const createdProductVariant =
                     await productVariantService.createProductVariant(
                         productVariant
@@ -83,7 +82,7 @@ export default (app: Application, channel: Channel): void => {
             try {
                 console.log(req.body);
 
-                const productVariant = req.body as UpdateProductVariantDTO;
+                const productVariant = req.body as ProductVariantDTO;
                 console.log(productVariant);
                 const updatedProductVariant =
                     await productVariantService.updateProductVariant(
@@ -91,23 +90,6 @@ export default (app: Application, channel: Channel): void => {
                         productVariant
                     );
                 return res.status(200).json(updatedProductVariant);
-            } catch (error) {
-                next(error);
-                return;
-            }
-        }
-    );
-
-    app.get(
-        '/productVariantReverse',
-        async (req: Request, res: Response, next: NextFunction) => {
-            try {
-                const productVariantPayload = req.body;
-                const productVariant =
-                    await productVariantService.reserveProductVariantsQuantity(
-                        productVariantPayload
-                    );
-                return res.status(200).json(productVariant);
             } catch (error) {
                 next(error);
                 return;

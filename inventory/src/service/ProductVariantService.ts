@@ -2,21 +2,20 @@ import { CreateVariantRPCRequest, UpdateVariantRPCRequest } from './../types/pro
 import {
     VariantFilterRPCRequest,
     VariantFilterRPCResponse,
-} from '../types/productVariant';
+} from './../types/productVariant';
 import { ShoppingRPCReplyProductVariantType } from '../types/shoppingRpcType';
 import {
     RPCReplyProductVariantUpdateType,
     RPCRequestProductVariantUpdateType,
-} from '../types/orderRpcType';
-import CreateProductVariantDTO from '../dto/CreateProductVariantDTO';
-import { RPCTypes } from '../types/rpcType';
+} from './../types/orderRpcType';
+import { RPCTypes } from './../types/rpcType';
 import { ProductVariantRepository } from '../repository/ProductVariantRepository';
 import { IService } from './IService';
-import { ProductVariant } from '../entity/ProductVariant';
-import { EventPayload, RPCPayload } from '../types/utilTypes';
+import { ProductVariant } from './../entity/ProductVariant';
+import { EventPayload, RPCPayload } from './../types/utilTypes';
 import { ColorService } from './ColorService';
 import { SizeService } from './SizeService';
-import UpdateProductVariantDTO from '../dto/UpdateProductVariantDTO';
+import ProductVariantDTO from './../dto/ProductVariantDTO';
 import EventType from './../types/eventType';
 
 export class ProductVariantService implements IService {
@@ -30,21 +29,23 @@ export class ProductVariantService implements IService {
         this.sizeService = new SizeService();
     }
 
-    async getAll(): Promise<ProductVariant[]> {
-        return this.productVariantRepository.getAll();
+    async getAll(): Promise<ProductVariantDTO[]> {
+        const productVariantList = await this.productVariantRepository.getAll();
+        return ProductVariantDTO.toDTOs(productVariantList);
     }
 
     async findById(id: string): Promise<ProductVariant> {
-        return this.productVariantRepository.findById(id);
+        return  this.productVariantRepository.findById(id);
     }
 
-    async findByProductId(productId: string): Promise<ProductVariant[]> {
-        return this.productVariantRepository.findByProductId(productId);
+    async findByProductId(productId: string): Promise<ProductVariantDTO[]> {
+        const productVariantList = await this.productVariantRepository.findByProductId(productId);
+        return ProductVariantDTO.toDTOs(productVariantList)
     }
 
     async createProductVariant(
-        productVariantDTO: CreateProductVariantDTO
-    ): Promise<ProductVariant> {
+        productVariantDTO: ProductVariantDTO
+    ): Promise<ProductVariantDTO> {
         const [color, size] = await Promise.all([
             this.colorService.findByName(productVariantDTO.color),
             this.sizeService.findByName(productVariantDTO.size),
@@ -57,14 +58,15 @@ export class ProductVariantService implements IService {
             productVariantDTO,
             { color, size }
         );
-        return this.productVariantRepository.createProductVariant(
+        const createdProductVariant = await this.productVariantRepository.createProductVariant(
             productVariant
         );
+        return ProductVariantDTO.toDTO(createdProductVariant);
     }
 
     async updateProductVariant(
         id: string,
-        productVariantDTO: UpdateProductVariantDTO
+        productVariantDTO: ProductVariantDTO
     ): Promise<ProductVariant> {
         const [color, size] = await Promise.all([
             this.colorService.findByName(productVariantDTO.color),
