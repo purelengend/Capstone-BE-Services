@@ -4,7 +4,6 @@ import { RetrieveProductRequest } from './../types/product';
 import { Channel } from 'amqplib';
 import { Application, NextFunction, Request, Response } from 'express';
 import observerRPC from './../message-queue/rpc/observerRPC';
-import { IProductModel } from '../model/productModel';
 import ProductService from '../service/ProductService';
 import publishMessage from '../message-queue/pub-sub/publishMessage';
 import EventType from './../types/eventType';
