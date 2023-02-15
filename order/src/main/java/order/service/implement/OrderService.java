@@ -157,4 +157,9 @@ public class OrderService implements IOrderService {
         order.setOrderItemList(orderItemList);
         return order;
     }
+
+    @Override
+    public void deleteAllOrdersByUserId(String userId) {
+        orderRepository.deleteAllByUserId(userId);
+    }
 }

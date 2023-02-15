@@ -40,4 +40,10 @@ public class OrderController {
     public ResponseEntity<Order> create(@RequestBody OrderDTO orderDTO) {
         return ResponseEntity.ok().body(orderService.save(orderDTO));
     }
+
+    @DeleteMapping(value = "/deleteAllByUserId/{userId}")
+    public ResponseEntity<Void> deleteAllByUserId(@PathVariable String userId) {
+        orderService.deleteAllOrdersByUserId(userId);
+        return ResponseEntity.ok().build();
+    }
 }
