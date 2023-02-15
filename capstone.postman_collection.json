@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "62d21d13-3dc9-4c7e-aa6f-6c7e3e4a4c22",
+		"_postman_id": "afcc85da-73ac-4b8c-be33-b1bdf924a207",
 		"name": "capstone",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -463,6 +463,27 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/order/deleteAllByUserId/u123",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"deleteAllByUserId",
+								"u123"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -865,7 +886,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"vay nu 1\",\r\n    \"description\": \"product description line 1\\nproduct description line 2\\nproduct description line 3\",\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900,\r\n    \"coverPhoto\": \"fake women skirt image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63df6cd230a67c3bfdb6fc04\", \"63df6cbe30a67c3bfdb6fbfe\"],\r\n    \"productVariants\": [\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"M\",\r\n            \"quantity\": 200,\r\n            \"basePrice\": 1500,\r\n            \"sellingPrice\": 1250\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"L\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        }\r\n    ]\r\n\r\n}",
+							"raw": "{\r\n    \"name\": \"vay nu 1\",\r\n    \"description\": \"product description line 1\\nproduct description line 2\\nproduct description line 3\",\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900,\r\n    \"coverPhoto\": \"fake women skirt image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63e4a3c905b47a9aeddaad29\"],\r\n    \"productVariants\": [\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"M\",\r\n            \"quantity\": 200,\r\n            \"basePrice\": 1500,\r\n            \"sellingPrice\": 1250\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"L\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        }\r\n    ]\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -893,7 +914,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"vay nu 1\",\r\n    \"description\": \"product description line 1\\nproduct description line 2\\nproduct description line 3\",\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900,\r\n    \"coverPhoto\": \"fake women skirt image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63df6cd230a67c3bfdb6fc04\", \"63df6cbe30a67c3bfdb6fbfe\"],\r\n    \"productVariants\": [\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"M\",\r\n            \"quantity\": 200,\r\n            \"basePrice\": 1500,\r\n            \"sellingPrice\": 1250\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"L\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        }\r\n    ]\r\n\r\n}",
+							"raw": "{\r\n    \"name\": \"vay nu 1\",\r\n    \"description\": \"product description line 1\\nproduct description line 2\\nproduct description line 3\",\r\n    \"basePrice\": 1000,\r\n    \"sellingPrice\": 900,\r\n    \"coverPhoto\": \"fake women skirt image url\",\r\n    \"photoUrls\": [\r\n        \"link 1\",\r\n        \"link 2\",\r\n        \"link 3\",\r\n        \"link 4\"\r\n    ],\r\n    \"categories\": [\"63e4a3c905b47a9aeddaad29\"],\r\n    \"productVariants\": [\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"S\",\r\n            \"quantity\": 90,\r\n            \"basePrice\": 1000,\r\n            \"sellingPrice\": 900\r\n        },\r\n        {\r\n            \"color\": \"white\",\r\n            \"size\": \"M\",\r\n            \"quantity\": 200,\r\n            \"basePrice\": 1500,\r\n            \"sellingPrice\": 1250\r\n        }\r\n    ]\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -901,7 +922,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/update/63a2a9e306d2c7b052374f73",
+							"raw": "http://localhost:3000/update/63e9efb54662c1606a9c0f40",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -909,7 +930,7 @@
 							"port": "3000",
 							"path": [
 								"update",
-								"63a2a9e306d2c7b052374f73"
+								"63e9efb54662c1606a9c0f40"
 							]
 						}
 					},
