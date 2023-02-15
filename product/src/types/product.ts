@@ -32,3 +32,4 @@ export type VariantFilterOptions = {
 };
 
 export type SortFieldProduct = 'basePrice' | 'rating';
+
