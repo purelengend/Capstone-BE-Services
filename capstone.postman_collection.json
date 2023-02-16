@@ -465,7 +465,7 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "DeleteOrderByUserId",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1296,6 +1296,26 @@
 									"port": "3004",
 									"path": [
 										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteUserById",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3004/user/3f53e672-e5ae-4607-acea-11012b0b1df2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3004",
+									"path": [
+										"user",
+										"3f53e672-e5ae-4607-acea-11012b0b1df2"
 									]
 								}
 							},
