@@ -117,6 +117,10 @@ export class UserService implements IService{
         }
     }
 
+    async deleteUsersById(userId: string) {
+        return await this.userRepository.delete(userId);
+    }
+
     subscribeEvents(_: string): void {
         throw new Error('Method not implemented.');
     }

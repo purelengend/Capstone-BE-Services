@@ -7,4 +7,5 @@ export const MESSAGE_BROKER_URL = process.env.MESSAGE_BROKER_URL || 'amqp://loca
 export const EXCHANGE_NAME='CAPSTONE_EXCHANGE';
 export const REVIEW_SERVICE='REVIEW_SERVICE';
 export const PRODUCT_SERVICE='PRODUCT_SERVICE';
+export const USER_SERVICE='USER_SERVICE';
 export const USER_RPC = 'USER_RPC';

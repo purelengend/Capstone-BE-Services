@@ -87,4 +87,12 @@ export class UserRepository {
             throw new Error(error)
         }
     }
+
+    async delete(id: string): Promise<void> {
+        try {
+            await this.repository.delete(id);
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
 }
