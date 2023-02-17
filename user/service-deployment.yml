@@ -1,41 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: inventory-service-deployment
+  name: user-service-deployment
 spec: 
   replicas: 1
   selector:
     matchLabels: 
-      app: inventory-service
+      app: user-service
   template: 
     metadata:
       labels:
-        app: inventory-service
+        app: user-service
     spec:
       containers:
-        - name: inventory
-          image: doanhthuc/inventory-service
+        - name: user
+          image: doanhthuc/user-service
           imagePullPolicy: IfNotPresent
           ports:
-          - containerPort: 3002
+          - containerPort: 3004
           command: ["/bin/sh","-c"]
           args: ["yarn typeorm migration:run -d ./src/data-source.ts && yarn start"]
           env:
           - name: NODE_ENV
             value: production
           - name: DATABASE_URL
-            value: postgres://postgres:1@inventory-db:5432/fu-capstone-inventory
+            value: postgres://postgres:1@user-db:5432/fu-capstone-user
 ---
 apiVersion: v1
 kind: Service
 metadata: 
-  name: inventory-service
+  name: user-service
 spec: 
   selector:
-    app: inventory-service
+    app: user-service
   ports:
     - name: http
       protocol: TCP
-      port: 3002
-      targetPort: 3002
+      port: 3004
+      targetPort: 3004
   type: LoadBalancer

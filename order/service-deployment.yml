@@ -15,11 +15,12 @@ spec:
       containers:
         - name: order
           image: doanhthuc/order-service
+          imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 8080
           env:
           - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://order-db:5433/fu-capstone-order
+            value: jdbc:postgresql://order-db:5432/fu-capstone-order
           - name: SPRING_DATASOURCE_USERNAME
             value: postgres
           - name: SPRING_DATASOURCE_PASSWORD

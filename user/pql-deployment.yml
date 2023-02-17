@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-db-deployment # Sets Deployment name
+  name: user-db-deployment # Sets Deployment name
 spec:
   replicas: 1
   selector:
@@ -13,7 +13,7 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: order-db-container
+      - name: postgres
         image: postgres # Sets Image
         imagePullPolicy: "IfNotPresent"
         ports:
@@ -27,19 +27,19 @@ spec:
         - name: POSTGRES_PASSWORD
           value: "1"
         - name: POSTGRES_DB
-          value: fu-capstone-order
-      #   volumeMounts:
-      #     - mountPath: /var/lib/postgresql/data
-      #       name: postgres-data
-      # volumes:
-      #   - name: postgres-data
-      #     persistentVolumeClaim:
-      #       claimName: order-db-pv-claim
+          value: fu-capstone-user
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: user-db-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: order-db # Sets service name
+  name: user-db # Sets service name
   labels:
     app: postgres # Labels and Selectors
 spec:
