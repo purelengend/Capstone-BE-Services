@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopping-db-mongo
+  template:
+    metadata:
+      labels:
+        app: shopping-db-mongo
+    spec:
+      containers:
+      - name: shopping-db-container
+        image: mongo # Sets Image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: mongo-config
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: fu-capstone-shopping
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: root
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: secret
+        volumeMounts:
+          - mountPath: /data/db
+            name: mongo-data
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: shopping-db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopping-db # Sets service name
+  labels:
+    app: shopping-db-mongo # Labels and Selectors
+spec:
+  selector:
+    app: shopping-db-mongo
+  ports:
+    - port: 27017 # Sets port to run the mongo application
+      targetPort: 27017
+  type: ClusterIP # Sets service type 

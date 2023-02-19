@@ -1,28 +1,27 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: order-db-pv
+  name: inventory-db-pv
   labels:
     type: local
-    app: postgres
-    # storage-class: order-db-manual
+    app: inventory-db-postgres
 spec:
-  storageClassName: order-db-manual
+  storageClassName: inventory-db-manual
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"
+    path: "/mnt/data/inventory-db-pv"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: order-db-pv-claim
+  name: inventory-db-pv-claim
   labels:
-    app: postgres
+    app: inventory-db-postgres
 spec:
-  storageClassName: order-db-manual
+  storageClassName: inventory-db-manual
   accessModes:
     - ReadWriteOnce
   resources:

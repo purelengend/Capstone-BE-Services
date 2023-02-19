@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: nginx-proxy
-          image: doanhthuc/nginx-proxy
+          image: docker.io/doanhthuc/nginx-proxy
           ports:
             - containerPort: 80
 ---

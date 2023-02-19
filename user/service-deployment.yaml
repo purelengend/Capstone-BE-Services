@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user
-          image: doanhthuc/user-service
+          image: docker.io/doanhthuc/user-service
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 3004
