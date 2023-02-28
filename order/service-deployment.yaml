@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: order
-          image: doanhthuc/order-service
+          image: docker.io/doanhthuc/order-service:latest
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 8080

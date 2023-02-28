@@ -14,14 +14,23 @@ spec:
     spec:
       containers:
         - name: product
-          image: doanhthuc/product-service
+          image: docker.io/doanhthuc/product-service
+          imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 3000
           env:
+          - name: PORT
+            value: "3000"
           - name: NODE_ENV
             value: production
-          # - name: DATABASE_URL
-          #   value: postgres://postgres:1@inventory-db:5432/fu-capstone-inventory
+          - name: MONGO_URI
+            value: mongodb://product-db:27017/
+          - name: MONGO_INITDB_DATABASE
+            value: fu-capstone-product
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: root
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: secret
 ---
 apiVersion: v1
 kind: Service

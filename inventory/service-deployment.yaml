@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: inventory
-          image: doanhthuc/inventory-service
+          image: docker.io/doanhthuc/inventory-service
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 3002

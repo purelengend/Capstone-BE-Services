@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-db-mongo
+  template:
+    metadata:
+      labels:
+        app: product-db-mongo
+    spec:
+      containers:
+      - name: product-db-container
+        image: mongo # Sets Image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: mongo-config
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: fu-capstone-product
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: root
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: secret
+        volumeMounts:
+          - mountPath: /data/db
+            name: mongo-data
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: product-db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-db # Sets service name
+  labels:
+    app: product-db-mongo # Labels and Selectors
+spec:
+  selector:
+    app: product-db-mongo
+  ports:
+    - port: 27017 # Sets port to run the mongo application
+      targetPort: 27017
+  type: ClusterIP # Sets service type 

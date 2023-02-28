@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: shopping-service-deployment
+spec: 
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: shopping-service
+  template: 
+    metadata:
+      labels:
+        app: shopping-service
+    spec:
+      containers:
+        - name: shopping
+          image: docker.io/doanhthuc/shopping-service
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 3003
+          env:
+          - name: PORT
+            value: "3003"
+          - name: NODE_ENV
+            value: production
+          - name: MONGO_URI
+            value: mongodb://shopping-db:27017/
+          - name: MONGO_INITDB_DATABASE
+            value: fu-capstone-shopping
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: root
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: secret
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: shopping-service
+spec: 
+  selector:
+    app: shopping-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3003
+      targetPort: 3003
+  type: LoadBalancer

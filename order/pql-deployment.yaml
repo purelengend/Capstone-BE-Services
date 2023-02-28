@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: order-db-postgres
   template:
     metadata:
       labels:
-        app: postgres
+        app: order-db-postgres
     spec:
       containers:
       - name: order-db-container
@@ -28,23 +28,23 @@ spec:
           value: "1"
         - name: POSTGRES_DB
           value: fu-capstone-order
-      #   volumeMounts:
-      #     - mountPath: /var/lib/postgresql/data
-      #       name: postgres-data
-      # volumes:
-      #   - name: postgres-data
-      #     persistentVolumeClaim:
-      #       claimName: order-db-pv-claim
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: order-db-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: order-db # Sets service name
   labels:
-    app: postgres # Labels and Selectors
+    app: order-db-postgres # Labels and Selectors
 spec:
   selector:
-    app: postgres
+    app: order-db-postgres
   ports:
     - port: 5432 # Sets port to run the postgres application
       targetPort: 5432
