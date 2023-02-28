@@ -51,8 +51,6 @@ export const decodeTokenInRequest = (req: Request) => {
         accessToken,
         process.env.ACCESS_TOKEN_SECRET as Secret
     ) as UserTokenPayload;
-    let arr = [12, 434, 54];
-    arr.filter((item) => item > 10);
     return decodedToken;
 };
 

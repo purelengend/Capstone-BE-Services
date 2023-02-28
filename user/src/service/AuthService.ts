@@ -76,7 +76,7 @@ export class AuthService {
                 ? (process.env.ACCESS_TOKEN_SECRET as Secret)
                 : (process.env.REFRESH_TOKEN_SECRET as Secret),
             {
-                expiresIn: type === 'accessToken' ? '15m' : '60m'
+                expiresIn: type === 'accessToken' ? '1d' : '2d'
             }
         )
     }
