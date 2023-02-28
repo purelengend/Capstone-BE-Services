@@ -15,6 +15,10 @@ export class ReviewService implements IService {
         this.reviewRepository = new ReviewRepository();
     }
 
+    async getAllReviews(): Promise<IReviewModel[]> {
+        return await this.reviewRepository.getAllReviews();
+    }
+
     async getReviewsByProductId(productId: string): Promise<IReviewModel[]> {
         return await this.reviewRepository.getReviewsByProductId(productId);
     }

@@ -1,3 +1,4 @@
+import { UserRoleType } from './../types/auth';
 import { AuthorizeError } from './../error/error-type/AuthorizedError';
 import { decodeTokenInRequest } from './../middleware/auth';
 import { ItemDTO } from './../dto/ItemDTO';
@@ -24,7 +25,8 @@ export default (app: Application) => {
                 throw new Error('Missing userId in query');
             }
             const decodedToken = decodeTokenInRequest(req);
-            if (decodedToken && decodedToken.userId !== userId) {
+        
+            if (decodedToken.userId !== userId && decodedToken.role !== UserRoleType.ADMIN) {
                 throw new AuthorizeError('User is not authorized to get cart');
             }
             const cart = await cartService.getCartByUserId(userId);
@@ -45,7 +47,7 @@ export default (app: Application) => {
                 throw new Error('Missing userId or itemDTO in request body');
             }
             const decodedToken = decodeTokenInRequest(req);
-            if (decodedToken && decodedToken.userId !== userId) {
+            if (decodedToken.userId !== userId) {
                 throw new AuthorizeError(
                     'User is not authorized to add item to cart'
                 );

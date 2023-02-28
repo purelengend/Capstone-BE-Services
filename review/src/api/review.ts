@@ -13,6 +13,15 @@ export default (app: Application, channel: Channel) => {
 
     subscribeMessage(channel, reviewService);
 
+    app.get('/review/all', async (_, res, next) => {
+        try {
+            const reviews = await reviewService.getAllReviews();
+            return res.status(200).json(reviews);
+        } catch (error) {
+            next(error);
+            return;
+        }
+    });
     // Get all reviews for a product by product id in query of request
     app.get(
         '/api/reviews',

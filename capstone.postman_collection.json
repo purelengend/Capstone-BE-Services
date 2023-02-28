@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "afcc85da-73ac-4b8c-be33-b1bdf924a207",
+		"_postman_id": "6290b680-487c-4355-96d5-001198302340",
 		"name": "capstone",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1018,7 +1018,7 @@
 			"name": "review",
 			"item": [
 				{
-					"name": "GetRview",
+					"name": "GetReviewOfProductByProductId",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1130,6 +1130,26 @@
 							"path": [
 								"update",
 								"63e4c7a7d039cb529785ed97"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllReviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/review/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"review",
+								"all"
 							]
 						}
 					},

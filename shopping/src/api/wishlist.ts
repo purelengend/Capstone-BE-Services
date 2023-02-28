@@ -1,3 +1,4 @@
+import { UserRoleType } from './../types/auth';
 import { IWishlistItemModel } from './../model/wishlistModel';
 import { AuthorizeError } from './../error/error-type/AuthorizedError';
 import { Application } from 'express';
@@ -7,10 +8,19 @@ import { decodeTokenInRequest } from './../middleware/auth';
 export default (app: Application) => {
     const wishlistService = new WishlistService();
 
-    app.get('/wishlist/all', (_, res) => {
-        wishlistService.getAllWishlists().then((result) => {
-            res.send(result);
-        });
+    app.get('/wishlist/all', async (req, res, next) => {
+        try {
+            const decodedToken = decodeTokenInRequest(req);
+            if (decodedToken.role !== UserRoleType.ADMIN) {
+                throw new AuthorizeError(
+                    'User have no permission to perform this action'
+                );
+            }
+            return res.status(200).json(await wishlistService.getAllWishlists());   
+        } catch (error) {
+            next(error);
+            return;
+        }
     });
 
     app.get('/wishlist/', async (req, res, next) => {
@@ -20,7 +30,7 @@ export default (app: Application) => {
                 throw new Error('Missing userId in query');
             }
             const decodedToken = decodeTokenInRequest(req);
-            if (decodedToken && decodedToken.userId !== userId) {
+            if (decodedToken.userId !== userId && decodedToken.role !== UserRoleType.ADMIN) {
                 throw new AuthorizeError(
                     'User is not authorized to get wishlist'
                 );
@@ -60,7 +70,7 @@ export default (app: Application) => {
                 throw new Error('Missing userId or itemDTO in request body');
             }
             const decodedToken = decodeTokenInRequest(req);
-            if (decodedToken && decodedToken.userId !== userId) {
+            if (decodedToken.userId !== userId) {
                 throw new AuthorizeError(
                     'User is not authorized to get wishlist'
                 );

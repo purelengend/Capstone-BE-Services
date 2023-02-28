@@ -39,7 +39,7 @@ export const verifyUserAuthentication = async (
     }
 };
 
-export const decodeTokenInRequest = (req: Request) => {
+export const decodeTokenInRequest = (req: Request) : UserTokenPayload => {
     // authHeader here is "Bearer accessToken"
     const [, accessToken] = req.header('Authorization')?.split(' ') || [];
 
