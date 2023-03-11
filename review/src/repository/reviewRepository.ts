@@ -46,7 +46,7 @@ export class ReviewRepository {
     async updateReview(
         id: string,
         review: IReviewModel
-    ): Promise<IReviewModel | null> {
+    ): Promise<IReviewModel> {
         try {
             const updatedReview = await reviewModel.findByIdAndUpdate(
                 id,
@@ -55,6 +55,7 @@ export class ReviewRepository {
                     new: true,
                 }
             );
+            if (!updatedReview) throw new Error('Review not found');
             return updatedReview;
         } catch (error) {
             throw new Error('Review update failed in the database');
@@ -125,11 +126,12 @@ export class ReviewRepository {
         }
     }
 
+     // Get average rating of product by productId that rating is not 0
     async getAverageRatingByProductId(productId: string): Promise<number> {
         try {
             const averageRating = await reviewModel.aggregate([
                 {
-                    $match: { productId },
+                    $match: { productId, rating: { $ne: 0 } },
                 },
                 {
                     $group: {

@@ -142,6 +142,8 @@ export default (app: Application, channel: Channel) => {
                     rating,
                     comment
                 );
+                // Publish message to product service
+                await publishReviewEvent(updatedReview.productId, EventType.CREATE_REVIEW);
                 return res.status(200).json(updatedReview);
             } catch (error) {
                 console.log('Error in update review', error);
@@ -165,7 +167,7 @@ export default (app: Application, channel: Channel) => {
                 // publish the review event to product service
                 await publishReviewEvent(
                     deletedReview?.id!,
-                    EventType.CREATE_REVIEW
+                    EventType.DELETE_REVIEW
                 );
                 
                 return res.status(200).json(deletedReview);

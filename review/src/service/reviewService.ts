@@ -71,10 +71,10 @@ export class ReviewService implements IService {
         id: string,
         rating: number,
         comment: string
-    ): Promise<IReviewModel | null> {
+    ): Promise<IReviewModel> {
         const review = await this.reviewRepository.getReviewById(id);
         if (!review) {
-            return null;
+            throw new NotFoundError('Review not found');
         }
         review.rating = rating;
         review.comment = comment;
