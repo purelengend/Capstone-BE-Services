@@ -14,15 +14,14 @@ spec:
     spec:
       containers:
       - name: product-db-container
-        image: docker.io/doanhthuc/mongo:latest
+        image: docker.io/mongo:latest
         resources:
           requests:
-            memory: "64Mi"
-            cpu: "250m"
+            memory: "2Gi"
+            cpu: "2"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
-        imagePullPolicy: IfNotPresent
+            memory: "4Gi"
+            cpu: "3"
         ports:
         - containerPort: 27017 # Exposes container port
         # envFrom:
@@ -41,7 +40,7 @@ spec:
       volumes:
         - name: mongo-data
           persistentVolumeClaim:
-            claimName: product-db-pv-claim
+            claimName: product-db-pvc
 ---
 apiVersion: v1
 kind: Service

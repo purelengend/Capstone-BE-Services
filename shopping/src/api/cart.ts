@@ -8,7 +8,7 @@ import { CartService } from './../service/CartService';
 export default (app: Application) => {
     const cartService = new CartService();
 
-    app.get('/cart/all', async (_, res, next) => {
+    app.get('/shopping/cart/all', async (_, res, next) => {
         try {
             const carts = await cartService.getAllCarts();
             return res.status(200).json(carts);
@@ -18,7 +18,7 @@ export default (app: Application) => {
         }
     });
 
-    app.get('/cart', async (req, res, next) => {
+    app.get('/shopping/cart', async (req, res, next) => {
         try {
             const userId = req.query.userId as string;
             if (!userId) {
@@ -37,7 +37,7 @@ export default (app: Application) => {
         }
     });
 
-    app.post('/addToCart', async (req, res, next) => {
+    app.post('/shopping/addToCart', async (req, res, next) => {
         try {
             const { userId, itemDTO } = req.body as {
                 userId: string;
@@ -60,7 +60,7 @@ export default (app: Application) => {
         }
     });
 
-    app.put('/removeFromCart', async (req, res, next) => {
+    app.put('/shopping/removeFromCart', async (req, res, next) => {
         try {
             const { userId, productVariantId } = req.body as {
                 userId: string;
@@ -80,7 +80,7 @@ export default (app: Application) => {
         }
     });
 
-    app.put('/updateCartItemQuantity', async (req, res, next) => {
+    app.put('/shopping/updateCartItemQuantity', async (req, res, next) => {
         try {
             const { userId, productVariantId, quantity } = req.body as {
                 userId: string;

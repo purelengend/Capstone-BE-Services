@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Connecting to Amazon ECR...
+      - aws --version
+      # - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - aws ecr-public get-login-password --region us-east-1 | docker login 
+      --username AWS --password-stdin public.ecr.aws/k8m0d3q4
+      - REPOSITORY_URI=public.ecr.aws/k8m0d3q4/product-service
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+  build:
+    commands:
+      - IMAGE_NAME=product-service
+      - echo Build started on `date`
+      - echo cd into the product directory...
+      - cd ./product
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      # - docker build -t product-service .
+      - echo Tagging the Docker image...
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"simple-app","imageUri":"%s"}]'
+        $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json

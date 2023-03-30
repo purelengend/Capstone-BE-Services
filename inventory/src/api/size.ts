@@ -5,7 +5,7 @@ export default (app: Application): void => {
     const sizeService = new SizeService();
 
     app.get(
-        '/size/all',
+        '/inventory/size/all',
         async (_: Request, res: Response, next: NextFunction) => {
             try {
                 const sizes = await sizeService.getAll();
@@ -18,7 +18,7 @@ export default (app: Application): void => {
     );
 
     app.get(
-        '/size/:name',
+        '/inventory/size/:name',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const size = await sizeService.findByName(req.params.name);
@@ -31,7 +31,7 @@ export default (app: Application): void => {
     );
 
     app.post(
-        '/size',
+        '/inventory/size',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const size = await sizeService.createSize(req.body.name);
@@ -44,7 +44,7 @@ export default (app: Application): void => {
     );
 
     app.put(
-        '/size/:id',
+        '/inventory/size/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = parseInt(req.params.id);
@@ -58,7 +58,7 @@ export default (app: Application): void => {
     );
 
     app.delete(
-        '/size/:id',
+        '/inventory/size/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = parseInt(req.params.id);

@@ -24,7 +24,7 @@ export default (app: Application, channel: Channel) => {
     });
     // Get all reviews for a product by product id in query of request
     app.get(
-        '/api/reviews',
+        '/review/api/reviews',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const productId = req.query.productId as string;
@@ -44,7 +44,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.get(
-        '/getByProductId/:id',
+        '/review/getByProductId/:id',
         async (_: Request, res: Response, next: NextFunction) => {
             try {
                 const { id: productId } = _.params;
@@ -66,7 +66,7 @@ export default (app: Application, channel: Channel) => {
 
     // Get comment of user for a product
     app.get(
-        '/reviewOfUserForProduct',
+        '/review/reviewOfUserForProduct',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { productId, userId } = req.query;
@@ -85,7 +85,7 @@ export default (app: Application, channel: Channel) => {
     );  
 
     app.post(
-        '/create',
+        '/review/create',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { id, productId, rating, comment, userId } = req.body;
@@ -128,7 +128,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.put(
-        '/update/:id',
+        '/review/update/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { id } = req.params;
@@ -154,7 +154,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.delete(
-        '/delete/:id',
+        '/review/delete/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { id } = req.params;
@@ -180,7 +180,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.delete(
-        '/deleteByProductId/:id',
+        '/review/deleteByProductId/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { id } = req.params;
@@ -200,7 +200,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.delete(
-        '/deleteByAuthorId/:id',
+        '/review/deleteByAuthorId/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { id } = req.params;

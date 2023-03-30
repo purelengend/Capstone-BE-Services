@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres # Sets Image
+        image: docker.io/postgres # Sets Image
         imagePullPolicy: "IfNotPresent"
         ports:
         - containerPort: 5432 # Exposes container port
@@ -31,6 +31,7 @@ spec:
         volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: postgres-data
+            subPath: postgres
       volumes:
         - name: postgres-data
           persistentVolumeClaim:

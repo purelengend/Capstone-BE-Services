@@ -1,18 +1,30 @@
-apiVersion: v1
-kind: PersistentVolume
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: inventory-db-pv
+#   labels:
+#     type: local
+#     app: inventory-db-postgres
+# spec:
+#   storageClassName: inventory-db-manual
+#   capacity:
+#     storage: 1Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   hostPath:
+#     path: "/mnt/data/inventory-db-pv"
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
 metadata:
-  name: inventory-db-pv
-  labels:
-    type: local
-    app: inventory-db-postgres
-spec:
-  storageClassName: inventory-db-manual
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data/inventory-db-pv"
+  name: inventory-db-manual
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  fsType: ext4
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

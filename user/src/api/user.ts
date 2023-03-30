@@ -12,7 +12,7 @@ export default (app: Application, channel: Channel) => {
 
     observerRPC(USER_RPC, userService)
 
-    app.get('/user', async (_, res, next) => {
+    app.get('/auth/user', async (_, res, next) => {
         try {
             return res.status(200).json(await userService.getAllUsers());
         } catch (error) {
@@ -21,7 +21,7 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
-    app.get('/user/:id', async (req, res, next) => {
+    app.get('/auth/user/:id', async (req, res, next) => {
         try {
             const { id } = req.params as { id: string };
             return res.status(200).json(await userService.getUserById(id));
@@ -31,7 +31,7 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
-    app.get('/userAddress/:userId', async (req, res, next) => {
+    app.get('/auth/userAddress/:userId', async (req, res, next) => {
         try {
             const { userId } = req.params;
             return res.status(200).json(await userService.getAddressOfUser(userId));
@@ -41,7 +41,7 @@ export default (app: Application, channel: Channel) => {
         }
     })
 
-    app.post('/user/createAdmin', async (req, res, next) => {
+    app.post('/auth/user/createAdmin', async (req, res, next) => {
         try {
             const userDTO = req.body as CreateUserDTO;
             return res.status(200).json(await userService.createAdmin(userDTO));
@@ -51,7 +51,7 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
-    app.post('/user', async (req, res, next) => {
+    app.post('/auth/user', async (req, res, next) => {
         try {
             const userDTO = req.body as CreateUserDTO;
             return res.status(200).json(await userService.createCustomer(userDTO));
@@ -61,7 +61,7 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
-    app.put('/user/:id', async (req, res, next) => {
+    app.put('/auth/user/:id', async (req, res, next) => {
         try {
             const { id } = req.params;
             const userDTO = req.body as CreateUserDTO;
@@ -72,7 +72,7 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
-    app.delete('/user/:id', async (req, res, next) => {
+    app.delete('/auth/user/:id', async (req, res, next) => {
         try {
             const { id } = req.params;
             await userService.deleteUsersById(id);

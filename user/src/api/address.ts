@@ -5,7 +5,7 @@ import { AddressService } from "./../service/AddressService";
 export default (app: Application) => {
     const addressService = new AddressService();
 
-    app.get('/address', async (_, res, next) => {
+    app.get('/auth/address', async (_, res, next) => {
         try {
             return res.status(200).json(await addressService.findAll());
         } catch (error) {
@@ -14,7 +14,7 @@ export default (app: Application) => {
         }
     });
 
-    app.get('/address/:id', async (req, res, next) => {
+    app.get('/auth/address/:id', async (req, res, next) => {
         try {
             const { id } = req.params;
             return res.status(200).json(await addressService.findById(id));
@@ -24,7 +24,7 @@ export default (app: Application) => {
         }
     });
 
-    app.post('/address', async (req, res, next) => {
+    app.post('/auth/address', async (req, res, next) => {
         try {
             const addressDTO = req.body as AddressDTO;
             return res.status(200).json(await addressService.createAddress(addressDTO));
@@ -34,7 +34,7 @@ export default (app: Application) => {
         }
     });
 
-    app.put('/address/:id', async (req, res, next) => {
+    app.put('/auth/address/:id', async (req, res, next) => {
         try {
             const { id } = req.params;
             const addressDTO = req.body as AddressDTO;

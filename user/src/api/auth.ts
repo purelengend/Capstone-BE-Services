@@ -7,7 +7,7 @@ export default (app: Application) => {
     const authService = new AuthService();
     const registerService = new RegisterService();
     
-    app.post('/login', async (req, res, next) => {
+    app.post('/auth/login', async (req, res, next) => {
         try {
             const { username, password } = req.body;
             return res.status(200).json(await authService.login(username, password));
@@ -17,7 +17,7 @@ export default (app: Application) => {
         }    
     });
 
-    app.post('/register', async (req, res, next) => {
+    app.post('/auth/register', async (req, res, next) => {
         try {
             const registerCustomerDTO = req.body as RegisterCustomerDTO;
             return res.status(200).json(await registerService.registerUser(registerCustomerDTO)); 
@@ -27,7 +27,7 @@ export default (app: Application) => {
         }
     });
 
-    app.post('/refreshAccessToken',async (req, res, next) => {
+    app.post('/auth/refreshAccessToken',async (req, res, next) => {
         try {
             const { refreshToken } = req.body;
             return res.status(200).json(await authService.refreshAccessToken(refreshToken));

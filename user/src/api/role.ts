@@ -5,7 +5,7 @@ import { Application } from 'express';
 export default (app: Application) => {
     const roleService = new RoleService()
 
-    app.get('/role', async (_, res, next) => {
+    app.get('/auth/role', async (_, res, next) => {
         try {
             return res.status(200).json(await roleService.getAllRoles());
         } catch (error) {
@@ -14,7 +14,7 @@ export default (app: Application) => {
         }
     });
 
-    app.get('/role/:id', async (req, res, next) => {
+    app.get('/auth/role/:id', async (req, res, next) => {
         try {
             const { id } = req.params;
             return res.status(200).json(await roleService.getRoleById(parseInt(id)));
@@ -25,7 +25,7 @@ export default (app: Application) => {
     });
 
 
-    app.post('/role', async (req, res, next) => {
+    app.post('/auth/role', async (req, res, next) => {
         try {
             const name = req.body.name as UserRoleType;           
             return res.status(200).json(await roleService.createRole(name));

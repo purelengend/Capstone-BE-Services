@@ -8,7 +8,7 @@ import { decodeTokenInRequest } from './../middleware/auth';
 export default (app: Application) => {
     const wishlistService = new WishlistService();
 
-    app.get('/wishlist/all', async (req, res, next) => {
+    app.get('/shopping/wishlist/all', async (req, res, next) => {
         try {
             const decodedToken = decodeTokenInRequest(req);
             if (decodedToken.role !== UserRoleType.ADMIN) {
@@ -23,7 +23,7 @@ export default (app: Application) => {
         }
     });
 
-    app.get('/wishlist/', async (req, res, next) => {
+    app.get('/shopping/wishlist/', async (req, res, next) => {
         try {
             const userId = req.query.userId as string;
             if (!userId) {
@@ -43,7 +43,7 @@ export default (app: Application) => {
         }
     });
 
-    app.get('/checkItemInWishlist', async (req, res, next) => {
+    app.get('/shopping/checkItemInWishlist', async (req, res, next) => {
         try {
             const { userId, productId } = req.query as {
                 userId: string;
@@ -60,7 +60,7 @@ export default (app: Application) => {
         }
     });
 
-    app.put('/toggleAddItemToWishlist', async (req, res, next) => {
+    app.put('/shopping/toggleAddItemToWishlist', async (req, res, next) => {
         try {
             const { userId, item } = req.body as {
                 userId: string;
@@ -86,7 +86,7 @@ export default (app: Application) => {
         }
     });
 
-    app.put('/removeFromWishlist', async (req, res, next) => {
+    app.put('/shopping/removeFromWishlist', async (req, res, next) => {
         try {
             const { userId, productId } = req.body as {
                 userId: string;

@@ -14,7 +14,7 @@ export default (app: Application, channel: Channel): void => {
     subscribeMessage(channel, productVariantService, DISCOUNT_SERVICE);
 
     app.get(
-        '/productVariant/all',
+        '/inventory/productVariant/all',
         async (_: Request, res: Response, next: NextFunction) => {
             try {
                 const sizes = await productVariantService.getAll();
@@ -26,7 +26,7 @@ export default (app: Application, channel: Channel): void => {
         }
     );
 
-    app.get('/productVariant/stock', async (req: Request, res: Response, next: NextFunction) => {
+    app.get('/inventory/productVariant/stock', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { productId, sizeName, colorName } = req.query;
             if (!productId || !sizeName || !colorName) {
@@ -45,7 +45,7 @@ export default (app: Application, channel: Channel): void => {
     });
 
     app.get(
-        '/productVariant/:id',
+        '/inventory/productVariant/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const size = await productVariantService.findById(
@@ -60,7 +60,7 @@ export default (app: Application, channel: Channel): void => {
     );
 
     app.post(
-        '/productVariant',
+        '/inventory/productVariant',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const productVariant = req.body as ProductVariantDTO;
@@ -77,7 +77,7 @@ export default (app: Application, channel: Channel): void => {
     );
 
     app.put(
-        '/productVariant/:id',
+        '/inventory/productVariant/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 console.log(req.body);
@@ -98,7 +98,7 @@ export default (app: Application, channel: Channel): void => {
     );
 
     app.get(
-        '/getProductVariantByProductId/:productId',
+        '/inventory/getProductVariantByProductId/:productId',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const productVariant =

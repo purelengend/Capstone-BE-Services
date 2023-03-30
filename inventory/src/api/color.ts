@@ -5,7 +5,7 @@ export default (app: Application): void => {
     const colorService = new ColorService();
 
     app.get(
-        '/color/all',
+        '/inventory/color/all',
         async (_: Request, res: Response, next: NextFunction) => {
             try {
                 const sizes = await colorService.getAll();
@@ -18,7 +18,7 @@ export default (app: Application): void => {
     );
 
     app.get(
-        '/color/:name',
+        '/inventory/color/:name',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const size = await colorService.findByName(req.params.name);
@@ -31,7 +31,7 @@ export default (app: Application): void => {
     );
 
     app.post(
-        '/color',
+        '/inventory/color',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const size = await colorService.createColor(req.body.name);
@@ -44,7 +44,7 @@ export default (app: Application): void => {
     );
 
     app.put(
-        '/color/:id',
+        '/inventory/color/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = parseInt(req.params.id);
@@ -58,7 +58,7 @@ export default (app: Application): void => {
     );
 
     app.delete(
-        '/color/:id',
+        '/inventory/color/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = parseInt(req.params.id);

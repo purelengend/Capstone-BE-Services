@@ -17,7 +17,7 @@ export default (app: Application, channel: Channel) => {
     subscribeMessage(channel, productService);
     subscribeMessage(channel, productService, DISCOUNT_SERVICE);
 
-    app.get('/', async (_: Request, res: Response, next: NextFunction) => {
+    app.get('/product/', async (_: Request, res: Response, next: NextFunction) => {
         try {
             const products = await productService.getProducts();
             return res.status(200).json(products);
@@ -27,7 +27,7 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
-    app.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    app.get('/product/:id', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const product = await productService.getProductById(req.params.id);
             return res.status(200).json(product);
@@ -37,7 +37,7 @@ export default (app: Application, channel: Channel) => {
         }
     });
 
-    app.post('/search', async (req: Request, res: Response, next: NextFunction) => {
+    app.post('/product/search', async (req: Request, res: Response, next: NextFunction) => {
         try {
             const searchTerm = req.body.searchTerm as string;
             if (!searchTerm || searchTerm.length < 2) {
@@ -52,7 +52,7 @@ export default (app: Application, channel: Channel) => {
     });
 
     app.post(
-        '/create',
+        '/product/create',
         // verifyAdminAuthorization,
         async (req: Request, res: Response, next: NextFunction) => {
             try {
@@ -69,7 +69,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.put(
-        '/update/:id',
+        '/product/update/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = req.params.id;
@@ -87,7 +87,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.delete(
-        '/delete/:id',
+        '/product/delete/:id',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = req.params.id;
@@ -108,7 +108,7 @@ export default (app: Application, channel: Channel) => {
     );
 
     app.post(
-        '/retrieveProduct',
+        '/product/retrieveProduct',
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 let { page, pageSize, orderBy, sortBy, filters } =
