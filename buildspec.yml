@@ -8,7 +8,7 @@ phases:
       # - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - aws ecr-public get-login-password --region us-east-1 | docker login 
       --username AWS --password-stdin public.ecr.aws/k8m0d3q4
-      - REPOSITORY_URI=public.ecr.aws/k8m0d3q4/product-service
+      - REPOSITORY_URI=975719059066.dkr.ecr.ap-southeast-1.amazonaws.com/product-service
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
