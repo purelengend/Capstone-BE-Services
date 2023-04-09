@@ -54,7 +54,7 @@ phases:
       # - kubectl apply -f service-deployment.yaml
       # - cd ../
       # - kubectl apply -f ingress.yaml
-      - export EKS_KUBECTL_ROLE_ARN=arn:aws:iam::975719059066:role/eks-admin-for-codebuild
+      - export EKS_KUBECTL_ROLE_ARN=arn:aws:iam::975719059066:role/eks-admin-for-product-code-build-service-role
       - CREDENTIALS=$(aws sts assume-role --role-arn $EKS_KUBECTL_ROLE_ARN --role-session-name codebuild-kubectl --duration-seconds 900)
       - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
       - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
