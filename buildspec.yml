@@ -62,7 +62,7 @@ phases:
       - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
       - aws eks update-kubeconfig --region ap-southeast-1 --name eks-capstone-cluster
       - echo Login into Kubernetes successfully
-      - kubectl run nginx --image=nginx
+      # - kubectl run nginx --image=nginx
       - echo Applying service to Kubernetes successfully
 artifacts:
   files: image-definitions.json

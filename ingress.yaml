@@ -53,6 +53,13 @@ spec:
               name: order-service
               port:
                 number: 8080
+        - path: /discount
+          pathType: Prefix
+          backend:
+            service:
+              name: discountservice
+              port:
+                number: 9000
 
 
 

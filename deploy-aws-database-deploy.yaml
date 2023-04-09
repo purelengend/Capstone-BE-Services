@@ -1,0 +1,325 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-db-postgres
+  template:
+    metadata:
+      labels:
+        app: inventory-db-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: docker.io/postgres # Sets Image
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 5432 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: postgres-config
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: "1"
+        - name: POSTGRES_DB
+          value: fu-capstone-inventory
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+            subPath: postgres
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: inventory-db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-db # Sets service name
+  labels:
+    app: inventory-db-postgres # Labels and Selectors
+spec:
+  selector:
+    app: inventory-db-postgres
+  ports:
+    - port: 5432 # Sets port to run the postgres application
+      targetPort: 5432
+  type: ClusterIP # Sets service type 
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-db-postgres
+  template:
+    metadata:
+      labels:
+        app: order-db-postgres
+    spec:
+      containers:
+      - name: order-db-container
+        image: docker.io/postgres # Sets Image
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 5432 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: postgres-config
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: "1"
+        - name: POSTGRES_DB
+          value: fu-capstone-order
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+            subPath: postgres
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: order-db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-db # Sets service name
+  labels:
+    app: order-db-postgres # Labels and Selectors
+spec:
+  selector:
+    app: order-db-postgres
+  ports:
+    - port: 5432 # Sets port to run the postgres application
+      targetPort: 5432
+  type: ClusterIP # Sets service type 
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-db-mongo
+  template:
+    metadata:
+      labels:
+        app: product-db-mongo
+    spec:
+      containers:
+      - name: product-db-container
+        image: docker.io/mongo:latest
+        # resources:
+        #   requests:
+        #     memory: "2Gi"
+        #     cpu: "2"
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "3"
+        ports:
+        - containerPort: 27017 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: mongo-config
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: fu-capstone-product
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: root
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: secret
+        volumeMounts:
+          - mountPath: /data/db
+            name: mongo-data
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: product-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-db # Sets service name
+  labels:
+    app: product-db-mongo # Labels and Selectors
+spec:
+  selector:
+    app: product-db-mongo
+  ports:
+    - port: 27017 # Sets port to run the mongo application
+      targetPort: 27017
+  type: ClusterIP # Sets service type 
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: review-db-mongo
+  template:
+    metadata:
+      labels:
+        app: review-db-mongo
+    spec:
+      containers:
+      - name: review-db-container
+        image: mongo # Sets Image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: mongo-config
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: fu-capstone-review
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: root
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: secret
+        volumeMounts:
+          - mountPath: /data/db
+            name: mongo-data
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: review-db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: review-db # Sets service name
+  labels:
+    app: review-db-mongo # Labels and Selectors
+spec:
+  selector:
+    app: review-db-mongo
+  ports:
+    - port: 27017 # Sets port to run the mongo application
+      targetPort: 27017
+  type: ClusterIP # Sets service type 
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopping-db-mongo
+  template:
+    metadata:
+      labels:
+        app: shopping-db-mongo
+    spec:
+      containers:
+      - name: shopping-db-container
+        image: mongo # Sets Image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: mongo-config
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: fu-capstone-shopping
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: root
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: secret
+        volumeMounts:
+          - mountPath: /data/db
+            name: mongo-data
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: shopping-db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopping-db # Sets service name
+  labels:
+    app: shopping-db-mongo # Labels and Selectors
+spec:
+  selector:
+    app: shopping-db-mongo
+  ports:
+    - port: 27017 # Sets port to run the mongo application
+      targetPort: 27017
+  type: ClusterIP # Sets service type 
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-db-deployment # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-db-postgres
+  template:
+    metadata:
+      labels:
+        app: user-db-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres # Sets Image
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 5432 # Exposes container port
+        # envFrom:
+        #   - configMapRef:
+        #       name: postgres-config
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: "1"
+        - name: POSTGRES_DB
+          value: fu-capstone-user
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+            subPath: postgres
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: user-db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-db # Sets service name
+  labels:
+    app: user-db-postgres # Labels and Selectors
+spec:
+  selector:
+    app: user-db-postgres
+  ports:
+    - port: 5432 # Sets port to run the postgres application
+      targetPort: 5432
+  type: ClusterIP # Sets service type 
