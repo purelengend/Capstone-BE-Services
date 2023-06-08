@@ -2,7 +2,7 @@ version: '3'
 services:
   # Product service 
   product:
-    build: 
+    build:
       context: ./product
       dockerfile: Dockerfile
     image: product
@@ -23,18 +23,18 @@ services:
     container_name: product-mongo-db
     # ports: 
     #   - '27017:27017'
-    environment: 
+    environment:
       MONGO_INITDB_DATABASE: fu-capstone-product
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: secret
     # enable auth for mongo
-    command: --auth 
+    command: --auth
     volumes:
       - product-mongo-data:/data/db
 
   # Review service
   review:
-    build: 
+    build:
       context: ./review
       dockerfile: Dockerfile
     image: review
@@ -55,18 +55,18 @@ services:
     container_name: review-mongo-db
     # ports: 
     #   - '27017:27017'
-    environment: 
+    environment:
       MONGO_INITDB_DATABASE: fu-capstone-review
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: secret
     # enable auth for mongo
-    command: --auth 
+    command: --auth
     volumes:
       - review-mongo-data:/data/db
 
   # Invetory service
   inventory:
-    build: 
+    build:
       context: ./inventory
       dockerfile: Dockerfile
     image: inventory
@@ -87,7 +87,7 @@ services:
     image: postgres
     # ports: 
     #   - '5432:5432'
-    environment: 
+    environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: fu-capstone-inventory
@@ -97,7 +97,7 @@ services:
 
   # Shopping service
   shopping:
-    build: 
+    build:
       context: ./shopping
       dockerfile: Dockerfile
     image: shopping
@@ -118,18 +118,18 @@ services:
     container_name: shopping-mongo-db
     # ports: 
     #   - '27017:27017'
-    environment: 
+    environment:
       MONGO_INITDB_DATABASE: fu-capstone-shopping
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: secret
     # enable auth for mongo
-    command: --auth 
+    command: --auth
     volumes:
       - shopping-mongo-data:/data/db
 
   # User service
   user:
-    build: 
+    build:
       context: ./user
       dockerfile: Dockerfile
     image: user
@@ -150,7 +150,7 @@ services:
     image: postgres
     # ports: 
     #   - '5434:5432'
-    environment: 
+    environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: fu-capstone-user
@@ -158,11 +158,11 @@ services:
       # - ./user/db-data:/var/lib/postgresql/data
       - user-postgres-data:/var/lib/postgresql/data
 
-  # Order service
+  # Order service 
   order:
     build:
-        context: ./order
-        dockerfile: Dockerfile
+      context: ./order
+      dockerfile: Dockerfile
     image: order
     container_name: order-service
     ports:
@@ -186,8 +186,31 @@ services:
     volumes:
       # - ./order/db-data:/var/lib/postgresql/data
       - order-postgres-data:/var/lib/postgresql/data
+      #Discount service
+      # discount-db:
+      #   image: postgres
 
-  #proxy
+      #   environment:
+      #     POSTGRES_USER: postgres
+      #     POSTGRES_PASSWORD: 123456
+      #     POSTGRES_DB: fu-capstone-discount
+      #   volumes:
+      # - ./inventory/db-data:/var/lib/postgresql/data
+      # - discount-postgres-data:/var/lib/postgresql/data
+      # discount:
+      # build:
+      #   context: ./discount
+      #   dockerfile: Dockerfile
+      # image: discount
+      # container_name: discount-service
+      # ports:
+      #   - 7000:80
+      # environment:
+      #   DB_CONNECTION_STRING: "host=discount-db;port=5432;database=fu-capstone-discount;username=postgres;password=123456"
+      #   TZ: Asia/Ho_Chi_Minh
+      # depends_on:
+      #   - discount-db
+      #proxy
   nginx-proxy:
     build:
       context: ./proxy
@@ -210,4 +233,6 @@ volumes:
   product-mongo-data:
   review-mongo-data:
   shopping-mongo-data:
-  
+    # discount-postgres-data:
+
+
